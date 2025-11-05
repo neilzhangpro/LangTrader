@@ -12,10 +12,9 @@ AI-powered cryptocurrency trading bot using LangChain and Hyperliquid DEX.
 
 **Offical X: @AIBTCAI** [@AIBTCAI](https://x.com/AIBTCAI)
 
-**Offical LinkedIn:** [@tomiezhang](https://www.linkedin.com/in/tomiezhang/)
 
 ## Powerful AI trade bot driving by Langgraph 🚀
-Simper-Trader is a powerful, open-source AI-driven cryptocurrency trading bot built on top of [LangChain](https://www.langchain.com/), [LangGraph](https://langchain-ai.github.io/langgraph/), and the decentralized exchange [Hyperliquid](https://hyperliquid.xyz/). Leveraging the latest advancements in Python, AI, and on-chain trading, Simper-Trader automates trading decisions with sophisticated technical indicator analysis, advanced logging via Loguru, and seamless DEX integration.
+LangTrader is a powerful, open-source AI-driven cryptocurrency trading bot built on top of [LangChain](https://www.langchain.com/), [LangGraph](https://langchain-ai.github.io/langgraph/), and the decentralized exchange [Hyperliquid](https://hyperliquid.xyz/). Leveraging the latest advancements in Python, AI, and on-chain trading, Simper-Trader automates trading decisions with sophisticated technical indicator analysis, advanced logging via Loguru, and seamless DEX integration.
 
 **Key Features:**
 - **Automated Trading**: Executes trades automatically based on real-time technical indicator signals (e.g., RSI, MACD, Bollinger Bands, SMA/EMA) and AI-driven insights.
