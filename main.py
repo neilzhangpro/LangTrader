@@ -1,7 +1,6 @@
-
-from utils import logger
-from market import CryptoFetcher
-from hyperliquidExchange import hyperliquidAPI
+from src.LangTrader.utils import logger
+from src.LangTrader.market import CryptoFetcher
+from src.LangTrader.hyperliquidExchange import hyperliquidAPI
 from time import sleep
 
 
@@ -9,7 +8,7 @@ from time import sleep
 
 
 def main():
-    logger.info("Hello from simper-trader!")
+    logger.info("Hello from LangTrader!")
     fetcher = CryptoFetcher(symbol="BTC")
     current_price = fetcher.get_current_price()
     df = fetcher.get_OHLCV()

@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import pandas_ta as ta
-from utils import logger
+from src.LangTrader.utils import logger
 
 class CryptoFetcher:
     """This class is used to fetch data from exchange API"""
