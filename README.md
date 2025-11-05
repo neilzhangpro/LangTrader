@@ -32,6 +32,8 @@ This project is for educational purposes and not financial advice. Use at your o
 ## Progess
 - 05/11/2025: finish basic structure of project, fetch markting info & simply analyze trade singal & place order & cancal order
 
+- 06/11/2025: Restructure project & add unit testing & init database, Now you can run ''' uv run pytest '''
+
 ## ToDo list
 - keep going coding and intrdouce LLM function
 
