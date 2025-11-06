@@ -1,0 +1,98 @@
+#config class for LLM & Dex
+
+import json
+import os
+from src.LangTrader.db import Database
+
+class Config:
+    """Config class for LLM & Dex"""
+    def __init__(self, trader_id: str):
+        """
+        初始化配置
+        
+        Args:
+            trader_id: 交易员 ID (UUID)
+        """
+        self.trader_id = trader_id
+        self.db = Database()
+        
+        # 从数据库加载配置
+        self.llm_config = self.get_llm_config()
+        self.exchange_config = self.get_exchange_config()
+        self.risk_config = self.get_risk_config()
+        self.system_prompt = self.get_system_prompt()
+    
+    def get_llm_config(self):
+        """获取 LLM 配置"""
+        query = "SELECT llm_config FROM traders WHERE id = %s"
+        params = (self.trader_id,)
+        result = self.db.execute(query, params)
+        return result[0]['llm_config'] if result else None
+    
+    def get_exchange_config(self):
+        """获取交易所配置"""
+        query = "SELECT exchange_configs FROM traders WHERE id = %s"
+        params = (self.trader_id,)
+        result = self.db.execute(query, params)
+        return result[0]['exchange_configs'] if result else None
+    
+    def get_risk_config(self):
+        """获取风控配置"""
+        query = "SELECT risk_config FROM traders WHERE id = %s"
+        params = (self.trader_id,)
+        result = self.db.execute(query, params)
+        return result[0]['risk_config'] if result else None
+    
+    def get_system_prompt(self):
+        """获取系统提示词"""
+        query = "SELECT system_prompt FROM traders WHERE id = %s"
+        params = (self.trader_id,)
+        result = self.db.execute(query, params)
+        return result[0]['system_prompt'] if result else None
+
+    def set_llm_config(self, llm_config):
+        """设置 LLM 配置"""
+        query = "UPDATE traders SET llm_config = %s WHERE id = %s"
+        params = (json.dumps(llm_config) if isinstance(llm_config, dict) else llm_config, self.trader_id)
+        result = self.db.execute(query, params)
+        # 更新本地缓存
+        self.llm_config = llm_config
+        return result
+    
+    def set_exchange_config(self, exchange_config):
+        """设置交易所配置"""
+        query = "UPDATE traders SET exchange_configs = %s WHERE id = %s"
+        params = (json.dumps(exchange_config) if isinstance(exchange_config, dict) else exchange_config, self.trader_id)
+        result = self.db.execute(query, params)
+        # 更新本地缓存
+        self.exchange_config = exchange_config
+        # 同时更新本地 config.json 文件
+        try:
+            with open("config.json", "w") as f:
+                json.dump(exchange_config, f, indent=2)
+        except Exception as e:
+            print(f"Warning: Failed to update config.json: {e}")
+        return result
+    
+    def set_risk_config(self, risk_config):
+        """设置风控配置"""
+        query = "UPDATE traders SET risk_config = %s WHERE id = %s"
+        params = (json.dumps(risk_config) if isinstance(risk_config, dict) else risk_config, self.trader_id)
+        result = self.db.execute(query, params)
+        # 更新本地缓存
+        self.risk_config = risk_config
+        return result
+    
+    def set_system_prompt(self, system_prompt):
+        """设置系统提示词"""
+        query = "UPDATE traders SET system_prompt = %s WHERE id = %s"
+        params = (system_prompt, self.trader_id)
+        result = self.db.execute(query, params)
+        # 更新本地缓存
+        self.system_prompt = system_prompt
+        return result
+    
+    def close(self):
+        """关闭数据库连接"""
+        if self.db:
+            self.db.close()

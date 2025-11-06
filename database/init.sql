@@ -16,6 +16,7 @@ CREATE TABLE traders (
     symbols JSONB NOT NULL,
     -- LLM config
     llm_config JSONB NOT NULL,
+    exchange_configs JSONB NOT NULL,
     -- Risk config
     risk_config JSONB NOT NULL,
     -- System prompt (updated by learning)

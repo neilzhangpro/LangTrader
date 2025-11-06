@@ -1,5 +1,5 @@
 import json
-from utils import logger
+from src.LangTrader.utils import logger
 from hyperliquid.info import Info
 from hyperliquid.utils import constants
 from hyperliquid.exchange import Exchange

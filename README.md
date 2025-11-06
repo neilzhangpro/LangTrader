@@ -34,6 +34,8 @@ This project is for educational purposes and not financial advice. Use at your o
 
 - 06/11/2025: Restructure project & add unit testing & init database, Now you can run ''' uv run pytest '''
 
+- 06/11/2025: Add fastapi & database
+
 ## ToDo list
 - keep going coding and intrdouce LLM function
 
