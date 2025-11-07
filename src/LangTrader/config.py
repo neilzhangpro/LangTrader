@@ -21,6 +21,14 @@ class Config:
         self.exchange_config = self.get_exchange_config()
         self.risk_config = self.get_risk_config()
         self.system_prompt = self.get_system_prompt()
+        self.symbols = self.get_symbols()
+    
+    def get_symbols(self):
+        """获取符号配置"""
+        query = "SELECT symbols FROM traders WHERE id = %s"
+        params = (self.trader_id,)
+        result = self.db.execute(query, params)
+        return result[0]['symbols'] if result else None
     
     def get_llm_config(self):
         """获取 LLM 配置"""
