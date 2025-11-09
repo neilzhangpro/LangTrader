@@ -42,6 +42,7 @@ class hyperliquidAPI:
             spot_user_state = self.info.spot_user_state(self.account_address)
             logger.info(f"Spot account balance: {spot_user_state}")
             self.spot_balance = spot_user_state
+            return user_state
         except Exception as e:
             logger.error(f"Error getting account balance: {e}")
             return None

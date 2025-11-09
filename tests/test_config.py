@@ -21,7 +21,8 @@ class TestConfig:
             [{'llm_config': {'provider': 'openai'}}],  # get_llm_config
             [{'exchange_configs': {'exchange': 'hyperliquid'}}],  # get_exchange_config
             [{'risk_config': {'max_leverage': 5}}],  # get_risk_config
-            [{'system_prompt': 'Test prompt'}]  # get_system_prompt
+            [{'system_prompt': 'Test prompt'}],  # get_system_prompt
+            [{'symbols': ['BTC', 'ETH']}]  # get_symbols
         ]
         
         # 修复后的代码需要 trader_id
@@ -50,6 +51,7 @@ class TestConfig:
             [{'exchange_configs': {}}],
             [{'risk_config': {}}],
             [{'system_prompt': 'test'}],
+            [{'symbols': ['BTC']}],  # get_symbols
             [{'llm_config': expected_config}]  # 单独调用 get_llm_config
         ]
         
@@ -73,7 +75,8 @@ class TestConfig:
             [{'llm_config': {}}],
             [{'exchange_configs': expected_config}],  # 注意是 exchange_configs
             [{'risk_config': {}}],
-            [{'system_prompt': 'test'}]
+            [{'system_prompt': 'test'}],
+            [{'symbols': ['BTC']}]  # get_symbols
         ]
         
         config = Config(trader_id="test-123")
@@ -95,7 +98,8 @@ class TestConfig:
             [{'llm_config': {}}],
             [{'exchange_configs': {}}],
             [{'risk_config': expected_config}],
-            [{'system_prompt': 'test'}]
+            [{'system_prompt': 'test'}],
+            [{'symbols': ['BTC']}]  # get_symbols
         ]
         
         config = Config(trader_id="test-123")
@@ -113,6 +117,7 @@ class TestConfig:
             [{'exchange_configs': {}}],
             [{'risk_config': {}}],
             [{'system_prompt': 'test'}],
+            [{'symbols': ['BTC']}],  # get_symbols
             []  # set_llm_config 的返回值
         ]
         
@@ -140,6 +145,7 @@ class TestConfig:
             [{'exchange_configs': {}}],
             [{'risk_config': {}}],
             [{'system_prompt': 'test'}],
+            [{'symbols': ['BTC']}],  # get_symbols
             []  # set_exchange_config 的返回值
         ]
         
@@ -204,6 +210,7 @@ class TestConfig:
             [{'exchange_configs': {}}],
             [{'risk_config': {'max_leverage': 3}}],
             [{'system_prompt': 'test'}],
+            [{'symbols': ['BTC']}],  # get_symbols
             []  # set_risk_config 返回值
         ]
         
@@ -230,6 +237,7 @@ class TestConfig:
             [{'exchange_configs': {}}],
             [{'risk_config': {}}],
             [{'system_prompt': 'old prompt'}],
+            [{'symbols': ['BTC']}],  # get_symbols
             []  # set_system_prompt 返回值
         ]
         
@@ -251,7 +259,8 @@ class TestConfig:
             [{'llm_config': {}}],
             [{'exchange_configs': {}}],
             [{'risk_config': {}}],
-            [{'system_prompt': 'test'}]
+            [{'system_prompt': 'test'}],
+            [{'symbols': ['BTC']}]  # get_symbols
         ]
         
         config = Config(trader_id="test-123")
