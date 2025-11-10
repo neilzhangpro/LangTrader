@@ -53,7 +53,7 @@ class CryptoFetcher:
         logger.info(f"Current price: {last_row['close']:,.2f} USD")
         logger.info(f"24 hours highest price: {last_row['high']:,.2f} USD")
         logger.info(f"24 hours lowest price: {last_row['low']:,.2f} USD")
-        logger.info(f"24 hours volume: {last_row['volume']:,.2f} ETH")
+        logger.info(f"24 hours volume: {last_row['volume']:,.2f} {self.symbol}")
         logger.info(f"RSI: {last_row['RSI_14']:,.2f}")
         logger.info(f"MACD: {last_row['MACD_12_26_9']:,.2f}")
         logger.info(f"MACD Signal: {last_row['MACDs_12_26_9']:,.2f}")

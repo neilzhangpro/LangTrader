@@ -36,6 +36,8 @@ This project is for educational purposes and not financial advice. Use at your o
 
 - 06/11/2025: Add fastapi & database
 
+- 10/11/2025 add langgraph & finish main parts
+
 ## ToDo list
-- keep going coding and intrdouce LLM function
+- place order & sotre feedback
 

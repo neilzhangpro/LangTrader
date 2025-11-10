@@ -4,19 +4,34 @@ from typing import TypedDict, Annotated, List
 from src.LangTrader.utils import logger
 from src.LangTrader.config import Config
 from src.LangTrader.hyperliquidExchange import hyperliquidAPI
+from src.LangTrader.market import CryptoFetcher
+from langchain.messages import AIMessage, HumanMessage, SystemMessage
+from src.LangTrader.trader import Trader
+from pydantic import BaseModel, Field
 
 
 class DecisionEngineState(TypedDict):
     trader_id:str
     symbol:str
-    market_data:dict
-    indicators:dict
+    market_data:str
     postion_info:dict
-    action:bool
+    action:str
+    side:str
     risk_passed:bool
     confidence:float
     leverage:int
+    historical_performance:dict
     llm_analysis:str
+
+
+class TradingDecision(BaseModel):
+    """LLM 结构化输出模型"""
+    symbol: str = Field(description="选择的交易币种，如 BTC, ETH")
+    action: str = Field(description="交易动作: BUY, SELL, 或 HOLD")
+    side: str = Field(description="方向: long 或 short，如果是 HOLD 则为 none")
+    confidence: float = Field(description="决策置信度，范围 0.0 到 1.0", ge=0.0, le=1.0)
+    leverage: int = Field(description="建议杠杆倍数，范围 1 到 10", ge=1, le=10)
+    analysis: str = Field(description="决策分析理由")
 
 class DecisionEngine:
     def __init__(self, config: Config):
@@ -32,29 +47,63 @@ class DecisionEngine:
         self.graph = self._build_graph()
         self.runner = self.graph.compile()
         self.hyperliquid = hyperliquidAPI()
+        self.fetcher = CryptoFetcher()
+        self.symbols = config.symbols
 
     def run(self, state:DecisionEngineState) -> DecisionEngineState:
         return self.runner.invoke(state)
     
     def _build_graph(self):
+        self.graph.add_node("historical_performance", self._historical_performance)
         self.graph.add_node("risk_check", self._risk_check)
         self.graph.add_node("market_analysis", self._market_analysis)
         self.graph.add_node("llm_analysis", self._llm_analysis)
 
-        self.graph.add_edge(START, "risk_check")
+        self.graph.add_edge(START, "historical_performance")
+        self.graph.add_edge("historical_performance", "risk_check")
         self.graph.add_edge("risk_check", "market_analysis")
         self.graph.add_edge("market_analysis", "llm_analysis")
         self.graph.add_edge("llm_analysis", END)
 
         return self.graph
 
-    
+    def _historical_performance(self, state:DecisionEngineState) -> DecisionEngineState:
+        logger.info("-----Start Historical Performance------")
+        trader = Trader(self.config)
+        recent_positions = trader.get_20_position_info(state["trader_id"])
+        if not recent_positions:
+            logger.error("Failed to get recent positions")
+            return {
+                **state,
+                "historical_performance": None
+            }
+        #calculate the historical performance
+        metrics ={}
+        #win rate
+        total_positions = len(recent_positions)
+        winning_positions = len([position for position in recent_positions if position["realized_pnl"] > 0])
+        losing_trades = len([position for position in recent_positions if position["realized_pnl"] < 0])
+
+        #total pnl
+        metrics["total_positions"] = total_positions
+        metrics["winning_positions"] = winning_positions
+        metrics["losing_positions"] = losing_trades
+        metrics["win_rate"] = winning_positions / total_positions if total_positions > 0 else 0
+
+        return {
+            **state,
+            "historical_performance": metrics
+        }
+
+            
     def _risk_check(self, state:DecisionEngineState) -> DecisionEngineState:
         logger.info("-----Strat Risk Check------")
         #get the risk config
         risk_config = self.config.risk_config
         #account balance check
         account_balance = self.hyperliquid.get_account_balance()
+        #get postion info
+        postion_info = account_balance["assetPositions"]
         if not account_balance:
             logger.error("Failed to get account balance")
             return {
@@ -98,21 +147,95 @@ class DecisionEngine:
                 "risk_passed": False
             }
         logger.info("-----End Risk Check------")
+
         return {
             **state,
-            "risk_passed": True
+            "risk_passed": True,
+            "postion_info": postion_info
         }
     
     def _market_analysis(self, state:DecisionEngineState) -> DecisionEngineState:
-        return {"market_data": state["market_data"]}
-    
-    def _llm_analysis(self, state:DecisionEngineState) -> DecisionEngineState:
-        system_prompt = self.config.system_prompt
-        result = self.model.invoke(system_prompt)
-        logger.info(f"LLM analysis result: {result}")
+        logger.info("-----Start Market Analysis------")
+        logger.info(f"Symbols: {self.symbols}")
+        market_data = ""
+        for symbol in self.symbols:
+            logger.info(f"Symbol--->: {symbol}")
+            fetcher =self.fetcher
+            self.fetcher.symbol = symbol
+            current_price = fetcher.get_current_price()
+            df = fetcher.get_OHLCV()
+            df = fetcher.get_technical_indicators(df)
+            simple_prompt = fetcher.get_simple_trade_signal(df)
+            logger.info(f"Simple prompt: {simple_prompt}")
+            market_data += f"---------------{symbol}-------------------\n{simple_prompt}\n-----------------------------------\nposition info:--------\n{state["postion_info"]}"
         return {
-            "llm_analysis": state["llm_analysis"],
-            "confidence": state["confidence"],
-            "leverage": state["leverage"],
-            "action": state["action"]
+            **state,
+            "market_data": market_data
+            }
+    
+    def _llm_analysis(self, state: DecisionEngineState) -> dict:
+        """LLM 分析（使用结构化输出）"""
+        logger.info("-----Start LLM Analysis------")
+        
+        # 创建结构化输出模型
+        structured_llm = self.model.with_structured_output(TradingDecision)
+        
+        system_prompt = self.config.system_prompt
+        coin_list = ", ".join(self.symbols)
+        
+        # 构建 prompt
+        user_prompt = f"""
+Market Analysis Data:
+{state["market_data"]}
+
+Historical Performance:
+- Total trades: {state["historical_performance"].get("total_positions", 0)}
+- Winning trades: {state["historical_performance"].get("winning_positions", 0)}
+- Losing trades: {state["historical_performance"].get("losing_positions", 0)}
+- Win rate: {state["historical_performance"].get("win_rate", 0):.1%}
+
+Available coins: {coin_list}
+
+Based on the market data and historical performance:
+1. Choose the best coin to trade
+2. Decide action: BUY, SELL, or HOLD
+3. Specify side: long or short (or none if HOLD)
+4. Provide confidence level (0.0 to 1.0)
+5. Suggest leverage (1 to {self.config.risk_config.get("max_leverage", 3)})
+6. Explain your reasoning
+
+If there is no clear trading signal, return HOLD with low confidence.
+"""
+        
+        messages = [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_prompt)
+        ]
+        
+        # 调用 LLM 获取结构化输出
+        try:
+            decision = structured_llm.invoke(messages)
+            
+            logger.info(f"LLM Decision: {decision.action} {decision.symbol} @ confidence {decision.confidence}")
+            logger.info(f"Side: {decision.side}, Leverage: {decision.leverage}x")
+            logger.info(f"Analysis: {decision.analysis[:100]}...")
+            
+            return {
+                **state,
+                "symbol": decision.symbol,
+                "action": decision.action,
+                "side": decision.side,
+                "confidence": decision.confidence,
+                "leverage": decision.leverage,
+                "llm_analysis": decision.analysis
+            }
+        except Exception as e:
+            logger.error(f"LLM analysis failed: {e}")
+            return {
+                **state,
+                "action": "HOLD",
+                "side": "none",
+                "confidence": 0.0,
+                "leverage": 0,
+                "llm_analysis": f"Analysis failed: {str(e)}"
             }
