@@ -45,16 +45,19 @@ def mock_account_balance():
 def test_state():
     """测试用的初始状态"""
     return {
-        "trader_id": "test-123",
+        "trader_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",  # 使用有效UUID
         "symbol": "BTC",
-        "market_data": {"price": 100000},
+        "market_data": "",  # 改为string类型
         "indicators": {"RSI_14": 50},
         "postion_info": {},
-        "action": False,
+        "action": "HOLD",  # 改为string类型
+        "side": "none",
         "risk_passed": False,
         "confidence": 0.0,
         "leverage": 2,
-        "llm_analysis": ""
+        "historical_performance": {},  # 添加缺失字段
+        "llm_analysis": "",
+        "executed": False  # 添加缺失字段
     }
 
 
@@ -508,9 +511,9 @@ class TestDecisionEngineStateType:
         """测试22：验证状态字段类型"""
         assert isinstance(test_state["trader_id"], str)
         assert isinstance(test_state["symbol"], str)
-        assert isinstance(test_state["market_data"], dict)
+        assert isinstance(test_state["market_data"], str)  # 改为str类型
         assert isinstance(test_state["indicators"], dict)
-        assert isinstance(test_state["action"], bool)
+        assert isinstance(test_state["action"], str)  # 改为str类型
         assert isinstance(test_state["confidence"], float)
         assert isinstance(test_state["leverage"], int)
 

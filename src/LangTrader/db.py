@@ -18,7 +18,9 @@ class Database:
     def execute(self, query, params=None):
         self.cursor.execute(query, params)
         self.conn.commit()
-        return self.cursor.fetchall()
+        if self.cursor.description:
+            return self.cursor.fetchall()
+        return []
 
     def close(self):
         self.cursor.close()

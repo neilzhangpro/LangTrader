@@ -10,34 +10,43 @@
 
 AI-powered cryptocurrency trading bot using LangChain and Hyperliquid DEX.
 
-**Offical X: @AIBTCAI** [@AIBTCAI](https://x.com/AIBTCAI)
+**Official X: @AIBTCAI** [@AIBTCAI](https://x.com/AIBTCAI)
 
 
-## Powerful AI trade bot driving by Langgraph 🚀
-LangTrader is a powerful, open-source AI-driven cryptocurrency trading bot built on top of [LangChain](https://www.langchain.com/), [LangGraph](https://langchain-ai.github.io/langgraph/), and the decentralized exchange [Hyperliquid](https://hyperliquid.xyz/). Leveraging the latest advancements in Python, AI, and on-chain trading, Simper-Trader automates trading decisions with sophisticated technical indicator analysis, advanced logging via Loguru, and seamless DEX integration.
+## Powerful AI trade bot driven by LangGraph 🚀
+LangTrader is a powerful, open-source AI-driven cryptocurrency trading bot built on top of [LangChain](https://www.langchain.com/), [LangGraph](https://langchain-ai.github.io/langgraph/), and the decentralized exchange [Hyperliquid](https://hyperliquid.xyz/). Leveraging the latest advancements in Python, AI, and on-chain trading, LangTrader automates trading decisions with sophisticated technical indicator analysis, advanced logging via Loguru, and seamless DEX integration.
 
 **Key Features:**
 - **Automated Trading**: Executes trades automatically based on real-time technical indicator signals (e.g., RSI, MACD, Bollinger Bands, SMA/EMA) and AI-driven insights.
 - **AI Integration**: Utilizes the LangChain ecosystem and LangGraph for sophisticated decision-making workflows.
 - **Hyperliquid DEX Support**: Place and manage orders, leverage positions, and handle risk on the Hyperliquid decentralized exchange.
 - **Detailed Logging**: All actions and decisions are logged using Loguru for transparency and easy debugging.
+- **Database Integration**: Stores trading decisions, positions, and performance metrics in a PostgreSQL database for analysis and backtesting.
+- **Position Management**: Tracks open positions, calculates realized/unrealized PnL, and manages stop-loss/take-profit levels.
+- **Risk Management**: Implements configurable risk controls including maximum leverage, stop-loss percentages, and position sizing.
+- **Historical Performance Analysis**: Analyzes past trading performance to inform future decisions.
 - **Customizable & Extensible**: Modular architecture makes it easy to add strategies, indicators, or integrate with other AI services.
 
 **Getting Started:**  
-View [main.py](main.py) for an example of how to use Simper-Trader. Simply configure your environment and run the bot to begin automated trading.
+View [main.py](main.py) for an example of how to use LangTrader. Simply configure your environment and run the bot to begin automated trading.
 
 **Disclaimer:**  
 This project is for educational purposes and not financial advice. Use at your own risk.
 
-## Progess
-- 05/11/2025: finish basic structure of project, fetch markting info & simply analyze trade singal & place order & cancal order
+## Progress
+- 05/11/2025: Finish basic structure of project, fetch marketing info & simply analyze trade signal & place order & cancel order
+- 06/11/2025: Restructure project & add unit testing & init database, Now you can run `uv run pytest`
+- 06/11/2025: Add FastAPI & database
+- 10/11/2025: Add LangGraph & finish main parts
+- 12/11/2025: Implement position tracking, PnL calculation, and database storage for trading decisions and positions
+- 12/11/2025: Add trend-following logic to prevent unnecessary closing of positions when trend continues
 
-- 06/11/2025: Restructure project & add unit testing & init database, Now you can run ''' uv run pytest '''
-
-- 06/11/2025: Add fastapi & database
-
-- 10/11/2025 add langgraph & finish main parts
-
-## ToDo list
-- place order & sotre feedback
+## To-Do List
+- [ ] Implement more sophisticated trading strategies
+- [ ] Add backtesting capabilities
+- [ ] Implement advanced risk management features
+- [ ] Add support for multiple trading pairs
+- [ ] Improve error handling and recovery mechanisms
+- [ ] Add more comprehensive logging and monitoring
+- [ ] Implement position sizing based on volatility
 
