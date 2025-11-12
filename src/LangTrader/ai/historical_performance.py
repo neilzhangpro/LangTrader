@@ -18,7 +18,6 @@ class HistoricalPerformance:
         recent_decisions = self.db.execute("""
         SELECT * FROM decisions
         WHERE trader_id = %s
-        AND executed = TRUE
         ORDER BY created_at DESC
         LIMIT 3
         """,(trader_id,))
