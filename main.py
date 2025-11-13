@@ -33,7 +33,7 @@ def main():
     logger.info(f"Close all positions result: {close_all_positions}")
     """
     """ Strarting LLM test """
-    config = Config(trader_id="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
+    config = Config(trader_id="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
     decision_engine = DecisionEngine(config)
     state = DecisionEngineState(
         trader_id=config.trader_id,
@@ -130,4 +130,4 @@ import time
 if __name__ == "__main__":
     while True:
         main()
-        time.sleep(60 * 5)  # 每5分钟执行一次
+        time.sleep(60 * 3)  # 每3分钟执行一次

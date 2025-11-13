@@ -13,6 +13,10 @@ from src.LangTrader.ai.position_analysis import PositionAnalysis
 from src.LangTrader.ai.prompt import Prompt
 from src.LangTrader.ai.execute_decision import ExecuteDecision
 from src.LangTrader.ai.historical_performance import HistoricalPerformance
+from src.LangTrader.ai.strategies.strategy_manager import StrategyManager
+from src.LangTrader.ai.strategies.rsi_strategy import RSIStrategy
+from src.LangTrader.ai.strategies.macd_strategy import MACDStrategy
+from src.LangTrader.ai.strategies.bollinger_strategy import BollingerStrategy
 
 class DecisionEngineState(TypedDict):
     trader_id:str
@@ -33,6 +37,8 @@ class DecisionEngineState(TypedDict):
     account_balance:NotRequired[dict]
     decision_id:NotRequired[str]
     executed_intent:NotRequired[str]
+    strategy_signals:NotRequired[dict]
+    strategy_analysis_error:NotRequired[str]
 
 
 class TradingDecision(BaseModel):
@@ -66,6 +72,12 @@ class DecisionEngine:
         self.prompt = Prompt()
         self.execute_decision = ExecuteDecision(self.config)
         self.historical_performance = HistoricalPerformance(self.config)
+        #init strategy manager
+        self.strategy_manager = StrategyManager()
+        #register strategies
+        self.strategy_manager.register_strategy(RSIStrategy())
+        self.strategy_manager.register_strategy(MACDStrategy())
+        self.strategy_manager.register_strategy(BollingerStrategy())
 
     def run(self, state:DecisionEngineState) -> DecisionEngineState:
         return self.runner.invoke(state)
@@ -78,6 +90,7 @@ class DecisionEngine:
         self.graph.add_node("llm_analysis", self._llm_analysis)
         self.graph.add_node("store_decision", self._store_decision)
         self.graph.add_node("execute_decision", self._execute_decision)
+        self.graph.add_node("strategy_analysis", self._strategy_analysis)
 
         self.graph.add_edge(START, "historical_performance")
         self.graph.add_edge("historical_performance", "position_analysis")
@@ -91,7 +104,8 @@ class DecisionEngine:
                 False: "store_decision"
             }
         )
-        self.graph.add_edge("market_analysis", "llm_analysis")
+        self.graph.add_edge("market_analysis", "strategy_analysis")
+        self.graph.add_edge("strategy_analysis", "llm_analysis")
         self.graph.add_edge("llm_analysis", "store_decision")
     
         self.graph.add_conditional_edges(
@@ -105,6 +119,45 @@ class DecisionEngine:
         self.graph.add_edge("execute_decision", END)
 
         return self.graph
+    
+    def _strategy_analysis(self, state: DecisionEngineState) -> dict:
+        """策略分析 - 生成所有量化策略信号"""
+        logger.info("-----Start Strategy Analysis------")
+        
+        # 添加调试信息
+        logger.info(f"Market data keys: {list(state.get('indicators', {}).keys())}")
+        logger.info(f"Current positions: {state.get('current_positions', {})}")
+        logger.info(f"Strategy manager strategies: {self.strategy_manager.get_all_strategies()}")
+        
+        try:
+            # 获取所有策略信号
+            quant_signals = self.strategy_manager.generate_all_signals(
+                state.get("indicators", {}), 
+                state.get("current_positions", {})
+            )
+            
+            logger.info(f"生成策略信号: {quant_signals}")
+            
+            # 检查是否有信号生成
+            if not quant_signals:
+                logger.warning("未生成任何策略信号")
+            else:
+                logger.info(f"成功生成 {len(quant_signals)} 个策略信号")
+            
+            return {
+                **state,
+                "strategy_signals": quant_signals
+            }
+                
+        except Exception as e:
+            logger.error(f"策略分析失败: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return {
+                **state,
+                "strategy_signals": {},
+                "strategy_analysis_error": str(e)
+            }
 
     def _historical_performance(self, state:DecisionEngineState) -> DecisionEngineState:
         logger.info("-----Start Historical Performance------")
