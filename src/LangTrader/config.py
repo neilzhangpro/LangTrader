@@ -14,6 +14,7 @@ class Config:
             trader_id: 交易员 ID (UUID)
         """
         self.trader_id = trader_id
+        # 使用连接池的数据库连接
         self.db = Database()
         
         # 从数据库加载配置
@@ -101,6 +102,6 @@ class Config:
         return result
     
     def close(self):
-        """关闭数据库连接"""
+        """将数据库连接返回给连接池"""
         if self.db:
             self.db.close()

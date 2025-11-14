@@ -1,13 +1,12 @@
 from src.LangTrader.hyperliquidExchange import hyperliquidAPI
 from src.LangTrader.utils import logger
-from src.LangTrader.db import Database
 
 
 class ExecuteDecision:
     def __init__(self,config):
         self.hyperliquid = hyperliquidAPI()
         self.config = config
-        self.db = Database()
+        self.db = config.db
         self.symbols = config.symbols
     
     def _update_decision(self, decision_id):

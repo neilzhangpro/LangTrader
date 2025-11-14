@@ -6,8 +6,6 @@ class Prompt:
         self.user_prompt = ""
     
     def get_user_prompt(self, state, config, coin_list):
-        # 格式化策略信号
-        strategy_signals_text = self._format_strategy_signals(state.get("strategy_signals", {}))
         
         user_prompt = f"""
             Market Analysis Data:
@@ -24,9 +22,6 @@ class Prompt:
             - Recent 3 times Decisions:
             {state["historical_performance"].get("recent_decisions", "")}
             -----------------------------
-            Quantitative Strategy Signals:
-            {strategy_signals_text}
-            -------------------------------
             Available coins: {coin_list}
             ------------------------------
             Based on the market data, current positions, historical performance, and quantitative strategy signals above:
@@ -48,6 +43,8 @@ class Prompt:
             7. 超过上限的杠杆将倍数调整为上限，所以请不要输出超过上限的杠杆倍数
             8. 解释决策理由，特别说明对现有仓位的处理，不要超过250字
             9. 如果当前没有持仓，只可以开仓或HOLD,不可以平仓
+            10. 当前持仓处于盈利状态的时候，不要立刻平仓，应该等待市场趋势变化或者达到止盈止损点再平仓
+            11. 当前持仓处于亏损状态的时候，应根据信号判断下一步操作，如果信号不明确，则继续持有
 
             如果没有明确交易信号或风险过高，请返回 HOLD，置信度保持较低。
             """

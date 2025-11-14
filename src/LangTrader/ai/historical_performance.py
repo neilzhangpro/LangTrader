@@ -2,7 +2,6 @@ from src.LangTrader.utils import logger
 from src.LangTrader.config import Config
 from src.LangTrader.hyperliquidExchange import hyperliquidAPI
 from src.LangTrader.market import CryptoFetcher
-from src.LangTrader.db import Database
 import json
 
 class HistoricalPerformance:
@@ -10,7 +9,7 @@ class HistoricalPerformance:
         self.config = config
         self.hyperliquid = hyperliquidAPI()
         self.fetcher = CryptoFetcher()
-        self.db = Database()
+        self.db = config.db
         self.symbols = config.symbols
     
     def get_20_decision_info(self,trader_id:str):

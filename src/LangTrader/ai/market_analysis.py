@@ -27,6 +27,9 @@ class MarketAnalysis:
                 symbol_indicators = {}
                 for col in df.columns:
                     value = last_row[col]
+                    # 添加调试信息，但避免直接打印Series
+                    logger.info(f"Column: {col}")
+                    
                     # 处理不同类型的值
                     if pd.isna(value):
                         symbol_indicators[col] = None
@@ -34,8 +37,20 @@ class MarketAnalysis:
                         symbol_indicators[col] = str(value)
                     elif isinstance(value, (int, float)):
                         symbol_indicators[col] = float(value)
+                    elif isinstance(value, pd.Series):
+                        # 如果是Series，取第一个值
+                        if len(value) > 0:
+                            first_value = value.iloc[0]
+                            if pd.isna(first_value):
+                                symbol_indicators[col] = None
+                            else:
+                                symbol_indicators[col] = float(first_value) if isinstance(first_value, (int, float)) else str(first_value)
+                        else:
+                            symbol_indicators[col] = None
                     else:
                         symbol_indicators[col] = str(value)
+                    
+                    logger.info(f"Value: {symbol_indicators[col]}")
                 
                 key_indicators[symbol] = symbol_indicators
                 
@@ -71,6 +86,8 @@ class MarketAnalysis:
                 
             except Exception as e:
                 logger.error(f"获取 {symbol} 市场数据失败: {e}")
+                import traceback
+                logger.error(traceback.format_exc())
                 key_indicators[symbol] = {}
                 market_data += f"---------------{symbol}-------------------\n数据获取失败: {e}\n\n"
         return market_data, key_indicators
