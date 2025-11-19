@@ -1,0 +1,25 @@
+2025-11-19 21:12:54 | ERROR    | src.LangTrader.ai.multi_ai_competition:_initialize_models:92 - ❌ Gemini3加载失败: Unable to import langchain_google_vertexai. Please install with `pip install -U langchain-google-vertexai`
+2025-11-19 21:14:39 | ERROR    | src.LangTrader.ai.multi_ai_competition:_initialize_models:92 - ❌ Gemini3加载失败: Unable to find your project. Please provide a project ID by:
+- Passing a constructor argument
+- Using vertexai.init()
+- Setting project using 'gcloud config set project my-project'
+- Setting a GCP environment variable
+- To create a Google Cloud project, please follow guidance at https://developers.google.com/workspace/guides/create-project
+2025-11-19 21:16:50 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:155 - ❌ gemini 决策失败: 404 page not found
+2025-11-19 21:19:16 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:155 - ❌ gemini 决策失败: 1 validation error for TradingDecision
+  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value='Symbol: SOL\nAction: HOL...震荡中被磨损。', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/json_invalid
+2025-11-19 21:22:29 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:155 - ❌ gemini 决策失败: 1 validation error for TradingDecision
+  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value='Symbol: SOL\nAction: HOL...",\n  "leverage": 2\n}', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/json_invalid
+2025-11-19 21:28:12 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:156 - ❌ gemini 决策失败: 1 validation error for TradingDecision
+  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value='Symbol: SOL\nAction: HOL...故选择 **HOLD**。', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/json_invalid
+2025-11-19 21:30:35 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:155 - ❌ gemini 决策失败: 1 validation error for TradingDecision
+  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value="**分析：**\n\n1.  **...势或信号出现。", input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/json_invalid
+2025-11-19 21:32:37 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:155 - ❌ gemini 决策失败: 404 page not found
+2025-11-19 21:44:48 | ERROR    | __main__:get_competition:673 - 获取竞争数据失败: column "all_decisions" does not exist
+LINE 3:                 id, all_decisions, winner_decision, 
+                            ^
+

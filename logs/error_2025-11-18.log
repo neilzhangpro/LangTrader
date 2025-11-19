@@ -1,0 +1,295 @@
+2025-11-18 13:30:34 | ERROR    | src.LangTrader.ai.multi_ai_competition:_initialize_models:65 - ❌ DeepSeek加载失败: Unable to import langchain_deepseek. Please install with `pip install -U langchain-deepseek`
+2025-11-18 13:32:36 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:137 - ❌ deepseek 决策失败: Error code: 401 - {'error': {'message': 'Authentication Fails, Your api key: ****99b5 is invalid', 'type': 'authentication_error', 'param': None, 'code': 'invalid_request_error'}}
+2025-11-18 13:36:34 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:137 - ❌ deepseek 决策失败: Error code: 401 - {'error': {'message': 'Authentication Fails, Your api key: ****FkXJ is invalid', 'type': 'authentication_error', 'param': None, 'code': 'invalid_request_error'}}
+2025-11-18 13:38:17 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:137 - ❌ deepseek 决策失败: Error code: 401 - {'error': {'message': 'Authentication Fails, Your api key: ****FkXJ is invalid', 'type': 'authentication_error', 'param': None, 'code': 'invalid_request_error'}}
+2025-11-18 19:03:10 | ERROR    | __main__:main:133 - 执行出错: HTTPSConnectionPool(host='api.hyperliquid.xyz', port=443): Max retries exceeded with url: /info (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x11db6f890>: Failed to resolve 'api.hyperliquid.xyz' ([Errno 8] nodename nor servname provided, or not known)"))
+2025-11-18 19:03:10 | ERROR    | __main__:main:135 - Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/util/connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/.local/share/uv/python/cpython-3.12.12-macos-aarch64-none/lib/python3.12/socket.py", line 978, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connection.py", line 753, in connect
+    self.sock = sock = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x11db6f890>: Failed to resolve 'api.hyperliquid.xyz' ([Errno 8] nodename nor servname provided, or not known)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.hyperliquid.xyz', port=443): Max retries exceeded with url: /info (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x11db6f890>: Failed to resolve 'api.hyperliquid.xyz' ([Errno 8] nodename nor servname provided, or not known)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/main.py", line 27, in main
+    decision_engine = DecisionEngine(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/decision_engine.py", line 72, in __init__
+    self.position_analysis = PositionAnalysis()
+                             ^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/position_analysis.py", line 8, in __init__
+    self.hyperliquid = hyperliquidAPI()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/hyperliquidExchange.py", line 21, in __init__
+    self.info = Info(constants.MAINNET_API_URL, skip_ws=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/hyperliquid/info.py", line 36, in __init__
+    spot_meta = self.spot_meta()
+                ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/hyperliquid/info.py", line 356, in spot_meta
+    return cast(SpotMeta, self.post("/info", {"type": "spotMeta"}))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/hyperliquid/api.py", line 23, in post
+    response = self.session.post(url, json=payload, timeout=self.timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/sessions.py", line 637, in post
+    return self.request("POST", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/adapters.py", line 677, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.hyperliquid.xyz', port=443): Max retries exceeded with url: /info (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x11db6f890>: Failed to resolve 'api.hyperliquid.xyz' ([Errno 8] nodename nor servname provided, or not known)"))
+
+2025-11-18 21:08:58 | ERROR    | __main__:main:133 - 执行出错: RealTimePerformanceTracker.__init__() missing 1 required positional argument: 'db'
+2025-11-18 21:08:58 | ERROR    | __main__:main:135 - Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/main.py", line 27, in main
+    decision_engine = DecisionEngine(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/decision_engine.py", line 81, in __init__
+    self.perf_tracker = RealTimePerformanceTracker(self.config)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: RealTimePerformanceTracker.__init__() missing 1 required positional argument: 'db'
+
+2025-11-18 21:09:47 | ERROR    | __main__:main:133 - 执行出错: 'RealTimePerformanceTracker' object has no attribute '_default_metrics'
+2025-11-18 21:09:47 | ERROR    | __main__:main:135 - Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/main.py", line 41, in main
+    result = decision_engine.run(state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/decision_engine.py", line 84, in run
+    return self.runner.invoke(state)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3094, in invoke
+    for chunk in self.stream(
+                 ^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 2679, in stream
+    for _ in runner.tick(
+             ^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 167, in tick
+    run_with_retry(
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/decision_engine.py", line 132, in _real_time_performance
+    metrics = self.perf_tracker.calculate_real_time_metrics(lookback_days=7)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/performance_tracker.py", line 52, in calculate_real_time_metrics
+    return self._default_metrics()
+           ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RealTimePerformanceTracker' object has no attribute '_default_metrics'
+During task with name 'real_time_performance' and id '00162bab-fb54-ea87-7655-0802d40d0774'
+
+2025-11-18 21:25:58 | ERROR    | src.LangTrader.ai.decision_engine:_real_time_performance:148 - ❌ 实时性能分析失败: unsupported operand type(s) for -: 'float' and 'decimal.Decimal'
+2025-11-18 21:25:58 | ERROR    | src.LangTrader.ai.decision_engine:_real_time_performance:150 - Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/decision_engine.py", line 133, in _real_time_performance
+    metrics = self.perf_tracker.calculate_real_time_metrics(lookback_days=7)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/performance_tracker.py", line 69, in calculate_real_time_metrics
+    if len(returns) > 0 and returns.std() > 0:
+                            ^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/pandas/core/series.py", line 6613, in std
+    return NDFrame.std(self, axis, skipna, ddof, numeric_only, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/pandas/core/generic.py", line 12423, in std
+    return self._stat_function_ddof(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/pandas/core/generic.py", line 12387, in _stat_function_ddof
+    return self._reduce(
+           ^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/pandas/core/series.py", line 6478, in _reduce
+    return op(delegate, skipna=skipna, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/pandas/core/nanops.py", line 147, in f
+    result = alt(values, axis=axis, skipna=skipna, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/pandas/core/nanops.py", line 950, in nanstd
+    result = np.sqrt(nanvar(values, axis=axis, skipna=skipna, ddof=ddof, mask=mask))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/pandas/core/nanops.py", line 85, in _f
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/pandas/core/nanops.py", line 147, in f
+    result = alt(values, axis=axis, skipna=skipna, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/pandas/core/nanops.py", line 1016, in nanvar
+    sqr = _ensure_numeric((avg - values) ** 2)
+                           ~~~~^~~~~~~~
+TypeError: unsupported operand type(s) for -: 'float' and 'decimal.Decimal'
+
+2025-11-19 03:59:49 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.08 元才能完成，您的可用余额为 -0.853996215 元(请求预冻结 0.075404985 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 03:59:50 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.38 元才能完成，您的可用余额为 -1.15452298 元(请求预冻结 0.37593175 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 04:15:29 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.48 元才能完成，您的可用余额为 -1.25728143 元(请求预冻结 0.4786902 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 04:15:30 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.07 元才能完成，您的可用余额为 -0.8535104 元(请求预冻结 0.07491917 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 04:15:31 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.37 元才能完成，您的可用余额为 -1.15231473 元(请求预冻结 0.3737235 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 04:30:42 | ERROR    | __main__:main:133 - 执行出错: HTTPSConnectionPool(host='api.hyperliquid.xyz', port=443): Max retries exceeded with url: /info (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x15a4796d0>: Failed to resolve 'api.hyperliquid.xyz' ([Errno 8] nodename nor servname provided, or not known)"))
+2025-11-19 04:30:42 | ERROR    | __main__:main:135 - Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/util/connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/.local/share/uv/python/cpython-3.12.12-macos-aarch64-none/lib/python3.12/socket.py", line 978, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connection.py", line 753, in connect
+    self.sock = sock = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x15a4796d0>: Failed to resolve 'api.hyperliquid.xyz' ([Errno 8] nodename nor servname provided, or not known)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.hyperliquid.xyz', port=443): Max retries exceeded with url: /info (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x15a4796d0>: Failed to resolve 'api.hyperliquid.xyz' ([Errno 8] nodename nor servname provided, or not known)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/main.py", line 27, in main
+    decision_engine = DecisionEngine(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/decision_engine.py", line 76, in __init__
+    self.position_analysis = PositionAnalysis()
+                             ^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/ai/position_analysis.py", line 8, in __init__
+    self.hyperliquid = hyperliquidAPI()
+                       ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/src/LangTrader/hyperliquidExchange.py", line 21, in __init__
+    self.info = Info(constants.MAINNET_API_URL, skip_ws=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/hyperliquid/info.py", line 36, in __init__
+    spot_meta = self.spot_meta()
+                ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/hyperliquid/info.py", line 356, in spot_meta
+    return cast(SpotMeta, self.post("/info", {"type": "spotMeta"}))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/hyperliquid/api.py", line 23, in post
+    response = self.session.post(url, json=payload, timeout=self.timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/sessions.py", line 637, in post
+    return self.request("POST", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/aibtc/LangTrader/simper-trader/.venv/lib/python3.12/site-packages/requests/adapters.py", line 677, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.hyperliquid.xyz', port=443): Max retries exceeded with url: /info (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x15a4796d0>: Failed to resolve 'api.hyperliquid.xyz' ([Errno 8] nodename nor servname provided, or not known)"))
+
+2025-11-19 04:46:14 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.42 元才能完成，您的可用余额为 -1.20163353 元(请求预冻结 0.4230423 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 04:46:15 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.06 元才能完成，您的可用余额为 -0.84330427 元(请求预冻结 0.06471304 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 04:46:15 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.33 元才能完成，您的可用余额为 -1.10592323 元(请求预冻结 0.327332 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:01:49 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.37 元才能完成，您的可用余额为 -1.14826323 元(请求预冻结 0.369672 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:01:49 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.05 元才能完成，您的可用余额为 -0.833519715 元(请求预冻结 0.054928485 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:01:49 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.28 元才能完成，您的可用余额为 -1.06144798 元(请求预冻结 0.28285675 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:17:20 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.31 元才能完成，您的可用余额为 -1.09353513 元(请求预冻结 0.3149439 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:17:21 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.823490245 元(请求预冻结 0.044899015 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:17:21 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01585948 元(请求预冻结 0.23726825 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:32:54 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.31 元才能完成，您的可用余额为 -1.09296573 元(请求预冻结 0.3143745 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:32:54 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.82338184 元(请求预冻结 0.04479061 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:32:55 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01536673 元(请求预冻结 0.2367755 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:48:27 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.32 元才能完成，您的可用余额为 -1.09360083 元(请求预冻结 0.3150096 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:48:27 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.82350229 元(请求预冻结 0.04491106 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 05:48:28 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01591423 元(请求预冻结 0.237323 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:04:02 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.32 元才能完成，您的可用余额为 -1.09371033 元(请求预冻结 0.3151191 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:04:02 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.823522365 元(请求预冻结 0.044931135 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:04:02 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01600548 元(请求预冻结 0.23741425 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:19:35 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.31 元才能完成，您的可用余额为 -1.09292193 元(请求预冻结 0.3143307 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:19:35 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.823377825 元(请求预冻结 0.044786595 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:19:36 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01534848 元(请求预冻结 0.23675725 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:35:08 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.32 元才能完成，您的可用余额为 -1.09427973 元(请求预冻结 0.3156885 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:35:08 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.05 元才能完成，您的可用余额为 -0.82362274 元(请求预冻结 0.04503151 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:35:09 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01646173 元(请求预冻结 0.2378705 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:50:40 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.32 元才能完成，您的可用余额为 -1.09377603 元(请求预冻结 0.3151848 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:50:41 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.823530395 元(请求预冻结 0.044939165 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 06:50:41 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01604198 元(请求预冻结 0.23745075 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:06:13 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.31 元才能完成，您的可用余额为 -1.09329423 元(请求预冻结 0.314703 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:06:14 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.82344608 元(请求预冻结 0.04485485 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:06:14 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01565873 元(请求预冻结 0.2370675 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:21:47 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.31 元才能完成，您的可用余额为 -1.09318473 元(请求预冻结 0.3145935 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:21:47 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.823426005 元(请求预冻结 0.044834775 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:21:48 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01556748 元(请求预冻结 0.23697625 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:37:26 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.31 元才能完成，您的可用余额为 -1.09322853 元(请求预冻结 0.3146373 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:37:26 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.823434035 元(请求预冻结 0.044842805 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:37:27 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01560398 元(请求预冻结 0.23701275 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:52:57 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ claude 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.31 元才能完成，您的可用余额为 -1.09325043 元(请求预冻结 0.3146592 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:52:58 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ deepseek 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.04 元才能完成，您的可用余额为 -0.82343805000000003 元(请求预冻结 0.04484682000000003 元)，请充值后再使用', 'type': 'error'}}
+2025-11-19 07:52:58 | ERROR    | src.LangTrader.ai.multi_ai_competition:run_competition:140 - ❌ gpt4o 决策失败: Error code: 403 - {'error': {'message': '主账户可用余额不足，本次请求需要可用余额大于 0.24 元才能完成，您的可用余额为 -1.01562223000000002 元(请求预冻结 0.23703100000000002 元)，请充值后再使用', 'type': 'error'}}

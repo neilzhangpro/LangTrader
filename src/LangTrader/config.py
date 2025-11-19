@@ -23,6 +23,10 @@ class Config:
         self.risk_config = self.get_risk_config()
         self.system_prompt = self.get_system_prompt()
         self.symbols = self.get_symbols()
+        
+        # 🆕 加载自定义提示词配置
+        self.custom_system_prompt = self.get_custom_system_prompt()
+        self.custom_user_prompt = self.get_custom_user_prompt()
     
     def get_symbols(self):
         """获取符号配置"""
@@ -58,6 +62,20 @@ class Config:
         params = (self.trader_id,)
         result = self.db.execute(query, params)
         return result[0]['system_prompt'] if result else None
+    
+    def get_custom_system_prompt(self):
+        """获取自定义系统提示词"""
+        query = "SELECT custom_system_prompt FROM traders WHERE id = %s"
+        params = (self.trader_id,)
+        result = self.db.execute(query, params)
+        return result[0]['custom_system_prompt'] if result and result[0].get('custom_system_prompt') else None
+    
+    def get_custom_user_prompt(self):
+        """获取自定义用户提示词模板"""
+        query = "SELECT custom_user_prompt FROM traders WHERE id = %s"
+        params = (self.trader_id,)
+        result = self.db.execute(query, params)
+        return result[0]['custom_user_prompt'] if result and result[0].get('custom_user_prompt') else None
 
     def set_llm_config(self, llm_config):
         """设置 LLM 配置"""
@@ -99,6 +117,16 @@ class Config:
         result = self.db.execute(query, params)
         # 更新本地缓存
         self.system_prompt = system_prompt
+        return result
+    
+    def set_custom_prompts(self, custom_system_prompt=None, custom_user_prompt=None):
+        """设置自定义提示词"""
+        query = "UPDATE traders SET custom_system_prompt = %s, custom_user_prompt = %s WHERE id = %s"
+        params = (custom_system_prompt, custom_user_prompt, self.trader_id)
+        result = self.db.execute(query, params)
+        # 更新本地缓存
+        self.custom_system_prompt = custom_system_prompt
+        self.custom_user_prompt = custom_user_prompt
         return result
     
     def close(self):

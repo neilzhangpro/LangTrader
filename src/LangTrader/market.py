@@ -68,32 +68,39 @@ class CryptoFetcher:
             df['volume_rsi'] = volume_rsi
         return df
 
-    def get_simple_trade_signal(self,df):
+    def get_simple_trade_signal(self, df):
+        """生成清晰的策略信号摘要"""
+        
         last_row = df.iloc[-1]
-        prompts = ""
-        logger.info("--------------Simple Prompt------------------")
-        logger.info("This is the simplest trading data from coinbase, and the simple trading signal is generated based on the technical indicators.")
-        logger.info(f"Current coin: {self.symbol}")
-        logger.info(f"Current price: {last_row['close']:,.2f} USD")
-        logger.info(f"24 hours highest price: {last_row['high']:,.2f} USD")
-        logger.info(f"24 hours lowest price: {last_row['low']:,.2f} USD")
-        logger.info(f"24 hours volume: {last_row['volume']:,.2f} {self.symbol}")
-        logger.info(f"RSI: {last_row['RSI_14']:,.2f}")
-        logger.info(f"MACD: {last_row['MACD_12_26_9']:,.2f}")
-        logger.info(f"MACD Signal: {last_row['MACDs_12_26_9']:,.2f}")
-        logger.info(f"MACD Hist: {last_row['MACDh_12_26_9']:,.2f}")
-        logger.info(f"Upper Band: {last_row['BBU_20_2.0_2.0']:,.2f}")
-        logger.info(f"Middle Band: {last_row['BBB_20_2.0_2.0']:,.2f}")
-        logger.info(f"Lower Band: {last_row['BBP_20_2.0_2.0']:,.2f}")
-        logger.info(f"SMA 20: {last_row['SMA_20']:,.2f}")
-        logger.info(f"EMA 20: {last_row['EMA_20']:,.2f}")
-        logger.info(f"Volume: {last_row['volume']:,.2f}")
-        prompts += f"Current coin: {self.symbol}\nCurrent price: {last_row['close']:,.2f} USD\n24 hours highest price: {last_row['high']:,.2f} USD\n24 hours lowest price: {last_row['low']:,.2f} USD\n24 hours volume: {last_row['volume']:,.2f} ETH\nRSI: {last_row['RSI_14']:,.2f}\nMACD: {last_row['MACD_12_26_9']:,.2f}\nMACD Signal: {last_row['MACDs_12_26_9']:,.2f}\nMACD Hist: {last_row['MACDh_12_26_9']:,.2f}\nUpper Band: {last_row['BBU_20_2.0_2.0']:,.2f}\nMiddle Band: {last_row['BBB_20_2.0_2.0']:,.2f}\nLower Band: {last_row['BBP_20_2.0_2.0']:,.2f}\nSMA 20: {last_row['SMA_20']:,.2f}\nEMA 20: {last_row['EMA_20']:,.2f}"
-        SimpleTradeSignal = ""
-        #simple trade signal
+        
+        # 基础数据
+        base_info = f"""
+    当前币种: {self.symbol}
+    当前价格: ${last_row['close']:,.2f}
+    24H最高: ${last_row['high']:,.2f}
+    24H最低: ${last_row['low']:,.2f}
+    24H成交量: {last_row['volume']:,.2f}
+    """
+        
+        # 关键指标
+        key_indicators = f"""
+    【关键指标】
+    - RSI(14): {last_row.get('RSI_14', 0):.1f} {'(超买)' if last_row.get('RSI_14', 50) > 70 else '(超卖)' if last_row.get('RSI_14', 50) < 30 else '(中性)'}
+    - MACD: {'金叉' if last_row.get('MACD_12_26_9', 0) > last_row.get('MACDs_12_26_9', 0) else '死叉'}
+    - 布林带位置: {'上轨外' if last_row['close'] > last_row.get('BBU_20_2.0_2.0', 999999) else '下轨外' if last_row['close'] < last_row.get('BBL_20_2.0_2.0', 0) else '轨道内'}
+    - 均线趋势: {'多头' if last_row['close'] > last_row.get('SMA_20', 0) else '空头'}
+    """
+        
+        # 收集策略信号（简化输出）
+        strategy_signals = "\n【各策略信号】"
         for strategy in self.strategies:
-            simple_prompt = strategy.generate_signal(self.symbol, df)
-            prompts += simple_prompt
-            logger.info(f"Strategy: {strategy.name}, Signal: {simple_prompt}")
-        logger.info("--------------Simple Prompt End------------------")
-        return prompts
+            try:
+                signal = strategy.generate_signal(self.symbol, df)
+                # 简化信号描述
+                if signal:
+                    strategy_signals += f"\n• {strategy.name}: {signal.strip()}"
+            except Exception as e:
+                logger.error(f"策略 {strategy.name} 失败: {e}")
+        
+        # 组合
+        return base_info + key_indicators + strategy_signals

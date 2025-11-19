@@ -448,3 +448,254 @@ class hyperliquidAPI:
         except Exception as e:
             logger.error(f"Error getting asset index: {e}")
             return None
+    
+    def place_stop_loss_order(
+        self,
+        coin_name: str,
+        side: str,
+        trigger_price: float
+    ):
+        """
+        设置止损单（使用trigger订单 + positionTpsl分组）
+        
+        Args:
+            coin_name: 币种名称，如 'BTC'
+            side: 当前持仓方向 'long' 或 'short'
+            trigger_price: 止损触发价格
+        
+        Returns:
+            订单结果
+        """
+        coin_name = coin_name.upper()
+        
+        try:
+            # 获取当前仓位信息
+            account_balance = self.get_account_balance()
+            if not account_balance:
+                logger.error("无法获取账户信息")
+                return None
+            
+            # 找到对应仓位
+            positions = account_balance.get("assetPositions", [])
+            position_size = 0
+            
+            for asset in positions:
+                pos = asset.get("position", {})
+                if pos.get("coin") == coin_name:
+                    position_size = abs(float(pos.get("szi", 0)))
+                    break
+            
+            if position_size == 0:
+                logger.warning(f"{coin_name} 无持仓，跳过止损单设置")
+                return None
+            
+            logger.info(f"🛡️ 设置 {coin_name} 止损单")
+            logger.info(f"   持仓方向: {side}")
+            logger.info(f"   触发价格: ${trigger_price:,.2f}")
+            logger.info(f"   仓位大小: {position_size}")
+            
+            # 止损方向：long仓用sell止损，short仓用buy止损
+            is_buy = (side.lower() == "short")
+            logger.info(f"   止损方向: {'buy' if is_buy else 'sell'}")
+            
+            # 使用SDK的order方法设置trigger订单
+            logger.info(f"🔧 调用 exchange.order() 设置止损单...")
+            logger.info(f"   参数: coin={coin_name}, is_buy={is_buy}, sz={position_size}")
+            logger.info(f"   order_type: trigger, triggerPx={trigger_price}, tpsl=sl")
+            
+            # ✅ 使用位置参数（参考第421行的正确用法）
+            order_result = self.exchange.order(
+                coin_name,      # 位置参数1：币种
+                is_buy,         # 位置参数2：买卖方向
+                position_size,  # 位置参数3：数量
+                trigger_price,  # 位置参数4：价格
+                {"trigger": {   # 位置参数5：订单类型
+                    "triggerPx": trigger_price,  # ✅ 直接传float，不要转字符串
+                    "isMarket": True,  # 触发后使用市价
+                    "tpsl": "sl"  # 止损单
+                }},
+                reduce_only=True  # 关键字参数
+            )
+            
+            logger.info(f"📥 止损单返回结果: {order_result}")
+            
+            # 检查是否有错误
+            if isinstance(order_result, dict):
+                response = order_result.get("response", {})
+                data = response.get("data", {})
+                statuses = data.get("statuses", [])
+                
+                if statuses and isinstance(statuses[0], dict):
+                    if "error" in statuses[0]:
+                        error_msg = statuses[0]["error"]
+                        logger.error(f"❌ 止损单设置失败: {error_msg}")
+                        return None
+                    elif "resting" in statuses[0]:
+                        oid = statuses[0]["resting"].get("oid")
+                        logger.info(f"✅ 止损单设置成功, oid={oid}")
+                        return order_result
+            
+            logger.info(f"✅ 止损单已提交")
+            return order_result
+            
+        except Exception as e:
+            logger.error(f"❌ 设置止损单失败: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return None
+    
+    def place_take_profit_order(
+        self,
+        coin_name: str,
+        side: str,
+        trigger_price: float
+    ):
+        """
+        设置止盈单（使用trigger订单 + positionTpsl分组）
+        
+        Args:
+            coin_name: 币种名称
+            side: 当前持仓方向
+            trigger_price: 止盈触发价格
+        """
+        coin_name = coin_name.upper()
+        
+        try:
+            # 获取仓位信息
+            account_balance = self.get_account_balance()
+            if not account_balance:
+                return None
+            
+            positions = account_balance.get("assetPositions", [])
+            position_size = 0
+            
+            for asset in positions:
+                pos = asset.get("position", {})
+                if pos.get("coin") == coin_name:
+                    position_size = abs(float(pos.get("szi", 0)))
+                    break
+            
+            if position_size == 0:
+                logger.warning(f"{coin_name} 无持仓，跳过止盈单设置")
+                return None
+            
+            logger.info(f"🎯 设置 {coin_name} 止盈单")
+            logger.info(f"   触发价格: ${trigger_price:,.2f}")
+            logger.info(f"   仓位大小: {position_size}")
+            
+            is_buy = (side.lower() == "short")
+            logger.info(f"   止盈方向: {'buy' if is_buy else 'sell'}")
+            
+            logger.info(f"🔧 调用 exchange.order() 设置止盈单...")
+            logger.info(f"   参数: coin={coin_name}, is_buy={is_buy}, sz={position_size}")
+            logger.info(f"   order_type: trigger, triggerPx={trigger_price}, tpsl=tp")
+            
+            # ✅ 使用位置参数
+            order_result = self.exchange.order(
+                coin_name,      # 位置参数1：币种
+                is_buy,         # 位置参数2：买卖方向
+                position_size,  # 位置参数3：数量
+                trigger_price,  # 位置参数4：价格
+                {"trigger": {   # 位置参数5：订单类型
+                    "triggerPx": trigger_price,  # ✅ 直接传float，不要转字符串
+                    "isMarket": False,  # 止盈用限价更好
+                    "tpsl": "tp"  # 止盈单
+                }},
+                reduce_only=True  # 关键字参数
+            )
+            
+            logger.info(f"📥 止盈单返回结果: {order_result}")
+            
+            # 检查是否有错误
+            if isinstance(order_result, dict):
+                response = order_result.get("response", {})
+                data = response.get("data", {})
+                statuses = data.get("statuses", [])
+                
+                if statuses and isinstance(statuses[0], dict):
+                    if "error" in statuses[0]:
+                        error_msg = statuses[0]["error"]
+                        logger.error(f"❌ 止盈单设置失败: {error_msg}")
+                        return None
+                    elif "resting" in statuses[0]:
+                        oid = statuses[0]["resting"].get("oid")
+                        logger.info(f"✅ 止盈单设置成功, oid={oid}")
+                        return order_result
+            
+            logger.info(f"✅ 止盈单已提交")
+            return order_result
+            
+        except Exception as e:
+            logger.error(f"❌ 设置止盈单失败: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return None
+    
+    def get_open_orders(self, coin_name: str = None):
+        """
+        获取未完成订单
+        
+        Args:
+            coin_name: 币种（可选）
+        """
+        try:
+            orders = self.info.open_orders(self.account_address)
+            
+            if coin_name:
+                coin_name = coin_name.upper()
+                filtered = [o for o in orders if o.get("coin") == coin_name]
+                logger.info(f"📋 {coin_name} 有 {len(filtered)} 个未完成订单")
+                return filtered
+            
+            logger.info(f"📋 总共有 {len(orders)} 个未完成订单")
+            return orders
+            
+        except Exception as e:
+            logger.error(f"获取订单失败: {e}")
+            return []
+    
+    def cancel_order_by_oid(self, coin_name: str, oid: int):
+        """
+        根据订单ID取消订单
+        
+        Args:
+            coin_name: 币种
+            oid: 订单ID
+        """
+        coin_name = coin_name.upper()
+        
+        try:
+            cancel_result = self.exchange.cancel(coin_name, oid)
+            
+            logger.info(f"✅ 已取消订单: {coin_name} oid={oid}")
+            return cancel_result
+            
+        except Exception as e:
+            logger.error(f"取消订单失败: {e}")
+            return None
+    
+    def cancel_all_orders_for_coin(self, coin_name: str):
+        """取消某个币种的所有未完成订单"""
+        
+        coin_name = coin_name.upper()
+        
+        try:
+            open_orders = self.get_open_orders(coin_name)
+            
+            if not open_orders:
+                logger.info(f"{coin_name} 无未完成订单")
+                return True
+            
+            logger.info(f"📋 准备取消 {coin_name} 的 {len(open_orders)} 个订单")
+            
+            for order in open_orders:
+                oid = order.get("oid")
+                if oid:
+                    self.cancel_order_by_oid(coin_name, oid)
+            
+            logger.info(f"✅ {coin_name} 所有订单已取消")
+            return True
+            
+        except Exception as e:
+            logger.error(f"批量取消订单失败: {e}")
+            return False

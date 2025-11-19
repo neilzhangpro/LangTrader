@@ -82,6 +82,10 @@ SECRET_KEY=your_secret_key
 
 # LLM Configuration
 OPENAI_API_KEY=your_openai_api_key
+
+# API Authentication (Required for /backtest endpoints)
+# Generate a secure token: python -c "import secrets; print(secrets.token_urlsafe(32))"
+API_TOKEN=your-secret-api-token-change-this
 ```
 
 ### 4. Database Setup
@@ -129,12 +133,35 @@ uv run pytest --cov=src --cov-report=html
 
 Once the server is running, you can access the following endpoints:
 
+**Public Endpoints:**
 - `GET /` - Health check endpoint
 - `GET /market?symbol=BTC` - Get market data for a symbol
 - `GET /config?trader_id=your_id` - Get trader configuration
 - `POST /config` - Update trader configuration
 - `GET /hyperliquidBalance` - Get Hyperliquid account balance
 - `POST /hyperliquidCloseAllPositions` - Close all open positions
+
+**Authenticated Endpoints (requires Bearer token):**
+- `POST /backtest/run` - Run backtest with custom strategies and prompts
+
+#### Using Authenticated Endpoints
+
+```bash
+# Set your API token in environment
+export API_TOKEN="your-secret-token"
+
+# Call authenticated endpoint
+curl -X POST "http://localhost:8000/backtest/run" \
+  -H "Authorization: Bearer your-secret-token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "trader_id": "your-trader-id",
+    "start_date": "2024-09-01",
+    "end_date": "2024-10-31",
+    "symbols": ["BTC", "ETH"],
+    "strategies": ["RSI", "MACD"]
+  }'
+```
 
 ## 🧪 Testing
 
@@ -175,6 +202,46 @@ LangTrader implements multiple technical analysis strategies:
 - **Fibonacci Retracement**: Uses Fibonacci levels for entry/exit points
 - **RSI/MACD/Bollinger Bands**: Classic technical indicators
 
+## 🔄 Backtesting System
+
+LangTrader includes a comprehensive backtesting system to evaluate strategy and prompt effectiveness:
+
+### Features
+- **Historical Data**: Fetches historical price data using yfinance
+- **LLM Decision Simulation**: Full simulation of the decision engine workflow (strategies → prompt → LLM → execution)
+- **Mock Position Management**: Simulates real trading with stop-loss/take-profit triggers
+- **Performance Metrics**: Win rate, Sharpe ratio, max drawdown, profit factor, etc.
+- **Strategy Comparison**: Test different strategy combinations and prompts
+
+### Usage Example
+
+```python
+# API call
+POST /backtest/run
+Authorization: Bearer your-api-token
+Content-Type: application/json
+
+{
+  "trader_id": "your-trader-id",
+  "start_date": "2024-09-01",
+  "end_date": "2024-10-31",
+  "initial_balance": 10000,
+  "symbols": ["BTC", "ETH"],
+  "strategies": ["RSI", "MACD", "EMA"],
+  "custom_prompt": "You are a conservative AI trader..."
+}
+```
+
+### Backtest Results
+
+The API returns comprehensive performance metrics:
+- Total trades and win rate
+- Total PnL and return percentage
+- Average win/loss and profit factor
+- Maximum drawdown and Sharpe ratio
+- Per-symbol and per-strategy breakdown
+- Complete equity curve and trade history
+
 ## ⚠️ Disclaimer
 
 This project is for educational purposes only and not financial advice. Cryptocurrency trading involves substantial risk of loss. Use at your own risk. The developers are not responsible for any financial losses incurred through the use of this software.
@@ -187,11 +254,13 @@ This project is for educational purposes only and not financial advice. Cryptocu
 - ✅ 10/11/2025: Add LangGraph & finish main parts
 - ✅ 12/11/2025: Implement position tracking, PnL calculation, and database storage for trading decisions and positions
 - ✅ 12/11/2025: Add trend-following logic to prevent unnecessary closing of positions when trend continues
+- ✅ 16/11/2025: Implement backtesting system with historical data fetching, mock position management, and performance metrics
+- ✅ 16/11/2025: Add API authentication for secure access to backtest endpoints
 
 ## 📋 To-Do List
 
 - [ ] Implement more sophisticated trading strategies
-- [ ] Add backtesting capabilities
+- [x] Add backtesting capabilities (Completed 16/11/2025)
 - [ ] Implement advanced risk management features
 - [ ] Add support for multiple trading pairs
 - [ ] Improve error handling and recovery mechanisms

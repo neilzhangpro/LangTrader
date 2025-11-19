@@ -23,7 +23,7 @@ def main():
             if pool_status['used'] > pool_status['maxconn'] * 0.8:
                 logger.warning("连接池使用率过高，请检查连接管理")
 
-        config = Config(trader_id="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        config = Config(trader_id="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
         decision_engine = DecisionEngine(config)
         state = DecisionEngineState(
             trader_id=config.trader_id,
@@ -41,6 +41,20 @@ def main():
         result = decision_engine.run(state)
         
         # 美化输出
+        console.print("\n")
+        
+        # 产品信息展示
+        product_info = """
+[bold cyan]╔═══════════════════════════════════════════════════════════╗[/bold cyan]
+[bold cyan]║[/bold cyan]           [bold magenta]🚀 LangTrader - AI Trading Bot 🚀[/bold magenta]           [bold cyan]║[/bold cyan]
+[bold cyan]╚═══════════════════════════════════════════════════════════╝[/bold cyan]
+
+[dim]Version:[/dim]  [bold green]v1.0.0[/bold green]
+[dim]Author:[/dim]   [bold yellow]大王的大(Tomie)[/bold yellow]
+[dim]X:[/dim]        [bold blue]@AIBTCAI[/bold blue]
+[dim]GitHub:[/dim]   [bold white]https://github.com/neilzhangpro/LangTrader[/bold white]
+        """
+        console.print(product_info)
         console.print("\n")
         
         # 创建决策摘要表格
@@ -135,7 +149,8 @@ if __name__ == "__main__":
     try:
         while True:
             main()
-            time.sleep(60 * 5)  # 每5分钟执行一次
+            logger.info("⏰ 等待15分钟进行下一次决策...")
+            time.sleep(60 * 15)  # 每15分钟执行一次
     except KeyboardInterrupt:
         print("程序被用户中断")
     except Exception as e:
