@@ -75,30 +75,16 @@ dbPort=5432
 dbBase=langtrader
 dbUser=your_username
 dbPass=your_password
-
-# Hyperliquid API Configuration
-ACCOUNT_ADDRESS=your_account_address
-SECRET_KEY=your_secret_key
-
-# LLM Configuration
-OPENAI_API_KEY=your_openai_api_key
-
-# API Authentication (Required for /backtest endpoints)
-# Generate a secure token: python -c "import secrets; print(secrets.token_urlsafe(32))"
-API_TOKEN=your-secret-api-token-change-this
+API_TOKEN="xxxxxx"
 ```
 
 ### 4. Database Setup
 
 Initialize the PostgreSQL database with the required schema:
 
-```bash
-# Create database
-createdb langtrader
+run database/langtrader.sql
 
-# Run database migrations (if applicable)
-# python scripts/init_db.py
-```
+config traders table
 
 ## ▶️ Usage
 
@@ -116,18 +102,6 @@ uv run python main.py
 uv run python server.py
 ```
 
-### Running Tests
-
-```bash
-# Run all tests
-uv run pytest
-
-# Run specific test file
-uv run pytest tests/test_market.py
-
-# Run tests with coverage
-uv run pytest --cov=src --cov-report=html
-```
 
 ### API Endpoints
 
@@ -163,20 +137,6 @@ curl -X POST "http://localhost:8000/backtest/run" \
   }'
 ```
 
-## 🧪 Testing
-
-LangTrader includes comprehensive unit tests for all core components:
-
-```bash
-# Run all tests
-uv run pytest
-
-# Run tests with verbose output
-uv run pytest -v
-
-# Run specific test category
-uv run pytest tests/test_strategy.py
-```
 
 ## 📊 Architecture
 
@@ -261,14 +221,7 @@ This project is for educational purposes only and not financial advice. Cryptocu
 
 - [ ] Implement more sophisticated trading strategies
 - [x] Add backtesting capabilities (Completed 16/11/2025)
-- [ ] Implement advanced risk management features
-- [ ] Add support for multiple trading pairs
-- [ ] Improve error handling and recovery mechanisms
-- [ ] Add more comprehensive logging and monitoring
-- [ ] Implement position sizing based on volatility
-- [ ] Add web dashboard for monitoring and configuration
-- [ ] Implement paper trading mode
-- [ ] Add support for other DEXs and CEXs
+- [ ] Add front website to config bot easily
 
 ## 🤝 Contributing
 

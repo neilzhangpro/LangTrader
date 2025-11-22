@@ -38,6 +38,9 @@ class PromptTemplate:
 
 === 🎯 交易任务 ===
 {task_instructions}
+
+=== 输出注意事项 ===
+1. 输出内容中不允许出现类似\u0000等特殊字符
 """
     
     def __init__(self, custom_template: str = None):

@@ -1,0 +1,772 @@
+2025-11-22 19:41:10 | INFO     | src.LangTrader.ai.decision_engine:__init__:62 - LLM Config: {'openai': {'model': 'gpt-4o', 'api_key': 'sk-tv4J8o9fYpKCeM3tDAa1XtqxJ2NXFw3gHUomWQ9i2L6lwCZo', 'base_url': 'https://api.openai-proxy.org/v1'}, 'deepseek': {'model': 'deepseek-chat', 'api_key': 'sk-tv4J8o9fYpKCeM3tDAa1XtqxJ2NXFw3gHUomWQ9i2L6lwCZo', 'base_url': 'https://api.openai-proxy.org/v1'}, 'anthropic': {'model': 'claude-sonnet-4-5', 'api_key': 'sk-tv4J8o9fYpKCeM3tDAa1XtqxJ2NXFw3gHUomWQ9i2L6lwCZo', 'base_url': 'https://api.openai-proxy.org/anthropic'}}
+2025-11-22 19:41:10 | INFO     | src.LangTrader.ai.decision_engine:__init__:68 - Model: client=<openai.resources.chat.completions.completions.Completions object at 0x12c9e8cb0> async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x12f2928d0> root_client=<openai.OpenAI object at 0x12c526600> root_async_client=<openai.AsyncOpenAI object at 0x12cf7ad50> model_name='gpt-4o' model_kwargs={} openai_api_key=SecretStr('**********') openai_api_base='https://api.openai-proxy.org/v1'
+2025-11-22 19:41:12 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMarginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMaintenanceMarginUsed': '0.0', 'withdrawable': '20.52123', 'assetPositions': [], 'time': 1763793672006}
+2025-11-22 19:41:12 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:41:12 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMarginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMaintenanceMarginUsed': '0.0', 'withdrawable': '20.52123', 'assetPositions': [], 'time': 1763793672408}
+2025-11-22 19:41:12 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:41:14 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMarginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMaintenanceMarginUsed': '0.0', 'withdrawable': '20.52123', 'assetPositions': [], 'time': 1763793674814}
+2025-11-22 19:41:15 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:41:15 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMarginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMaintenanceMarginUsed': '0.0', 'withdrawable': '20.52123', 'assetPositions': [], 'time': 1763793675237}
+2025-11-22 19:41:15 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:41:17 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMarginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMaintenanceMarginUsed': '0.0', 'withdrawable': '20.52123', 'assetPositions': [], 'time': 1763793677530}
+2025-11-22 19:41:17 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:41:18 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMarginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMaintenanceMarginUsed': '0.0', 'withdrawable': '20.52123', 'assetPositions': [], 'time': 1763793678003}
+2025-11-22 19:41:18 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:41:20 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMarginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMaintenanceMarginUsed': '0.0', 'withdrawable': '20.52123', 'assetPositions': [], 'time': 1763793680575}
+2025-11-22 19:41:21 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:41:21 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMarginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMaintenanceMarginUsed': '0.0', 'withdrawable': '20.52123', 'assetPositions': [], 'time': 1763793681174}
+2025-11-22 19:41:21 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:41:22 | INFO     | src.LangTrader.market_sentiment:__init__:32 - ✅ MarketSentiment 模块初始化完成 (使用RSS+Reddit免费源)
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.multi_ai_competition:_initialize_models:51 - ✅ Claude Sonnet 4 已加载
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.multi_ai_competition:_initialize_models:64 - ✅ DeepSeek V3 已加载
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.multi_ai_competition:_initialize_models:77 - ✅ GPT-4o 已加载
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.multi_ai_competition:_initialize_models:86 - 🤖 已加载 3 个AI模型: ['claude', 'deepseek', 'gpt4o']
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_historical_performance:179 - -----Start Historical Performance (Enhanced)------
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.historical_performance:get_20_decision_info:399 - -----Start Get 20 Decision Info------
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.historical_performance:get_coin_performance_analysis:31 - ---start coin performance analysis
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.historical_performance:get_coin_performance_analysis:170 - ✅ 币种表现分析完成，共分析 4 个币种
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_historical_performance:195 - 
+📊 历史表现分析：
+
+• ZEC: 胜率67%, 平均盈利-1.5%, 连亏1次 ⚠️ 一般
+• BNB: 胜率75%, 平均盈利-0.4%, 连亏1次 ✅ 优秀
+• SOL: 胜率50%, 平均盈利-0.5%, 连胜2次 ⚠️ 一般
+• BTC: 胜率50%, 平均盈利-0.1%, 连胜1次 ⚠️ 一般
+
+💡 交易建议：
+✅ BNB近期表现最佳（胜率75%），可适度加大仓位
+📈 当前可能处于趋势市，可适当延长持仓时间
+
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_real_time_performance:131 - -----Start Real-Time Performance Analysis------
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.performance_tracker:calculate_real_time_metrics:59 - 📊 查询到 34 条权益记录（7天内）
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.performance_tracker:calculate_real_time_metrics:65 - ✅ 权益数据充足，开始计算性能指标...
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_real_time_performance:140 - 📊 夏普率: -22.41
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_real_time_performance:141 - 📊 最大回撤: -5.5%
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_real_time_performance:142 - 📊 性能状态: fair
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_position_analysis:400 - -----Start Position Analysis------
+2025-11-22 19:41:22 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMarginSummary': {'accountValue': '20.52123', 'totalNtlPos': '0.0', 'totalRawUsd': '20.52123', 'totalMarginUsed': '0.0'}, 'crossMaintenanceMarginUsed': '0.0', 'withdrawable': '20.52123', 'assetPositions': [], 'time': 1763793682609}
+2025-11-22 19:41:22 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.position_analysis:get_position_analysis:129 - -----End Position Analysis------
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_risk_check:339 - -----Strat Risk Check------
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_risk_check:390 - -----End Risk Check------
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:416 - -----Start Market Analysis------
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:417 - Symbols: ['BTC', 'BNB', 'ETH', 'SOL', 'ZEC', 'LTC']
+2025-11-22 19:41:22 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:14 - Symbol--->: BTC
+2025-11-22 19:41:23 | INFO     | src.LangTrader.market:get_current_price:28 - Current price of BTC: 84579.635
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: time
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2025-11-22 06:00:00
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: low
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 84013.39
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: high
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 84732.02
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: open
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 84215.96
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: close
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 84547.93
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 160.07715866
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: RSI_14
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 47.275372060115586
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACD_12_26_9
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -419.33564066253894
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDh_12_26_9
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 170.0617740397878
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDs_12_26_9
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -589.3974147023267
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBL_20_2.0_2.0
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 82810.9392673007
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBM_20_2.0_2.0
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 84285.52649999999
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBU_20_2.0_2.0
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 85760.11373269929
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBB_20_2.0_2.0
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 3.499028347884373
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBP_20_2.0_2.0
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.5889752380127621
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: SMA_20
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 84285.52649999999
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: EMA_20
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 84640.46600827907
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_sma_20
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 1132.6284029289998
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_ratio
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.1413324601837966
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_rsi
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 41.465474058836485
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:59 - Simple prompt: 
+    当前币种: BTC
+    当前价格: $84,547.93
+    24H最高: $84,732.02
+    24H最低: $84,013.39
+    24H成交量: 160.08
+    
+    【关键指标】
+    - RSI(14): 47.3 (中性)
+    - MACD: 金叉
+    - 布林带位置: 轨道内
+    - 均线趋势: 多头
+    
+【各策略信号】
+• RSI Strategy: RSI策略信号：
+
+RSI between 30 and 70, HOLD signal
+• MACD Strategy: MACD策略信号：
+
+MACD greater than MACD Signal, SELL + SHORT
+• BBUStrategy: 布林带策略信号：
+
+Upper band greater than current price, sell signal
+• EMA20Strategy: EMA20策略信号：
+
+SMA and EMA between, hold signal
+• VolumeStrategy: 成交量策略信号：
+ 
+Volume RSI between 30 and 70, hold signal
+Volume ratio less than 1, buy signal
+Volume SMA 20 greater than volume, sell signal
+Volume less than volume SMA 20, buy signal
+Volume less than volume SMA 20, buy signal
+Volume greater than volume RSI, sell signal
+Volume greater than volume ratio, sell signal
+• SupportResistanceStrategy: 支撑阻力策略信号：
+
+价格突破枢轴点84431.11333333333, SELL + SHORT
+• FibonacciStrategy: 斐波那契策略信号：
+
+价格在38.2%斐波那契回调位84748.90附近回落
+价格在50.0%斐波那契回调位83942.32附近反弹
+• IchimokuStrategy: 一目均衡表策略信号：
+
+转换线上穿基准线 = 买入信号
+• VolatilityBreakoutStrategy: 波动突破策略信号：
+
+价格未突破波动率轨道
+• EnhancedMeanReversionStrategy: 增强均值回归策略信号：
+
+价格处于均值附近 (Z-Score: 0.35, RSI: 47.3)
+2025-11-22 19:41:23 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:14 - Symbol--->: BNB
+2025-11-22 19:41:24 | INFO     | src.LangTrader.market:get_current_price:28 - Current price of BNB: 830.685
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: time
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2025-11-22 06:00:00
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: low
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 820.02
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: high
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 832.56
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: open
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 823.92
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: close
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 829.8
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 32.67199
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: RSI_14
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 46.1339368748744
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACD_12_26_9
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -5.646559381324096
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDh_12_26_9
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2.3588065586181415
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDs_12_26_9
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -8.005365939942237
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBL_20_2.0_2.0
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 810.5436017714661
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBM_20_2.0_2.0
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 826.6790000000003
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBU_20_2.0_2.0
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 842.8143982285345
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBB_20_2.0_2.0
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 3.903667137675977
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBP_20_2.0_2.0
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.5967128283973926
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: SMA_20
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 826.6790000000003
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: EMA_20
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 832.586812538393
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_sma_20
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 166.1378859999999
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_ratio
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.19665586692249123
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_rsi
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 45.0672954918833
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:59 - Simple prompt: 
+    当前币种: BNB
+    当前价格: $829.80
+    24H最高: $832.56
+    24H最低: $820.02
+    24H成交量: 32.67
+    
+    【关键指标】
+    - RSI(14): 46.1 (中性)
+    - MACD: 金叉
+    - 布林带位置: 轨道内
+    - 均线趋势: 多头
+    
+【各策略信号】
+• RSI Strategy: RSI策略信号：
+
+RSI between 30 and 70, HOLD signal
+• MACD Strategy: MACD策略信号：
+
+MACD greater than MACD Signal, SELL + SHORT
+• BBUStrategy: 布林带策略信号：
+
+Upper band greater than current price, sell signal
+• EMA20Strategy: EMA20策略信号：
+
+SMA and EMA between, hold signal
+• VolumeStrategy: 成交量策略信号：
+ 
+Volume RSI between 30 and 70, hold signal
+Volume ratio less than 1, buy signal
+Volume SMA 20 greater than volume, sell signal
+Volume less than volume SMA 20, buy signal
+Volume less than volume SMA 20, buy signal
+Volume less than volume RSI, buy signal
+Volume greater than volume ratio, sell signal
+• SupportResistanceStrategy: 支撑阻力策略信号：
+
+价格突破枢轴点827.46, SELL + SHORT
+• FibonacciStrategy: 斐波那契策略信号：
+
+价格在50.0%斐波那契回调位832.93附近回落
+价格在61.8%斐波那契回调位822.70附近反弹
+• IchimokuStrategy: 一目均衡表策略信号：
+
+转换线下穿基准线 = 卖出信号
+• VolatilityBreakoutStrategy: 波动突破策略信号：
+
+价格未突破波动率轨道
+• EnhancedMeanReversionStrategy: 增强均值回归策略信号：
+
+价格处于均值附近 (Z-Score: 0.38, RSI: 46.1)
+2025-11-22 19:41:25 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:14 - Symbol--->: ETH
+2025-11-22 19:41:26 | INFO     | src.LangTrader.market:get_current_price:28 - Current price of ETH: 2759.295
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: time
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2025-11-22 06:00:00
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: low
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2730.79
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: high
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2766.75
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: open
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2742.73
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: close
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2758.84
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2209.10153795
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: RSI_14
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 47.754928650607816
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACD_12_26_9
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -16.51363738083728
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDh_12_26_9
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 6.842375948901697
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDs_12_26_9
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -23.35601332973898
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBL_20_2.0_2.0
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2699.817934870666
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBM_20_2.0_2.0
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2747.7744999999995
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBU_20_2.0_2.0
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2795.7310651293333
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBB_20_2.0_2.0
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 3.4905750183891544
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBP_20_2.0_2.0
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.6153700225418369
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: SMA_20
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2747.7744999999995
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: EMA_20
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2759.507563804278
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_sma_20
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 10105.272824439508
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_ratio
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.2186087972417042
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_rsi
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 41.82636342575681
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:59 - Simple prompt: 
+    当前币种: ETH
+    当前价格: $2,758.84
+    24H最高: $2,766.75
+    24H最低: $2,730.79
+    24H成交量: 2,209.10
+    
+    【关键指标】
+    - RSI(14): 47.8 (中性)
+    - MACD: 金叉
+    - 布林带位置: 轨道内
+    - 均线趋势: 多头
+    
+【各策略信号】
+• RSI Strategy: RSI策略信号：
+
+RSI between 30 and 70, HOLD signal
+• MACD Strategy: MACD策略信号：
+
+MACD greater than MACD Signal, SELL + SHORT
+• BBUStrategy: 布林带策略信号：
+
+Upper band greater than current price, sell signal
+• EMA20Strategy: EMA20策略信号：
+
+SMA and EMA between, hold signal
+• VolumeStrategy: 成交量策略信号：
+ 
+Volume RSI between 30 and 70, hold signal
+Volume ratio less than 1, buy signal
+Volume SMA 20 greater than volume, sell signal
+Volume less than volume SMA 20, buy signal
+Volume less than volume SMA 20, buy signal
+Volume greater than volume RSI, sell signal
+Volume greater than volume ratio, sell signal
+• SupportResistanceStrategy: 支撑阻力策略信号：
+
+价格突破枢轴点2752.126666666667, SELL + SHORT
+• FibonacciStrategy: 斐波那契策略信号：
+
+价格在38.2%斐波那契回调位2782.11附近回落
+价格在50.0%斐波那契回调位2751.15附近反弹
+• IchimokuStrategy: 一目均衡表策略信号：
+
+转换线上穿基准线 = 买入信号
+• VolatilityBreakoutStrategy: 波动突破策略信号：
+
+价格未突破波动率轨道
+• EnhancedMeanReversionStrategy: 增强均值回归策略信号：
+
+价格处于均值附近 (Z-Score: 0.45, RSI: 47.8)
+2025-11-22 19:41:26 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:14 - Symbol--->: SOL
+2025-11-22 19:41:27 | INFO     | src.LangTrader.market:get_current_price:28 - Current price of SOL: 127.585
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: time
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2025-11-22 06:00:00
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: low
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 125.26
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: high
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 128.02
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: open
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 126.16
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: close
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 127.58
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 40207.18187345
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: RSI_14
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 46.5994751146785
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACD_12_26_9
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -1.0975206213465327
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDh_12_26_9
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.237674389101731
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDs_12_26_9
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -1.3351950104482637
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBL_20_2.0_2.0
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 124.59474217185304
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBM_20_2.0_2.0
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 127.465
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBU_20_2.0_2.0
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 130.33525782814695
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBB_20_2.0_2.0
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 4.503601503388309
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBP_20_2.0_2.0
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.5200330435252651
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: SMA_20
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 127.465
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: EMA_20
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 128.09782387781826
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_sma_20
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 145696.46369984493
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_ratio
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.2759653930673459
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_rsi
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 43.345892907014154
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:59 - Simple prompt: 
+    当前币种: SOL
+    当前价格: $127.58
+    24H最高: $128.02
+    24H最低: $125.26
+    24H成交量: 40,207.18
+    
+    【关键指标】
+    - RSI(14): 46.6 (中性)
+    - MACD: 金叉
+    - 布林带位置: 轨道内
+    - 均线趋势: 多头
+    
+【各策略信号】
+• RSI Strategy: RSI策略信号：
+
+RSI between 30 and 70, HOLD signal
+• MACD Strategy: MACD策略信号：
+
+MACD greater than MACD Signal, SELL + SHORT
+• BBUStrategy: 布林带策略信号：
+
+Upper band greater than current price, sell signal
+• EMA20Strategy: EMA20策略信号：
+
+SMA and EMA between, hold signal
+• VolumeStrategy: 成交量策略信号：
+ 
+Volume RSI between 30 and 70, hold signal
+Volume ratio less than 1, buy signal
+Volume SMA 20 greater than volume, sell signal
+Volume less than volume SMA 20, buy signal
+Volume less than volume SMA 20, buy signal
+Volume greater than volume RSI, sell signal
+Volume greater than volume ratio, sell signal
+• SupportResistanceStrategy: 支撑阻力策略信号：
+
+价格突破枢轴点126.95333333333333, SELL + SHORT
+• FibonacciStrategy: 斐波那契策略信号：
+
+价格在50.0%斐波那契回调位128.19附近回落
+价格在61.8%斐波那契回调位126.60附近反弹
+• IchimokuStrategy: 一目均衡表策略信号：
+
+转换线上穿基准线 = 买入信号
+• VolatilityBreakoutStrategy: 波动突破策略信号：
+
+价格未突破波动率轨道
+• EnhancedMeanReversionStrategy: 增强均值回归策略信号：
+
+价格处于均值附近 (Z-Score: 0.08, RSI: 46.6)
+2025-11-22 19:41:29 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:14 - Symbol--->: ZEC
+2025-11-22 19:41:30 | INFO     | src.LangTrader.market:get_current_price:28 - Current price of ZEC: 497.44
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: time
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2025-11-22 06:00:00
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: low
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 481.25
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: high
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 499.6
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: open
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 483.1
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: close
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 497.13
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 13799.6296755
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: RSI_14
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 30.218121067260412
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACD_12_26_9
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -39.58513202724839
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDh_12_26_9
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -6.307080750822628
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDs_12_26_9
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -33.278051276425764
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBL_20_2.0_2.0
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 470.5579246958266
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBM_20_2.0_2.0
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 568.2334999999996
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBU_20_2.0_2.0
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 665.9090753041726
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBB_20_2.0_2.0
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 34.37867542275246
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBP_20_2.0_2.0
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.13602210799078931
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: SMA_20
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 568.2334999999996
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: EMA_20
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 559.3217683455314
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_sma_20
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 28567.819246956
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_ratio
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.48304806034399694
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_rsi
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 46.16654938527611
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:59 - Simple prompt: 
+    当前币种: ZEC
+    当前价格: $497.13
+    24H最高: $499.60
+    24H最低: $481.25
+    24H成交量: 13,799.63
+    
+    【关键指标】
+    - RSI(14): 30.2 (中性)
+    - MACD: 死叉
+    - 布林带位置: 轨道内
+    - 均线趋势: 空头
+    
+【各策略信号】
+• RSI Strategy: RSI策略信号：
+
+RSI between 30 and 70, HOLD signal
+• MACD Strategy: MACD策略信号：
+
+MACD less than MACD Signal, BUY + LONG
+• BBUStrategy: 布林带策略信号：
+
+Upper band greater than current price, sell signal
+• EMA20Strategy: EMA20策略信号：
+
+SMA greater than current price, sell signal
+• VolumeStrategy: 成交量策略信号：
+ 
+Volume RSI between 30 and 70, hold signal
+Volume ratio less than 1, buy signal
+Volume SMA 20 greater than volume, sell signal
+Volume less than volume SMA 20, buy signal
+Volume less than volume SMA 20, buy signal
+Volume greater than volume RSI, sell signal
+Volume greater than volume ratio, sell signal
+• SupportResistanceStrategy: 支撑阻力策略信号：
+
+价格突破枢轴点492.66, SELL + SHORT
+• FibonacciStrategy: 斐波那契策略信号：
+• IchimokuStrategy: 一目均衡表策略信号：
+
+转换线下穿基准线 = 卖出信号
+• VolatilityBreakoutStrategy: 波动突破策略信号：
+
+价格未突破波动率轨道
+• EnhancedMeanReversionStrategy: 增强均值回归策略信号：
+
+轻微超卖 (Z-Score: -1.42, RSI: 30.2)
+2025-11-22 19:41:31 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:14 - Symbol--->: LTC
+2025-11-22 19:41:31 | INFO     | src.LangTrader.market:get_current_price:28 - Current price of LTC: 83.055
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: time
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2025-11-22 06:00:00
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: low
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 81.8
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: high
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 83.27
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: open
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 82.22
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: close
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 82.86
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 2498.1849954
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: RSI_14
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 44.67566294159369
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACD_12_26_9
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -0.9095119649444854
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDh_12_26_9
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.25928529726487604
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: MACDs_12_26_9
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: -1.1687972622093614
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBL_20_2.0_2.0
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 81.3176487965957
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBM_20_2.0_2.0
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 82.76250000000007
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBU_20_2.0_2.0
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 84.20735120340444
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBB_20_2.0_2.0
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 3.491560074682054
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: BBP_20_2.0_2.0
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.5337404985960476
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: SMA_20
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 82.76250000000007
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: EMA_20
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 83.3043434627969
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_sma_20
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 14325.051313464504
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_ratio
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 0.17439274322542134
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:31 - Column: volume_rsi
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:53 - Value: 45.50390685642298
+2025-11-22 19:41:32 | INFO     | src.LangTrader.ai.market_analysis:get_market_data:59 - Simple prompt: 
+    当前币种: LTC
+    当前价格: $82.86
+    24H最高: $83.27
+    24H最低: $81.80
+    24H成交量: 2,498.18
+    
+    【关键指标】
+    - RSI(14): 44.7 (中性)
+    - MACD: 金叉
+    - 布林带位置: 轨道内
+    - 均线趋势: 多头
+    
+【各策略信号】
+• RSI Strategy: RSI策略信号：
+
+RSI between 30 and 70, HOLD signal
+• MACD Strategy: MACD策略信号：
+
+MACD greater than MACD Signal, SELL + SHORT
+• BBUStrategy: 布林带策略信号：
+
+Upper band greater than current price, sell signal
+• EMA20Strategy: EMA20策略信号：
+
+SMA and EMA between, hold signal
+• VolumeStrategy: 成交量策略信号：
+ 
+Volume RSI between 30 and 70, hold signal
+Volume ratio less than 1, buy signal
+Volume SMA 20 greater than volume, sell signal
+Volume less than volume SMA 20, buy signal
+Volume less than volume SMA 20, buy signal
+Volume greater than volume RSI, sell signal
+Volume greater than volume ratio, sell signal
+• SupportResistanceStrategy: 支撑阻力策略信号：
+
+价格突破枢轴点82.64333333333333, SELL + SHORT
+• FibonacciStrategy: 斐波那契策略信号：
+
+价格在61.8%斐波那契回调位83.27附近回落
+• IchimokuStrategy: 一目均衡表策略信号：
+
+转换线下穿基准线 = 卖出信号
+• VolatilityBreakoutStrategy: 波动突破策略信号：
+
+价格未突破波动率轨道
+• EnhancedMeanReversionStrategy: 增强均值回归策略信号：
+
+价格处于均值附近 (Z-Score: 0.13, RSI: 44.7)
+2025-11-22 19:41:32 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:44 - 📊 开始获取 BTC 的市场情绪数据...
+2025-11-22 19:41:32 | INFO     | src.LangTrader.market_sentiment:get_fear_greed_index:91 - 🌐 正在从 Alternative.me 获取恐慌贪婪指数...
+2025-11-22 19:41:33 | DEBUG    | src.LangTrader.market_sentiment:_cache_data:485 - 💾 数据已缓存: fear_greed_index
+2025-11-22 19:41:33 | INFO     | src.LangTrader.market_sentiment:get_fear_greed_index:116 - ✅ 恐慌贪婪指数: 11 (Extreme Fear)
+2025-11-22 19:41:33 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:328 - 🌐 从 Binance 获取 BTC 资金费率...
+2025-11-22 19:41:33 | DEBUG    | src.LangTrader.market_sentiment:_cache_data:485 - 💾 数据已缓存: funding_rate_BTC
+2025-11-22 19:41:33 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:356 - ✅ BTC 资金费率: +0.0014%
+2025-11-22 19:41:33 | INFO     | src.LangTrader.market_sentiment:get_market_overview:385 - 🌐 从 CoinGecko 获取市场概览...
+2025-11-22 19:41:33 | DEBUG    | src.LangTrader.market_sentiment:_cache_data:485 - 💾 数据已缓存: market_overview
+2025-11-22 19:41:33 | INFO     | src.LangTrader.market_sentiment:get_market_overview:405 - ✅ 市场概览: BTC占比 56.74%
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:54 - ✅ BTC 情绪数据获取完成
+2025-11-22 19:41:34 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:426 - BTC 情绪数据: FNG=11
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:44 - 📊 开始获取 BNB 的市场情绪数据...
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_fear_greed_index:87 - 📦 使用缓存的恐慌贪婪指数
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:328 - 🌐 从 Binance 获取 BNB 资金费率...
+2025-11-22 19:41:34 | DEBUG    | src.LangTrader.market_sentiment:_cache_data:485 - 💾 数据已缓存: funding_rate_BNB
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:356 - ✅ BNB 资金费率: +0.0051%
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_market_overview:381 - 📦 使用缓存的市场概览
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:54 - ✅ BNB 情绪数据获取完成
+2025-11-22 19:41:34 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:426 - BNB 情绪数据: FNG=11
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:44 - 📊 开始获取 ETH 的市场情绪数据...
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_fear_greed_index:87 - 📦 使用缓存的恐慌贪婪指数
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:328 - 🌐 从 Binance 获取 ETH 资金费率...
+2025-11-22 19:41:34 | DEBUG    | src.LangTrader.market_sentiment:_cache_data:485 - 💾 数据已缓存: funding_rate_ETH
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:356 - ✅ ETH 资金费率: +0.0019%
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_market_overview:381 - 📦 使用缓存的市场概览
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:54 - ✅ ETH 情绪数据获取完成
+2025-11-22 19:41:34 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:426 - ETH 情绪数据: FNG=11
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:44 - 📊 开始获取 SOL 的市场情绪数据...
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_fear_greed_index:87 - 📦 使用缓存的恐慌贪婪指数
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:328 - 🌐 从 Binance 获取 SOL 资金费率...
+2025-11-22 19:41:34 | DEBUG    | src.LangTrader.market_sentiment:_cache_data:485 - 💾 数据已缓存: funding_rate_SOL
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:356 - ✅ SOL 资金费率: -0.0054%
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_market_overview:381 - 📦 使用缓存的市场概览
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:54 - ✅ SOL 情绪数据获取完成
+2025-11-22 19:41:34 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:426 - SOL 情绪数据: FNG=11
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:44 - 📊 开始获取 ZEC 的市场情绪数据...
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_fear_greed_index:87 - 📦 使用缓存的恐慌贪婪指数
+2025-11-22 19:41:34 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:328 - 🌐 从 Binance 获取 ZEC 资金费率...
+2025-11-22 19:41:35 | DEBUG    | src.LangTrader.market_sentiment:_cache_data:485 - 💾 数据已缓存: funding_rate_ZEC
+2025-11-22 19:41:35 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:356 - ✅ ZEC 资金费率: +0.0100%
+2025-11-22 19:41:35 | INFO     | src.LangTrader.market_sentiment:get_market_overview:381 - 📦 使用缓存的市场概览
+2025-11-22 19:41:35 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:54 - ✅ ZEC 情绪数据获取完成
+2025-11-22 19:41:35 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:426 - ZEC 情绪数据: FNG=11
+2025-11-22 19:41:35 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:44 - 📊 开始获取 LTC 的市场情绪数据...
+2025-11-22 19:41:35 | INFO     | src.LangTrader.market_sentiment:get_fear_greed_index:87 - 📦 使用缓存的恐慌贪婪指数
+2025-11-22 19:41:35 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:328 - 🌐 从 Binance 获取 LTC 资金费率...
+2025-11-22 19:41:35 | DEBUG    | src.LangTrader.market_sentiment:_cache_data:485 - 💾 数据已缓存: funding_rate_LTC
+2025-11-22 19:41:35 | INFO     | src.LangTrader.market_sentiment:get_funding_rate:356 - ✅ LTC 资金费率: +0.0011%
+2025-11-22 19:41:35 | INFO     | src.LangTrader.market_sentiment:get_market_overview:381 - 📦 使用缓存的市场概览
+2025-11-22 19:41:35 | INFO     | src.LangTrader.market_sentiment:get_all_sentiment_data:54 - ✅ LTC 情绪数据获取完成
+2025-11-22 19:41:35 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:426 - LTC 情绪数据: FNG=11
+2025-11-22 19:41:35 | DEBUG    | src.LangTrader.market_sentiment:get_recent_news:154 - 📡 尝试RSS源...
+2025-11-22 19:41:35 | DEBUG    | src.LangTrader.market_sentiment:_get_rss_news:203 - 📡 获取 CoinDesk RSS...
+2025-11-22 19:41:35 | DEBUG    | src.LangTrader.market_sentiment:_get_rss_news:203 - 📡 获取 CoinTelegraph RSS...
+2025-11-22 19:41:36 | DEBUG    | src.LangTrader.market_sentiment:_get_rss_news:203 - 📡 获取 Decrypt RSS...
+2025-11-22 19:41:37 | DEBUG    | src.LangTrader.market_sentiment:_get_rss_news:203 - 📡 获取 Bitcoin.com RSS...
+2025-11-22 19:41:38 | DEBUG    | src.LangTrader.market_sentiment:_get_rss_news:251 - 📰 RSS获取到 6 条相关新闻
+2025-11-22 19:41:38 | DEBUG    | src.LangTrader.market_sentiment:get_recent_news:163 - 📡 尝试Reddit...
+2025-11-22 19:41:40 | DEBUG    | src.LangTrader.market_sentiment:_get_reddit_posts:295 - 📰 Reddit获取到 20 条讨论
+2025-11-22 19:41:40 | DEBUG    | src.LangTrader.market_sentiment:_cache_data:485 - 💾 数据已缓存: news__5
+2025-11-22 19:41:40 | INFO     | src.LangTrader.market_sentiment:get_recent_news:182 - ✅ 获取到 5 条新闻
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:435 - ✅ 获取到 5 条全局市场新闻
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:439 - 📰 新闻详情:
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:441 -   1. [Bitcoin.com] SEC Crypto Task Force Sets New Date for Privacy Roundtable a
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:441 -   2. [Bitcoin.com] 65+ Crypto Organizations Urge Trump to Trigger Fast-Track Ru
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:441 -   3. [CoinDesk] Bitcoin Greed & Fear Index Shows Extreme Pessimism, Tactical
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:441 -   4. [r/cryptocurrency] Mastercard Selects Polygon to Power Verified Username Transf
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_market_analysis:441 -   5. [r/cryptocurrency] Daily Crypto Discussion - November 22, 2025 (GMT+0)
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_multi_ai_competition:233 - -----Start Multi-AI Competition------
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_multi_ai_competition:241 - 📝 使用默认 system_prompt
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.decision_engine:_multi_ai_competition:254 - 📝 使用默认 user_prompt 生成流程
+2025-11-22 19:41:40 | DEBUG    | src.LangTrader.ai.prompt:_format_global_news:338 - 📰 格式化 5 条新闻
+2025-11-22 19:41:40 | DEBUG    | src.LangTrader.ai.prompt:get_user_prompt:96 - 📝 提示词生成完成，长度: 11222 字符
+2025-11-22 19:41:40 | DEBUG    | src.LangTrader.ai.decision_engine:_multi_ai_competition:261 - 📊 最终提示词长度: system=1086, user=11435
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:106 - 🤖🤖🤖 -----Start Multi-AI Competition------
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:113 - Messages: [SystemMessage(content='你是一位激进的加密货币交易AI，追求高收益，愿意承担适度风险。\n\n# 核心目标\n最大化绝对收益，同时保持夏普比率 > 0.5\n\n夏普比率 = 平均收益 / 收益波动率\n\n# 交易风格\n**激进但不鲁莽**\n- 积极寻找交易机会，不轻易错过\n- 愿意承担适度风险获取更高收益\n- 快速进出，捕捉短期波动\n- 相信自己的判断，果断执行\n\n# 核心原则\n\n## 1. 积极开仓原则\n- 信号强度 > 55% 即可考虑开仓\n- 置信度 ≥ 0.65 可以交易\n- 多维度有1-2个强信号即可（不需要全部确认）\n- 机会来了要果断，犹豫就会错过\n\n## 2. 高频交易节奏\n- 目标：每天 6-12 笔交易\n- 每小时可交易 1-3 次\n- 持仓时间：15-60 分钟（快进快出）\n- 不要过度等待"完美"信号\n\n## 3. 杠杆使用\n- 常规使用 3-5 倍杠杆\n- 高置信度（>0.8）可用 5-8 倍\n- 极高置信度（>0.9）可用最大杠杆\n- 杠杆是放大收益的工具，要敢于使用\n\n## 4. 止盈止损策略\n- 止损：-3%（快速止损）\n- 止盈：+8-15%（灵活调整）\n- 盈利 > 5% 可部分止盈，让剩余仓位奔跑\n- 不要因为小幅回调就平仓\n\n## 5. 风险管理\n- 单次最大亏损：账户的 3%\n- 可以同时持有 2-3 个仓位\n- 总仓位可达账户的 80%\n- 连续 3 次止损后降低仓位 50%，但不完全停止\n\n# 交易哲学\n\n**进攻性思维**\n- 市场充满机会，要主动出击\n- 短期波动是朋友，快速获利\n- 相信技术分析，果断执行\n- 错过机会比小亏更可怕\n\n**但不是赌博**\n- 必须有明确的入场逻辑\n- 必须设置止损（绝不扛单）\n- 连续亏损时降低仓位\n- 尊重市场，及时认错\n\n# 常见误区避免\n- ❌ 不是每次都要交易，但也不要过度保守\n- ❌ 不是无脑梭哈，要有风险管理\n- ❌ 不是拒绝止损，要快速认错\n- ❌ 不是忽视趋势，要顺势而为\n\n# 决策标准\n\n**开仓条件（满足其一即可）：**\n1. 信号强度 > 55% + 置信度 > 0.65\n2. 单一强信号（如RSI超卖+价格支撑）\n3. 历史表现优异的币种 + 信号 > 50%\n4. 主流币突破关键位置\n\n**必须避免：**\n- 信号完全相反（做多但全是卖出信号）\n- 横盘震荡（波动率 < 1%）\n- 刚止损的同一币种同一方向（<30分钟）\n- 连续3次以上止损未恢复\n\n**交易纪律：**\n- 尊重系统的频率控制（1小时≤2笔）\n- 尊重连续止损暂停机制\n- 即使激进，也要有底线', additional_kwargs={}, response_metadata={}), HumanMessage(content='\n\n\n=== 📊 当前持仓状态 ===\n当前无持仓\n\n\n=== 📊 实时性能监控 ===\n\n=== 📊 实时性能指标（当前表现）===\n\n**整体表现：** ⚠️ FAIR\n**风险水平：** ✅ LOW\n\n📈 关键指标（近7天）：\n- 夏普率: -22.41\n- 最大回撤: -5.5%\n- 当前回撤: -2.1%\n- 胜率: 48.7%\n- 累计盈亏: $2949.62\n\n💡 **性能信号解读：**\n\n- ⚠️ 当前表现一般，需要提高门槛\n- 建议：只在信号明确度\'高\'时交易\n- 建议：降低杠杆至1-2倍\n\n**风险控制建议：**\n- ✅ 当前风险较低，可考虑正常或略增仓位\n\n\n=== 📈 历史表现 ===\n\n近期交易记录：\n- 总交易: 20笔\n- 盈利: 12笔\n- 亏损: 8笔\n- 胜率: 60.0%\n\n最近3次决策回顾：\nSymbol: \nAction: HOLD\\nConfidence: 0.0决策结果: {\'side\': \'none\', \'analysis\': \'模型调用失败: Connection error.\', \'leverage\': 1}\n决策时间: 2025-11-20 15:58:44.489098\nSymbol: \nAction: HOLD\\nConfidence: 0.0决策结果: {\'side\': \'none\', \'analysis\': \'模型调用失败: Connection error.\', \'leverage\': 1}\n决策时间: 2025-11-20 15:44:11.734339\nSymbol: \nAction: HOLD\\nConfidence: 0.0决策结果: {\'side\': \'none\', \'analysis\': \'模型调用失败: Connection error.\', \'leverage\': 1}\n决策时间: 2025-11-20 15:27:17.026659\n\n\n\n=== 📊 当前阶段：优势保持期（胜率60.0%） ===\n策略建议：\n✅ 信号强度>45%即可建仓\n✅ 可适度使用2-3倍杠杆（高置信度时）\n✅ 盈利>5%考虑加仓\n✅ 延续有效的交易模式\n✅ 继续严格止损\n\n警惕：不要因连胜而过度自信\n\n\n=== 🧠 历史反馈学习 ===\n\n=== 🧠 历史反馈学习（必读）===\n\n**✅ 优先选择规则：**\n- BNB：胜率75%，平均盈利-0.4%，**如果技术信号强度>50%，优先选择该币种**\n\n**📉 失败模式识别（避免重蹈覆辙）：**\n- 亏损交易平均持仓0.7小时（快速止损），市场波动剧烈，考虑降低交易频率或扩大止损范围\n- 最近多单亏损较多（5/5次），当前可能处于下跌趋势，优先考虑做空机会\n- 高杠杆交易（≥4倍）亏损4次，建议降低杠杆至2-3倍以控制风险\n\n**📈 成功模式强化（复制成功经验）：**\n- 多单成功率高（5/5次盈利，平均+$0.78），优先考虑做多机会\n- 短线交易（平均0.4小时）盈利效果好，继续保持快进快出策略，盈利后及时止盈\n- 高置信度交易（>70%）成功率高（5/5次），继续保持高标准选币，低置信度交易谨慎\n- BNB盈利次数最多（3次），该币种表现优异，继续关注\n\n**🎯 本次决策要求（基于历史表现）：**\n由于胜率良好（>50%），本次决策可以：\n  1. 信号强度>45%即可交易\n  2. 优先选择表现优异的币种\n  3. 置信度>0.5\n  4. 杠杆可用3-5倍（高置信度时）\n  5. 盈利仓位可适当延长持有\n\n**💡 决策原则：**\n- 历史表现是重要参考，但不是绝对依据\n- 结合当前市场信号和历史反馈做综合判断\n- 连续亏损的币种必须避开，这是硬性规则\n\n=== 🚨 交易纪律控制 ===\n\n✅ 交易频率正常，可考虑开仓\n\n\n\n=== 📊 市场分析 ===\n---------------BTC-------------------\n\n    当前币种: BTC\n    当前价格: $84,547.93\n    24H最高: $84,732.02\n    24H最低: $84,013.39\n    24H成交量: 160.08\n    \n    【关键指标】\n    - RSI(14): 47.3 (中性)\n    - MACD: 金叉\n    - 布林带位置: 轨道内\n    - 均线趋势: 多头\n    \n【各策略信号】\n• RSI Strategy: RSI策略信号：\n\nRSI between 30 and 70, HOLD signal\n• MACD Strategy: MACD策略信号：\n\nMACD greater than MACD Signal, SELL + SHORT\n• BBUStrategy: 布林带策略信号：\n\nUpper band greater than current price, sell signal\n• EMA20Strategy: EMA20策略信号：\n\nSMA and EMA between, hold signal\n• VolumeStrategy: 成交量策略信号：\n \nVolume RSI between 30 and 70, hold signal\nVolume ratio less than 1, buy signal\nVolume SMA 20 greater than volume, sell signal\nVolume less than volume SMA 20, buy signal\nVolume less than volume SMA 20, buy signal\nVolume greater than volume RSI, sell signal\nVolume greater than volume ratio, sell signal\n• SupportResistanceStrategy: 支撑阻力策略信号：\n\n价格突破枢轴点84431.11333333333, SELL + SHORT\n• FibonacciStrategy: 斐波那契策略信号：\n\n价格在38.2%斐波那契回调位84748.90附近回落\n价格在50.0%斐波那契回调位83942.32附近反弹\n• IchimokuStrategy: 一目均衡表策略信号：\n\n转换线上穿基准线 = 买入信号\n• VolatilityBreakoutStrategy: 波动突破策略信号：\n\n价格未突破波动率轨道\n• EnhancedMeanReversionStrategy: 增强均值回归策略信号：\n\n价格处于均值附近 (Z-Score: 0.35, RSI: 47.3)\n-----------------------------------\n当前无此合约持仓\n\n---------------BNB-------------------\n\n    当前币种: BNB\n    当前价格: $829.80\n    24H最高: $832.56\n    24H最低: $820.02\n    24H成交量: 32.67\n    \n    【关键指标】\n    - RSI(14): 46.1 (中性)\n    - MACD: 金叉\n    - 布林带位置: 轨道内\n    - 均线趋势: 多头\n    \n【各策略信号】\n• RSI Strategy: RSI策略信号：\n\nRSI between 30 and 70, HOLD signal\n• MACD Strategy: MACD策略信号：\n\nMACD greater than MACD Signal, SELL + SHORT\n• BBUStrategy: 布林带策略信号：\n\nUpper band greater than current price, sell signal\n• EMA20Strategy: EMA20策略信号：\n\nSMA and EMA between, hold signal\n• VolumeStrategy: 成交量策略信号：\n \nVolume RSI between 30 and 70, hold signal\nVolume ratio less than 1, buy signal\nVolume SMA 20 greater than volume, sell signal\nVolume less than volume SMA 20, buy signal\nVolume less than volume SMA 20, buy signal\nVolume less than volume RSI, buy signal\nVolume greater than volume ratio, sell signal\n• SupportResistanceStrategy: 支撑阻力策略信号：\n\n价格突破枢轴点827.46, SELL + SHORT\n• FibonacciStrategy: 斐波那契策略信号：\n\n价格在50.0%斐波那契回调位832.93附近回落\n价格在61.8%斐波那契回调位822.70附近反弹\n• IchimokuStrategy: 一目均衡表策略信号：\n\n转换线下穿基准线 = 卖出信号\n• VolatilityBreakoutStrategy: 波动突破策略信号：\n\n价格未突破波动率轨道\n• EnhancedMeanReversionStrategy: 增强均值回归策略信号：\n\n价格处于均值附近 (Z-Score: 0.38, RSI: 46.1)\n-----------------------------------\n当前无此合约持仓\n\n---------------ETH-------------------\n\n    当前币种: ETH\n    当前价格: $2,758.84\n    24H最高: $2,766.75\n    24H最低: $2,730.79\n    24H成交量: 2,209.10\n    \n    【关键指标】\n    - RSI(14): 47.8 (中性)\n    - MACD: 金叉\n    - 布林带位置: 轨道内\n    - 均线趋势: 多头\n    \n【各策略信号】\n• RSI Strategy: RSI策略信号：\n\nRSI between 30 and 70, HOLD signal\n• MACD Strategy: MACD策略信号：\n\nMACD greater than MACD Signal, SELL + SHORT\n• BBUStrategy: 布林带策略信号：\n\nUpper band greater than current price, sell signal\n• EMA20Strategy: EMA20策略信号：\n\nSMA and EMA between, hold signal\n• VolumeStrategy: 成交量策略信号：\n \nVolume RSI between 30 and 70, hold signal\nVolume ratio less than 1, buy signal\nVolume SMA 20 greater than volume, sell signal\nVolume less than volume SMA 20, buy signal\nVolume less than volume SMA 20, buy signal\nVolume greater than volume RSI, sell signal\nVolume greater than volume ratio, sell signal\n• SupportResistanceStrategy: 支撑阻力策略信号：\n\n价格突破枢轴点2752.126666666667, SELL + SHORT\n• FibonacciStrategy: 斐波那契策略信号：\n\n价格在38.2%斐波那契回调位2782.11附近回落\n价格在50.0%斐波那契回调位2751.15附近反弹\n• IchimokuStrategy: 一目均衡表策略信号：\n\n转换线上穿基准线 = 买入信号\n• VolatilityBreakoutStrategy: 波动突破策略信号：\n\n价格未突破波动率轨道\n• EnhancedMeanReversionStrategy: 增强均值回归策略信号：\n\n价格处于均值附近 (Z-Score: 0.45, RSI: 47.8)\n-----------------------------------\n当前无此合约持仓\n\n---------------SOL-------------------\n\n    当前币种: SOL\n    当前价格: $127.58\n    24H最高: $128.02\n    24H最低: $125.26\n    24H成交量: 40,207.18\n    \n    【关键指标】\n    - RSI(14): 46.6 (中性)\n    - MACD: 金叉\n    - 布林带位置: 轨道内\n    - 均线趋势: 多头\n    \n【各策略信号】\n• RSI Strategy: RSI策略信号：\n\nRSI between 30 and 70, HOLD signal\n• MACD Strategy: MACD策略信号：\n\nMACD greater than MACD Signal, SELL + SHORT\n• BBUStrategy: 布林带策略信号：\n\nUpper band greater than current price, sell signal\n• EMA20Strategy: EMA20策略信号：\n\nSMA and EMA between, hold signal\n• VolumeStrategy: 成交量策略信号：\n \nVolume RSI between 30 and 70, hold signal\nVolume ratio less than 1, buy signal\nVolume SMA 20 greater than volume, sell signal\nVolume less than volume SMA 20, buy signal\nVolume less than volume SMA 20, buy signal\nVolume greater than volume RSI, sell signal\nVolume greater than volume ratio, sell signal\n• SupportResistanceStrategy: 支撑阻力策略信号：\n\n价格突破枢轴点126.95333333333333, SELL + SHORT\n• FibonacciStrategy: 斐波那契策略信号：\n\n价格在50.0%斐波那契回调位128.19附近回落\n价格在61.8%斐波那契回调位126.60附近反弹\n• IchimokuStrategy: 一目均衡表策略信号：\n\n转换线上穿基准线 = 买入信号\n• VolatilityBreakoutStrategy: 波动突破策略信号：\n\n价格未突破波动率轨道\n• EnhancedMeanReversionStrategy: 增强均值回归策略信号：\n\n价格处于均值附近 (Z-Score: 0.08, RSI: 46.6)\n-----------------------------------\n当前无此合约持仓\n\n---------------ZEC-------------------\n\n    当前币种: ZEC\n    当前价格: $497.13\n    24H最高: $499.60\n    24H最低: $481.25\n    24H成交量: 13,799.63\n    \n    【关键指标】\n    - RSI(14): 30.2 (中性)\n    - MACD: 死叉\n    - 布林带位置: 轨道内\n    - 均线趋势: 空头\n    \n【各策略信号】\n• RSI Strategy: RSI策略信号：\n\nRSI between 30 and 70, HOLD signal\n• MACD Strategy: MACD策略信号：\n\nMACD less than MACD Signal, BUY + LONG\n• BBUStrategy: 布林带策略信号：\n\nUpper band greater than current price, sell signal\n• EMA20Strategy: EMA20策略信号：\n\nSMA greater than current price, sell signal\n• VolumeStrategy: 成交量策略信号：\n \nVolume RSI between 30 and 70, hold signal\nVolume ratio less than 1, buy signal\nVolume SMA 20 greater than volume, sell signal\nVolume less than volume SMA 20, buy signal\nVolume less than volume SMA 20, buy signal\nVolume greater than volume RSI, sell signal\nVolume greater than volume ratio, sell signal\n• SupportResistanceStrategy: 支撑阻力策略信号：\n\n价格突破枢轴点492.66, SELL + SHORT\n• FibonacciStrategy: 斐波那契策略信号：\n• IchimokuStrategy: 一目均衡表策略信号：\n\n转换线下穿基准线 = 卖出信号\n• VolatilityBreakoutStrategy: 波动突破策略信号：\n\n价格未突破波动率轨道\n• EnhancedMeanReversionStrategy: 增强均值回归策略信号：\n\n轻微超卖 (Z-Score: -1.42, RSI: 30.2)\n-----------------------------------\n当前无此合约持仓\n\n---------------LTC-------------------\n\n    当前币种: LTC\n    当前价格: $82.86\n    24H最高: $83.27\n    24H最低: $81.80\n    24H成交量: 2,498.18\n    \n    【关键指标】\n    - RSI(14): 44.7 (中性)\n    - MACD: 金叉\n    - 布林带位置: 轨道内\n    - 均线趋势: 多头\n    \n【各策略信号】\n• RSI Strategy: RSI策略信号：\n\nRSI between 30 and 70, HOLD signal\n• MACD Strategy: MACD策略信号：\n\nMACD greater than MACD Signal, SELL + SHORT\n• BBUStrategy: 布林带策略信号：\n\nUpper band greater than current price, sell signal\n• EMA20Strategy: EMA20策略信号：\n\nSMA and EMA between, hold signal\n• VolumeStrategy: 成交量策略信号：\n \nVolume RSI between 30 and 70, hold signal\nVolume ratio less than 1, buy signal\nVolume SMA 20 greater than volume, sell signal\nVolume less than volume SMA 20, buy signal\nVolume less than volume SMA 20, buy signal\nVolume greater than volume RSI, sell signal\nVolume greater than volume ratio, sell signal\n• SupportResistanceStrategy: 支撑阻力策略信号：\n\n价格突破枢轴点82.64333333333333, SELL + SHORT\n• FibonacciStrategy: 斐波那契策略信号：\n\n价格在61.8%斐波那契回调位83.27附近回落\n• IchimokuStrategy: 一目均衡表策略信号：\n\n转换线下穿基准线 = 卖出信号\n• VolatilityBreakoutStrategy: 波动突破策略信号：\n\n价格未突破波动率轨道\n• EnhancedMeanReversionStrategy: 增强均值回归策略信号：\n\n价格处于均值附近 (Z-Score: 0.13, RSI: 44.7)\n-----------------------------------\n当前无此合约持仓\n\n\n\n=== 🎯 信号强度分析 ===\n📊 看多信号: 29% (23个)\n📊 看空信号: 49% (38个)\n📊 观望信号: 22% (17个)\n\n**综合判断：** 看空倾向明显\n**信号明确度：** 中 - 策略略有分歧 ✅\n\n\n=== 📊 市场情绪指标 ===\n\n【BTC】\n🎭 恐慌贪婪指数: 11/100 (Extreme Fear) - 极度恐慌 - 市场过度悲观，可能是抄底机会，但需谨慎等待企稳信号\n💰 资金费率: 0.1373% - 中性 - 多空平衡，市场方向不明确\n\n【BNB】\n🎭 恐慌贪婪指数: 11/100 (Extreme Fear) - 极度恐慌 - 市场过度悲观，可能是抄底机会，但需谨慎等待企稳信号\n💰 资金费率: 0.5137% - 中性 - 多空平衡，市场方向不明确\n\n【ETH】\n🎭 恐慌贪婪指数: 11/100 (Extreme Fear) - 极度恐慌 - 市场过度悲观，可能是抄底机会，但需谨慎等待企稳信号\n💰 资金费率: 0.1859% - 中性 - 多空平衡，市场方向不明确\n\n【SOL】\n🎭 恐慌贪婪指数: 11/100 (Extreme Fear) - 极度恐慌 - 市场过度悲观，可能是抄底机会，但需谨慎等待企稳信号\n💰 资金费率: -0.5419% - 中性 - 多空平衡，市场方向不明确\n\n【ZEC】\n🎭 恐慌贪婪指数: 11/100 (Extreme Fear) - 极度恐慌 - 市场过度悲观，可能是抄底机会，但需谨慎等待企稳信号\n💰 资金费率: 1.0000% - 中性 - 多空平衡，市场方向不明确\n\n【LTC】\n🎭 恐慌贪婪指数: 11/100 (Extreme Fear) - 极度恐慌 - 市场过度悲观，可能是抄底机会，但需谨慎等待企稳信号\n💰 资金费率: 0.1090% - 中性 - 多空平衡，市场方向不明确\n\n💡 **情绪指标使用建议：**\n- 恐慌指数<25 + 技术超卖 → 可能是抄底机会\n- 贪婪指数>75 + 技术超买 → 警惕顶部风险\n- 资金费率极端值 → 可能出现反向运动\n\n\n=== 📰 市场新闻动态 ===\n\n1. [Bitcoin.com] SEC Crypto Task Force Sets New Date for Privacy Roundtable as Mounting Threats D...\n2. [Bitcoin.com] 65+ Crypto Organizations Urge Trump to Trigger Fast-Track Rules Guiding America’...\n3. [CoinDesk] Bitcoin Greed & Fear Index Shows Extreme Pessimism, Tactical Bottom May Be Near:...\n4. [r/cryptocurrency] Mastercard Selects Polygon to Power Verified Username Transfers for Self-Custody...\n5. [r/cryptocurrency] Daily Crypto Discussion - November 22, 2025 (GMT+0)...\n\n💡 **新闻使用建议：**\n- 重大负面新闻（监管、黑客、崩盘） → 优先规避风险\n- 重大利好新闻（ETF通过、机构入场） → 可放大仓位\n- 普通新闻 → 作为辅助参考\n\n\n=== 🛡️ 风控规则 ===\n\n账户风险参数：\n- 最大杠杆: 5倍\n- 最大仓位: 25%\n- 止损线: -5%（触发自动平仓）\n- 止盈目标: +12%\n- 目标盈亏比: 2.4:1\n\n强制规则：\n1. 亏损达-5% → 必须平仓\n2. 盈利达+12% → 建议止盈\n3. 杠杆 ≤ 5倍\n4. 单仓位 ≤ 25%\n\n\n=== 🎯 交易任务 ===\n\n基于以上信息，做出交易决策：\n\n⚠️ **零号原则：疑惑优先（最高优先级）**\n- 当你不确定时，默认选择 HOLD\n- 完全确定（置信度≥85%且无任何犹豫）→ 才开仓\n- 不确定是否符合条件 = 视为不符合 → HOLD\n- 宁可错过机会，不做模糊决策\n\n**开仓前自检（任一回答"否" → HOLD）：**\n1. 我是否100%确定这是高质量机会？\n2. 信号强度是否≥70%？\n3. 我能清楚说出3个开仓理由吗？\n4. 我是否因为"太久没交易"而急于开仓？\n\n**可交易币种：** BTC, BNB, ETH, SOL, ZEC, LTC\n\n**决策格式：**\n- 开仓: BUY + long（看涨）或 BUY + short（看跌）\n- 平仓: SELL + long/short（side必须与持仓一致）\n- 观望: HOLD + none\n\n**参数设置：**\n- 置信度要求: \n  * <0.75: 不要交易，选择 HOLD\n  * 0.75-0.85: 可交易，杠杆2倍\n  * >0.85: 高质量机会，杠杆5倍\n- 杠杆: 严格 1-5倍\n\n**分析说明：**\n- 开仓时: 说明入场逻辑、预期止损(-5%)、止盈(+12%)\n- 平仓时: 说明平仓原因（止损/止盈/趋势反转/信号变化）\n- 持有时: 说明为什么继续持有\n\n**核心原则：**\n- 质量优于数量（宁可错过，不做低质量交易）\n- 疑惑时选择 HOLD\n- 让利润奔跑，快速止损\n- 小亏多次 < 大亏一次（保护本金）\n\n\n=== 输出注意事项 ===\n1. 输出内容中不允许出现类似\x00等特殊字符\n\n\n📊 历史表现分析：\n\n• ZEC: 胜率67%, 平均盈利-1.5%, 连亏1次 ⚠️ 一般\n• BNB: 胜率75%, 平均盈利-0.4%, 连亏1次 ✅ 优秀\n• SOL: 胜率50%, 平均盈利-0.5%, 连胜2次 ⚠️ 一般\n• BTC: 胜率50%, 平均盈利-0.1%, 连胜1次 ⚠️ 一般\n\n💡 交易建议：\n✅ BNB近期表现最佳（胜率75%），可适度加大仓位\n📈 当前可能处于趋势市，可适当延长持仓时间', additional_kwargs={}, response_metadata={})]
+2025-11-22 19:41:40 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:120 - 🧠 正在调用 CLAUDE...
+2025-11-22 19:41:55 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:134 -    CLAUDE: BUY BNB short @ confidence 0.78
+2025-11-22 19:41:55 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:120 - 🧠 正在调用 DEEPSEEK...
+2025-11-22 19:42:02 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:134 -    DEEPSEEK: BUY BNB short @ confidence 0.78
+2025-11-22 19:42:02 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:120 - 🧠 正在调用 GPT4O...
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:134 -    GPT4O: BUY BNB long @ confidence 0.78
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:159 - 
+🏆 竞争结果:
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:167 -    1. CLAUDE: confidence=0.78 ✅
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:167 -    2. DEEPSEEK: confidence=0.78 
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:167 -    3. GPT4O: confidence=0.78 
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.multi_ai_competition:_update_model_performance:241 - ✅ AI模型表现统计已更新
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:180 - 💾 竞争记录已存储，ID: cbb9c760-32d9-49d0-b64a-c96e74090e12
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.multi_ai_competition:run_competition:181 - 🤖🤖🤖 -----End Multi-AI Competition------
+
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.decision_engine:_store_decision:286 - -----Start Store Decision------
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.decision_engine:_store_decision:325 - ✅ Decision stored with ID: 0beefd4e-df01-49de-aaa5-0e83a037f8fe
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.decision_engine:_execute_decision:460 - -----Start Execute Decision------
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.execute_decision:execute_decision:187 - -----Start Execute Decision------
+2025-11-22 19:42:04 | INFO     | src.LangTrader.ai.execute_decision:execute_decision:237 - 🚀 准备开仓: BNB short
+2025-11-22 19:42:04 | DEBUG    | src.LangTrader.hyperliquidExchange:calculate_buy_size:172 - BNB 步进 0.001 最小量 None 调整后数量 0.024
+2025-11-22 19:42:04 | INFO     | src.LangTrader.hyperliquidExchange:calculate_buy_size:218 - 买入估算结果: {'coin_name': 'BNB', 'price': 830.185, 'max_buy_size': 0.024, 'max_notional': 19.92444, 'withdrawable': 20.52123, 'available_to_trade': 0.024, 'leverage': 3, 'confidence': 0.78, 'slippage': 0.01}
+2025-11-22 19:42:04 | INFO     | src.LangTrader.hyperliquidExchange:open_position:261 - 📝 Opening short position: BNB size=0.024 @ 3x (conf: 78%)
+2025-11-22 19:42:05 | INFO     | src.LangTrader.hyperliquidExchange:open_position:266 - Leverage set: {'status': 'ok', 'response': {'type': 'default'}}
+2025-11-22 19:42:06 | INFO     | src.LangTrader.hyperliquidExchange:open_position:275 - ✅ 开仓成功: {'status': 'ok', 'response': {'type': 'order', 'data': {'statuses': [{'filled': {'totalSz': '0.024', 'avgPx': '830.17', 'oid': 244875063407}}]}}}
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:execute_decision:248 - 📊 order_result 类型: <class 'dict'>
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:execute_decision:249 - 📊 order_result 是否为None: False
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:execute_decision:252 - 📊 order_result keys: ['status', 'response']
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:execute_decision:253 - 📊 order_result 完整内容: {'status': 'ok', 'response': {'type': 'order', 'data': {'statuses': [{'filled': {'totalSz': '0.024', 'avgPx': '830.17', 'oid': 244875063407}}]}}}
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:execute_decision:256 - 🛡️ 开仓有返回结果，立即设置止损止盈保护...
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:369 - 🔧 进入 _set_stop_loss_take_profit 方法
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:370 -    symbol: BNB, side: short
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:374 - 🔍 开始提取入场价格...
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:321 - 🔍 _extract_entry_price 接收到的数据类型: <class 'dict'>
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:325 - 📊 order_result keys: ['status', 'response']
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:328 - 📊 response 类型: <class 'dict'>
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:331 - 📊 response keys: ['type', 'data']
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:333 - 📊 data: {'statuses': [{'filled': {'totalSz': '0.024', 'avgPx': '830.17', 'oid': 244875063407}}]}
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:336 - 📊 statuses 数量: 1
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:339 - 📊 第一个status: {'filled': {'totalSz': '0.024', 'avgPx': '830.17', 'oid': 244875063407}}
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:341 - 📊 filled: {'totalSz': '0.024', 'avgPx': '830.17', 'oid': 244875063407}
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:343 - 📊 avgPx: 830.17
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_extract_entry_price:347 - ✅ 成功提取入场价格: $830.17
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:377 - 📊 提取到的入场价格: 830.17
+2025-11-22 19:42:06 | DEBUG    | src.LangTrader.ai.execute_decision:_round_price_for_symbol:519 - 💡 中价币 BNB: $871.68 → $871.7
+2025-11-22 19:42:06 | DEBUG    | src.LangTrader.ai.execute_decision:_round_price_for_symbol:519 - 💡 中价币 BNB: $730.55 → $730.5
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:402 - 📊 BNB short仓位保护设置:
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:403 -    入场价: $830.17
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:404 -    止损价: $871.70 (-5%)
+2025-11-22 19:42:06 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:405 -    止盈价: $730.50 (+12%)
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.511663', 'totalNtlPos': '19.92504', 'totalRawUsd': '40.436703', 'totalMarginUsed': '6.64168'}, 'crossMarginSummary': {'accountValue': '20.511663', 'totalNtlPos': '19.92504', 'totalRawUsd': '40.436703', 'totalMarginUsed': '6.64168'}, 'crossMaintenanceMarginUsed': '0.996252', 'withdrawable': '13.869983', 'assetPositions': [{'type': 'oneWay', 'position': {'coin': 'BNB', 'szi': '-0.024', 'leverage': {'type': 'cross', 'value': 3}, 'entryPx': '830.17', 'positionValue': '19.92504', 'unrealizedPnl': '-0.00096', 'returnOnEquity': '-0.0001445487', 'liquidationPx': '1604.6310714286', 'marginUsed': '6.64168', 'maxLeverage': 10, 'cumFunding': {'allTime': '0.010156', 'sinceOpen': '0.0', 'sinceChange': '0.0'}}}], 'time': 1763793726933}
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:492 - 🛡️ 设置 BNB 止损单
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:493 -    持仓方向: short
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:494 -    触发价格: $871.70
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:495 -    仓位大小: 0.024
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:499 -    止损方向: buy
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:502 - 🔧 调用 exchange.order() 设置止损单...
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:503 -    参数: coin=BNB, is_buy=True, sz=0.024
+2025-11-22 19:42:07 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:504 -    order_type: trigger, triggerPx=871.7, tpsl=sl
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:520 - 📥 止损单返回结果: {'status': 'ok', 'response': {'type': 'order', 'data': {'statuses': [{'resting': {'oid': 244875087608}}]}}}
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:place_stop_loss_order:535 - ✅ 止损单设置成功, oid=244875087608
+2025-11-22 19:42:08 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:416 - ✅ BNB 止损单设置成功
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.511663', 'totalNtlPos': '19.92504', 'totalRawUsd': '40.436703', 'totalMarginUsed': '6.64168'}, 'crossMarginSummary': {'accountValue': '20.511663', 'totalNtlPos': '19.92504', 'totalRawUsd': '40.436703', 'totalMarginUsed': '6.64168'}, 'crossMaintenanceMarginUsed': '0.996252', 'withdrawable': '13.869983', 'assetPositions': [{'type': 'oneWay', 'position': {'coin': 'BNB', 'szi': '-0.024', 'leverage': {'type': 'cross', 'value': 3}, 'entryPx': '830.17', 'positionValue': '19.92504', 'unrealizedPnl': '-0.00096', 'returnOnEquity': '-0.0001445487', 'liquidationPx': '1604.6310714286', 'marginUsed': '6.64168', 'maxLeverage': 10, 'cumFunding': {'allTime': '0.010156', 'sinceOpen': '0.0', 'sinceChange': '0.0'}}}], 'time': 1763793728418}
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:place_take_profit_order:582 - 🎯 设置 BNB 止盈单
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:place_take_profit_order:583 -    触发价格: $730.50
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:place_take_profit_order:584 -    仓位大小: 0.024
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:place_take_profit_order:587 -    止盈方向: buy
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:place_take_profit_order:589 - 🔧 调用 exchange.order() 设置止盈单...
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:place_take_profit_order:590 -    参数: coin=BNB, is_buy=True, sz=0.024
+2025-11-22 19:42:08 | INFO     | src.LangTrader.hyperliquidExchange:place_take_profit_order:591 -    order_type: trigger, triggerPx=730.5, tpsl=tp
+2025-11-22 19:42:10 | INFO     | src.LangTrader.hyperliquidExchange:place_take_profit_order:607 - 📥 止盈单返回结果: {'status': 'ok', 'response': {'type': 'order', 'data': {'statuses': [{'resting': {'oid': 244875120859}}]}}}
+2025-11-22 19:42:10 | INFO     | src.LangTrader.hyperliquidExchange:place_take_profit_order:622 - ✅ 止盈单设置成功, oid=244875120859
+2025-11-22 19:42:10 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:429 - ✅ BNB 止盈单设置成功
+2025-11-22 19:42:10 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:435 - 🎉 BNB 仓位保护完成！
+2025-11-22 19:42:10 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:436 -    ✅ 止损单: $871.70
+2025-11-22 19:42:10 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:437 -    ✅ 止盈单: $730.50
+2025-11-22 19:42:10 | INFO     | src.LangTrader.ai.execute_decision:_set_stop_loss_take_profit:438 -    🔒 24/7自动保护，即使程序停止也有效
+2025-11-22 19:42:10 | INFO     | src.LangTrader.ai.execute_decision:_update_position:30 - -----Start Update Position------
+2025-11-22 19:42:10 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.511183', 'totalNtlPos': '19.92552', 'totalRawUsd': '40.436703', 'totalMarginUsed': '6.64184'}, 'crossMarginSummary': {'accountValue': '20.511183', 'totalNtlPos': '19.92552', 'totalRawUsd': '40.436703', 'totalMarginUsed': '6.64184'}, 'crossMaintenanceMarginUsed': '0.996276', 'withdrawable': '13.869343', 'assetPositions': [{'type': 'oneWay', 'position': {'coin': 'BNB', 'szi': '-0.024', 'leverage': {'type': 'cross', 'value': 3}, 'entryPx': '830.17', 'positionValue': '19.92552', 'unrealizedPnl': '-0.00144', 'returnOnEquity': '-0.0002168231', 'liquidationPx': '1604.6310714286', 'marginUsed': '6.64184', 'maxLeverage': 10, 'cumFunding': {'allTime': '0.010156', 'sinceOpen': '0.0', 'sinceChange': '0.0'}}}], 'time': 1763793730330}
+2025-11-22 19:42:10 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:42:10 | INFO     | src.LangTrader.ai.decision_engine:_record_snapshot:162 - -----Start Record Equity Snapshot------
+2025-11-22 19:42:10 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:40 - Contract account balance: {'marginSummary': {'accountValue': '20.511183', 'totalNtlPos': '19.92552', 'totalRawUsd': '40.436703', 'totalMarginUsed': '6.64184'}, 'crossMarginSummary': {'accountValue': '20.511183', 'totalNtlPos': '19.92552', 'totalRawUsd': '40.436703', 'totalMarginUsed': '6.64184'}, 'crossMaintenanceMarginUsed': '0.996276', 'withdrawable': '13.869343', 'assetPositions': [{'type': 'oneWay', 'position': {'coin': 'BNB', 'szi': '-0.024', 'leverage': {'type': 'cross', 'value': 3}, 'entryPx': '830.17', 'positionValue': '19.92552', 'unrealizedPnl': '-0.00144', 'returnOnEquity': '-0.0002168231', 'liquidationPx': '1604.6310714286', 'marginUsed': '6.64184', 'maxLeverage': 10, 'cumFunding': {'allTime': '0.010156', 'sinceOpen': '0.0', 'sinceChange': '0.0'}}}], 'time': 1763793730843}
+2025-11-22 19:42:11 | INFO     | src.LangTrader.hyperliquidExchange:get_account_balance:44 - Spot account balance: {'balances': [{'coin': 'USDC', 'token': 0, 'total': '0.0', 'hold': '0.0', 'entryNtl': '0.0'}]}
+2025-11-22 19:42:11 | INFO     | src.LangTrader.ai.decision_engine:_record_snapshot:171 - ✅ 权益快照已记录
+2025-11-22 19:42:11 | INFO     | __main__:main:144 - 最终连接池状态: {'minconn': 1, 'maxconn': 50, 'used': 0, 'free': 1}
+2025-11-22 19:42:11 | INFO     | __main__:<module>:152 - ⏰ 等待15分钟进行下一次决策...
