@@ -1,0 +1,36 @@
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  background-color: #f0f0f0;
+  color: #fff;
+  font-size: 0.8rem;
+  /*defind theme */
+  --theme-secondary-background: rgb(27, 36, 41);
+  --theme-secondary-border: rgb(39, 48, 53);
+  --theme-fist-font-size: 1.5rem;
+  --theme-main-background: rgb(15, 26, 31);
+}
+
+.sidebar {
+  background-color: var(--theme-secondary-background);
+  border-right: 1px solid var(--theme-secondary-border);
+  text-align: center;
+}
+.sidebar h1 {
+  font-size: var(--theme-fist-font-size);
+  margin-block: 1rem auto;
+  text-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+.sidebar p {
+  border-bottom: 1px solid var(--theme-secondary-border);
+  padding-bottom: 1rem;
+  font-style: italic;
+}
+.main {
+  background-color: var(--theme-main-background);
+  color: #fff;
+}
