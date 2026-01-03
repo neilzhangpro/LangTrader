@@ -32,12 +32,16 @@ class DynamicStreamManager:
         # 订阅锁（避免重复订阅）
         self._subscription_locks: Dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
         
+        # 失败币种追踪（用于下一轮重试）
+        self._failed_symbols: Set[str] = set()
+        
         # 统计信息
         self.stats = {
             'total_subscribed': 0,
             'total_unsubscribed': 0,
             'active_streams': 0,
-            'reconnections': 0
+            'reconnections': 0,
+            'failed_retries': 0
         }
     
     async def sync_subscriptions(
@@ -56,10 +60,16 @@ class DynamicStreamManager:
         new_set = set(new_symbols)
         current_set = set(self.active_subscriptions.keys())
         
-        # 计算差异
-        to_subscribe = new_set - current_set
+        # 将之前失败的币种（如果仍在候选列表中）加入重新订阅
+        retry_symbols = self._failed_symbols & new_set
+        if retry_symbols:
+            logger.info(f"🔄 Re-attempting {len(retry_symbols)} previously failed symbols")
+            self._failed_symbols.clear()
+        
+        # 计算差异（包含需要重试的币种）
+        to_subscribe = (new_set - current_set) | retry_symbols
         to_unsubscribe = current_set - new_set
-        to_keep = current_set & new_set
+        to_keep = current_set & new_set - retry_symbols
         
         logger.info(f"📊 Subscription sync: "
                    f"+{len(to_subscribe)} "
@@ -184,6 +194,14 @@ class DynamicStreamManager:
         
         # 清理相关缓存
         self._cleanup_cache(symbol)
+        
+        # 清理对应的订阅锁（避免内存泄漏）
+        lock_keys_to_remove = [k for k in list(self._subscription_locks.keys()) 
+                              if k.startswith(f"{symbol}:")]
+        for key in lock_keys_to_remove:
+            del self._subscription_locks[key]
+        if lock_keys_to_remove:
+            logger.debug(f"🔓 Cleaned up {len(lock_keys_to_remove)} locks for {symbol}")
     
     async def _watch_stream(self, symbol: str, timeframe: str):
         """
@@ -260,6 +278,11 @@ class DynamicStreamManager:
                         self.active_subscriptions[symbol].pop(timeframe, None)
                         if not self.active_subscriptions[symbol]:
                             del self.active_subscriptions[symbol]
+                    
+                    # 标记为失败，下一轮 sync_subscriptions 时会尝试重新订阅
+                    self._failed_symbols.add(symbol)
+                    self.stats['failed_retries'] += 1
+                    logger.info(f"📌 Marked {symbol} for retry in next sync cycle")
                     break
                 
                 # 指数退避重试

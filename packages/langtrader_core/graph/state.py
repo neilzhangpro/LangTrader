@@ -43,13 +43,24 @@ class Position(BaseModel):
     datetime: datetime
     last_trade_timestamp: Optional[datetime] = None
 
-    price: float
-    average: float
-    amount: float
+    price: float          # 入场价格
+    average: float        # 平均价格
+    amount: float         # 持仓数量（币的数量）
+    leverage: int = 1     # 杠杆倍数（默认 1 倍）
 
     trigger_price: Optional[float] = None
     take_profit_price: Optional[float] = None
     stop_loss_price: Optional[float] = None
+    
+    @property
+    def notional_value(self) -> float:
+        """名义价值 = 数量 × 价格"""
+        return self.amount * self.price
+    
+    @property
+    def margin_used(self) -> float:
+        """已用保证金 = 名义价值 / 杠杆"""
+        return self.notional_value / self.leverage if self.leverage > 0 else self.notional_value
 
 
 # -------------------------
@@ -117,7 +128,7 @@ class PerformanceMetrics(BaseModel):
         text += f"  Sharpe Ratio: {self.sharpe_ratio:.2f}\n"
         text += f"  Avg Return per Trade: {self.avg_return_pct:.2f}%\n"
         text += f"  Total Return: ${self.total_return_usd:.2f}\n"
-        text += f"  Max Drawdown: {self.max_drawdown:.2f}%\n"
+        text += f"  Max Drawdown: {self.max_drawdown*100:.2f}%\n"
         
         # 根据夏普比率给出策略建议
         if self.sharpe_ratio < -0.5:
@@ -141,12 +152,12 @@ class PerformanceMetrics(BaseModel):
 DecisionAction = Literal[
     "open_long", "open_short",
     "close_long", "close_short",
-    "hold", "wait",
+    "wait",  # 不操作，观望（移除 hold 避免歧义）
 ]
 
 
 class AIDecision(BaseModel):
-    """AI 决策结果（LLM structured output）"""
+    """AI 决策结果（内部使用，由 PortfolioDecision 转换而来）"""
     model_config = ConfigDict(extra="forbid")
 
     symbol: str
@@ -164,6 +175,104 @@ class AIDecision(BaseModel):
     risk_approved: bool = False
 
     reasons: List[str] = Field(default_factory=list)
+
+
+# -------------------------
+# Batch Decision (NoFx-style)
+# -------------------------
+
+class PortfolioDecision(BaseModel):
+    """
+    单个币种的投资组合决策（批量决策模式）
+    
+    设计参考 NoFx prompt_builder.go 的 Decision 结构：
+    - 包含仓位分配百分比（allocation_pct）用于协调多币种仓位
+    - 包含优先级（priority）用于执行顺序控制
+    - 包含详细推理过程（reasoning）便于回溯分析
+    """
+    # OpenAI Structured Output 要求 additionalProperties: false
+    model_config = ConfigDict(extra="forbid")
+    
+    # 基础信息
+    symbol: str
+    action: DecisionAction
+    
+    # 仓位分配
+    allocation_pct: float = 0.0  # 占总余额的百分比 (0-100)
+    position_size_usd: float = 0.0  # 实际仓位金额
+    leverage: int = 1
+    
+    # 止盈止损
+    stop_loss: Optional[float] = None
+    take_profit: Optional[float] = None
+    
+    # 决策元信息
+    confidence: int = 0  # 0-100
+    reasoning: str = ""  # 详细推理过程（NoFx 要求必填）
+    priority: int = 0  # 执行优先级，数字越小优先级越高
+    
+    # 兼容旧版字段
+    risk_approved: bool = False
+
+
+class BatchDecisionResult(BaseModel):
+    """
+    批量决策结果（一次 LLM 调用输出所有币种的决策）
+    
+    设计原则（参考 NoFx）：
+    - 所有决策的 allocation_pct 总和不超过 80%
+    - 保留至少 20% 现金储备
+    - 包含整体策略说明
+    """
+    # OpenAI Structured Output 要求 additionalProperties: false
+    model_config = ConfigDict(extra="forbid")
+    
+    # 所有币种的决策列表
+    decisions: List[PortfolioDecision] = Field(default_factory=list)
+    
+    # 仓位汇总
+    total_allocation_pct: float = 0.0  # 总仓位占比
+    cash_reserve_pct: float = 20.0  # 现金储备比例
+    
+    # 整体策略说明
+    strategy_rationale: str = ""
+
+
+# -------------------------
+# Debate Decision Models (四角色辩论)
+# -------------------------
+
+class AnalystOutput(BaseModel):
+    """市场分析师输出"""
+    model_config = ConfigDict(extra="forbid")
+    
+    symbol: str
+    trend: Literal["bullish", "bearish", "neutral"] = Field(description="趋势判断")
+    key_levels: Optional[Dict[str, float]] = Field(default=None, description="关键价位: support/resistance，如 {'support': 100.5, 'resistance': 105.0}")
+    summary: str = Field(description="技术分析总结")
+
+
+class TraderSuggestion(BaseModel):
+    """交易员建议（Bull/Bear）"""
+    model_config = ConfigDict(extra="forbid")
+    
+    symbol: str
+    action: Literal["long", "short", "wait"] = Field(description="建议动作")
+    confidence: int = Field(ge=0, le=100, description="信心度 0-100")
+    allocation_pct: float = Field(ge=0, le=30, description="建议仓位 0-30%")
+    stop_loss_pct: float = Field(ge=0, le=10, default=2.0, description="止损比例 0-10%")
+    take_profit_pct: float = Field(ge=0, le=50, default=6.0, description="止盈比例 0-50%")
+    reasoning: str = Field(description="决策理由")
+
+
+class RiskReview(BaseModel):
+    """风控审核结果"""
+    model_config = ConfigDict(extra="forbid")
+    
+    approved: bool
+    total_allocation_pct: float = Field(description="审核后的总仓位")
+    modifications: Optional[List[Dict[str, Any]]] = Field(default=None, description="修正建议")
+    concerns: Optional[List[str]] = Field(default=None, description="风险关注点")
 
 
 class ExecutionResult(BaseModel):
@@ -185,31 +294,33 @@ class ExecutionResult(BaseModel):
 
 
 # -------------------------
-# Per-symbol record
+# Debate Decision Result (辩论决策完整结果)
 # -------------------------
 
-class RunRecord(BaseModel):
-    """单个 symbol 的一次运行记录"""
-    model_config = ConfigDict(extra="allow")
-
-    run_id: str
-    cycle_id: str
-    symbol: str
-    cycle_time: datetime
-
-    # 市场分析（纯文本，由 market_analyzer 生成）
-    market_analysis: Optional[str] = None
-    analyzed_at: Optional[str] = None
-
-    # AI 决策
-    decision: Optional[AIDecision] = None
-
-    # 执行结果
-    execution: Optional[ExecutionResult] = None
-
-    # 时间记录
-    started_at: Optional[datetime] = None
-    finished_at: Optional[datetime] = None
+class DebateDecisionResult(BaseModel):
+    """
+    辩论决策完整结果（记录整个辩论过程）
+    
+    与 batch_decision 平级，用于模式2的辩论决策节点
+    """
+    model_config = ConfigDict(extra="forbid")
+    
+    # Phase 1: 分析师输出
+    analyst_outputs: List[AnalystOutput] = Field(default_factory=list)
+    
+    # Phase 2: 多空交易员建议
+    bull_suggestions: List[TraderSuggestion] = Field(default_factory=list)
+    bear_suggestions: List[TraderSuggestion] = Field(default_factory=list)
+    
+    # Phase 3: 风控审核（可选，目前直接输出最终决策）
+    risk_review: Optional[RiskReview] = None
+    
+    # 最终决策（复用 BatchDecisionResult 格式，与 execution 兼容）
+    final_decision: Optional[BatchDecisionResult] = None
+    
+    # 元信息
+    debate_summary: str = ""  # 辩论过程摘要
+    completed_at: Optional[datetime] = None
 
 
 # -------------------------
@@ -235,11 +346,32 @@ class State(BaseModel):
     account: Optional[Account] = None
     positions: List[Position] = Field(default_factory=list)
 
-    # 每个 symbol 的运行记录（核心字段）
-    runs: Dict[str, RunRecord] = Field(default_factory=dict)
+    # 批量决策结果（模式1: 用户提示词）
+    batch_decision: Optional[BatchDecisionResult] = None
+    
+    # 辩论决策结果（模式2: 多空辩论）
+    debate_decision: Optional[DebateDecisionResult] = None
 
     # 绩效指标（由 Decision 节点计算并注入）
     performance: Optional[PerformanceMetrics] = None
 
     # 告警信息
     alerts: List[str] = Field(default_factory=list)
+    
+    def reset_for_new_cycle(self):
+        """
+        重置每轮临时数据（保留 bot_id、prompt_name、initial_balance）
+        
+        在每个交易周期开始时调用，清理上一轮的状态数据，
+        避免数据残留影响新一轮决策。
+        
+        注意：alerts 不在此处清空，保留到下一轮决策时供 AI 读取，
+        由 debate_decision/batch_decision 节点读取后再清空。
+        """
+        self.symbols = []
+        self.market_data = {}
+        self.batch_decision = None
+        self.debate_decision = None
+        self.performance = None
+        # alerts 保留：用于跨周期传递执行失败信息给 AI
+        # account 和 positions 由 run_once 单独刷新

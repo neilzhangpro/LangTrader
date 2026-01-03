@@ -85,45 +85,46 @@ class WorkflowBuilder:
                 logger.error("Trying to clean up checkpointer failed!")
     
     def load_bot_config(self) -> Dict[str, Any]:
-        """
-        load the bot config from database
-        """
+        """加载 bot 配置（主入口）"""
         logger.info(f"📦 Loading bot configuration: bot_id={self.bot_id}")
-        # auto sync plugins
+        
+        self._sync_plugins()
+        self._load_bot()
+        self._load_exchange()
+        self._load_workflow()
+        self._setup_tracing()
+        self._load_llm_config()
+        
+        return self._build_full_config()
+    
+    def _sync_plugins(self):
+        """同步插件到数据库"""
         try:
             logger.debug("🔄 Auto-syncing plugins...")
             syncer = PluginAutoSync(self.session)
-            
-            # discover plugins
             registry.discover_plugins("langtrader_core.graph.nodes")
             
-            # get target workflow id
-            # if bot_id is provided, get the workflow_id; otherwise use default workflow (id=1)
-            target_workflow_id = None
-            
-            if self.bot_id:
-                bot = self.bot_repo.get_by_id(self.bot_id)
-                if bot:
-                    target_workflow_id = bot.workflow_id
-            
-            if not target_workflow_id:
-                # use default workflow (id=1)
-                target_workflow_id = 1
-            
-            # execute auto sync
+            target_workflow_id = self._get_target_workflow_id()
             stats = syncer.sync_if_needed(target_workflow_id)
             
             if stats["added"] > 0:
                 logger.info(f"✅ Auto-registered {stats['added']} new plugins")
-            
         except Exception as e:
-            logger.warning(f"⚠️  Plugin auto-sync failed (non-critical): {e}")
-
-        # 1. load bot
+            logger.warning(f"⚠️ Plugin auto-sync failed: {e}")
+    
+    def _get_target_workflow_id(self) -> int:
+        """获取目标 workflow ID"""
+        if self.bot_id:
+            bot = self.bot_repo.get_by_id(self.bot_id)
+            if bot:
+                return bot.workflow_id
+        return 1  # 默认 workflow
+    
+    def _load_bot(self):
+        """加载 Bot 配置"""
         if self.bot_id:
             self.bot = self.bot_repo.get_by_id(self.bot_id)
         else:
-            # if not specified, get the first active bot
             active_bots = self.bot_repo.get_active_bots()
             if active_bots:
                 self.bot = active_bots[0]
@@ -131,101 +132,75 @@ class WorkflowBuilder:
         
         if not self.bot:
             raise ValueError(f"Bot not found: bot_id={self.bot_id}")
-        
         if not self.bot.is_active:
             raise ValueError(f"Bot is not active: {self.bot.name}")
         
         logger.info(f"✅ Loaded bot: {self.bot.name} (id={self.bot.id})")
-        
-        # 2. load exchange config
+    
+    def _load_exchange(self):
+        """加载交易所配置"""
         self.exchange_config = self.exchange_repo.get_by_id(self.bot.exchange_id)
         if not self.exchange_config:
             raise ValueError(f"Exchange not found: id={self.bot.exchange_id}")
         
         logger.info(f"✅ Loaded exchange: {self.exchange_config['name']} "
                    f"({'Testnet' if self.exchange_config['testnet'] else 'Mainnet'})")
-        
-        # 3. load workflow
+    
+    def _load_workflow(self):
+        """加载 Workflow 配置"""
         self.workflow = self.workflow_repo.get_workflow(self.bot.workflow_id)
         if not self.workflow:
             raise ValueError(f"Workflow not found: id={self.bot.workflow_id}")
         
         logger.info(f"✅ Loaded workflow: {self.workflow.name} (id={self.workflow.id})")
-        logger.info(f"   Nodes: {len(self.workflow.nodes)}")
-        logger.info(f"   Edges: {len(self.workflow.edges)}")
-
-        # 加载追踪配置（尽早设置环境变量）
-        is_tracing = self.bot.enable_tracing
-        tracing_key = self.bot.tracing_key
-        tracing_project = self.bot.tracing_project
-
+        logger.info(f"   Nodes: {len(self.workflow.nodes)}, Edges: {len(self.workflow.edges)}")
+    
+    def _setup_tracing(self):
+        """配置 LangSmith 追踪"""
+        if not self.bot.enable_tracing:
+            logger.info(f'ℹ️ Tracing disabled for bot: {self.bot.name}')
+            return
         
-        if is_tracing:
-            if tracing_key:
-                # 🔑 尽早设置环境变量，确保 LangSmith 能读取到
-                os.environ['LANGSMITH_API_KEY'] = tracing_key
-                os.environ['LANGSMITH_TRACING'] = 'true'  # 使用字符串而非布尔值
-                os.environ['LANGCHAIN_TRACING_V2'] = 'true'  # LangSmith 新版本使用这个
-                os.environ['LANGCHAIN_PROJECT'] = tracing_project  # 设置项目名
-                
-                logger.info(f'✅ Tracing enabled: project={tracing_project}')
-                logger.debug(f'   API Key: {tracing_key[:20]}...')
-            else:
-                logger.warning(f'⚠️  Tracing enabled but API key not found')
-                logger.warning(f'   Set bot.tracing_key in database or LANGSMITH_API_KEY in .env')
-                # 不抛出异常，允许继续运行但不追踪
-        else:
-            logger.info(f'ℹ️  Tracing disabled for bot: {self.bot.name}')
+        if not self.bot.tracing_key:
+            logger.warning('⚠️ Tracing enabled but API key not found')
+            return
         
-         # 4. load llm config
+        os.environ['LANGSMITH_API_KEY'] = self.bot.tracing_key
+        os.environ['LANGSMITH_TRACING'] = 'true'
+        os.environ['LANGCHAIN_TRACING_V2'] = 'true'
+        os.environ['LANGCHAIN_PROJECT'] = self.bot.tracing_project
+        logger.info(f'✅ Tracing enabled: project={self.bot.tracing_project}')
+    
+    def _load_llm_config(self):
+        """加载 LLM 配置"""
         self.llm_factory = LLMFactory(self.session)
+        self.llm_config = None
+        
         if self.bot.llm_id:
-            llm_config = self.llm_factory.repo.get_by_id(self.bot.llm_id)
-            if llm_config:
-                self.llm_config = llm_config
-                logger.info(f"✅ Loaded LLM config: {llm_config.name}")
-            else:
-                logger.warning(f"⚠️  LLM config not found: id={self.bot.llm_id}")
+            self.llm_config = self.llm_factory.repo.get_by_id(self.bot.llm_id)
         else:
-            llm_config = self.llm_factory.repo.get_default()
-            if llm_config:
-                self.llm_config = llm_config
-                logger.info(f"✅ Loaded default LLM config: {llm_config.name}")
-            else:
-                logger.warning("⚠️  No default LLM config found")
-
-
-        # 4. build full config
-        full_config = {
+            self.llm_config = self.llm_factory.repo.get_default()
+        
+        if self.llm_config:
+            logger.info(f"✅ Loaded LLM config: {self.llm_config.name}")
+        else:
+            logger.warning("⚠️ No LLM config found")
+    
+    def _build_full_config(self) -> Dict[str, Any]:
+        """构建完整配置字典"""
+        return {
             "bot": {
                 "id": self.bot.id,
                 "name": self.bot.name,
-                "prompt":self.bot.prompt,
+                "prompt": self.bot.prompt,
                 "trading_mode": self.bot.trading_mode,
                 "enable_tracing": self.bot.enable_tracing,
                 "tracing_project": self.bot.tracing_project,
-                "max_concurrent_symbols": self.bot.max_concurrent_symbols,
                 "cycle_interval_seconds": self.bot.cycle_interval_seconds,
-                "max_position_size_percent": float(self.bot.max_position_size_percent),
-                "max_total_positions": self.bot.max_total_positions,
-                "max_leverage": self.bot.max_leverage,
                 "llm_config": self.llm_config,
-                
-                # 新增：量化信号配置
-                "quant_signal_weights": self.bot.quant_signal_weights if hasattr(self.bot, 'quant_signal_weights') else {
-                    "trend": 0.4,
-                    "momentum": 0.3,
-                    "volume": 0.2,
-                    "sentiment": 0.1
-                },
-                "quant_signal_threshold": self.bot.quant_signal_threshold if hasattr(self.bot, 'quant_signal_threshold') else 50,
-                
-                # 新增：风险管理配置
-                "risk_limits": self.bot.risk_limits if hasattr(self.bot, 'risk_limits') else {
-                    "max_total_exposure_pct": 0.8,
-                    "max_consecutive_losses": 5,
-                    "max_single_symbol_pct": 0.3
-                },
+                "quant_signal_weights": getattr(self.bot, 'quant_signal_weights', None),
+                "quant_signal_threshold": getattr(self.bot, 'quant_signal_threshold', 50),
+                "risk_limits": getattr(self.bot, 'risk_limits', None),  # 风控配置唯一来源
             },
             "exchange": self.exchange_config,
             "workflow": {
@@ -235,10 +210,6 @@ class WorkflowBuilder:
                 "category": self.workflow.category,
             }
         }
-
-       
-        
-        return full_config
     
     async def build(self, context: PluginContext) -> StateGraph:
         """
@@ -253,6 +224,9 @@ class WorkflowBuilder:
         logger.info("🏗️  Building workflow from database...")
         
         self.context = context
+        # 添加 bot 和 bot_id 到 context（供 DebateNode 获取 Tavily API Key）
+        context.bot = self.bot
+        context.bot_id = self.bot.id
         
         # 1. load config
         config = self.load_bot_config()
@@ -341,17 +315,32 @@ class WorkflowBuilder:
                 continue
             
             try:
-                # get node config
-                config = self.workflow_repo.get_node_config_dict(node.id)
+                # get node-specific config from node_configs table
+                node_config = self.workflow_repo.get_node_config_dict(node.id)
+                
+                # 🔧 合并bot级别配置和节点配置（节点配置优先）
+                # 所有风控配置统一从 bot.risk_limits 读取
+                merged_config = {
+                    # Bot级别配置（作为默认值）
+                    "risk_limits": self.bot.risk_limits if hasattr(self.bot, 'risk_limits') else None,
+                    "quant_signal_weights": self.bot.quant_signal_weights if hasattr(self.bot, 'quant_signal_weights') else None,
+                    "quant_signal_threshold": self.bot.quant_signal_threshold if hasattr(self.bot, 'quant_signal_threshold') else None,
+                    # 节点特定配置（覆盖bot配置）
+                    **node_config
+                }
+                
+                # 移除None值，避免覆盖节点的默认值
+                merged_config = {k: v for k, v in merged_config.items() if v is not None}
                 
                 logger.info(f"📦 Loading node: {node.name} (plugin: {node.plugin_name})")
-                logger.debug(f"   Config: {config}")
+                logger.debug(f"   Node config: {node_config}")
+                logger.debug(f"   Merged config: {merged_config}")
                 
                 # create plugin instance
                 instance = registry.create_instance(
                     name=node.plugin_name,
                     context=self.context,
-                    config=config
+                    config=merged_config
                 )
                 
                 if instance:
@@ -474,6 +463,8 @@ class WorkflowBuilder:
         if not self.bot:
             return {}
         
+        risk_limits = getattr(self.bot, 'risk_limits', {}) or {}
+        
         return {
             "bot_id": self.bot.id,
             "bot_name": self.bot.name,
@@ -482,8 +473,10 @@ class WorkflowBuilder:
             "workflow": self.workflow.name if self.workflow else None,
             "trading_mode": self.bot.trading_mode,
             "is_active": self.bot.is_active,
-            "max_concurrent_symbols": self.bot.max_concurrent_symbols,
             "tracing_enabled": self.bot.enable_tracing,
+            # 风控配置摘要
+            "max_leverage": risk_limits.get('max_leverage'),
+            "max_total_allocation_pct": risk_limits.get('max_total_allocation_pct'),
         }
 
 

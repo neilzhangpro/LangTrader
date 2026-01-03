@@ -17,5 +17,6 @@ class exchange(SQLModel, table=True):
     password: Optional[str] = None
     testnet: bool = False
     IoTop: bool = False
+    slippage: Optional[float] = None 
 
     

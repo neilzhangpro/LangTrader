@@ -3384,3 +3384,1351 @@ ValueError: Graph must have an entrypoint: add at least one edge from START to a
 2025-12-30 17:00:12 | ERROR    | langtrader.execution | _validate_open_params:110 | 🚨 BTC/USDT:USDT: Invalid position_size_usd=0.0
 2025-12-30 17:12:23 | ERROR    | langtrader.execution | _validate_close_position:162 | 🚨 BTC/USDT:USDT: No position found to close
 2025-12-30 17:12:23 | ERROR    | langtrader.execution | _validate_open_params:110 | 🚨 BTC/USDT:USDT: Invalid position_size_usd=0.0
+2025-12-31 09:35:52 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: BTC/USDT:USDT:3m - hyperliquid does not have market symbol BTC/USDT:USDT
+2025-12-31 09:35:53 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: BTC/USDT:USDT:4h - hyperliquid does not have market symbol BTC/USDT:USDT
+2025-12-31 09:35:53 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: ETH/USDT:USDT:3m - hyperliquid does not have market symbol ETH/USDT:USDT
+2025-12-31 09:35:54 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: ETH/USDT:USDT:4h - hyperliquid does not have market symbol ETH/USDT:USDT
+2025-12-31 09:35:54 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: SOL/USDT:USDT:3m - hyperliquid does not have market symbol SOL/USDT:USDT
+2025-12-31 09:35:55 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: SOL/USDT:USDT:4h - hyperliquid does not have market symbol SOL/USDT:USDT
+2025-12-31 09:35:55 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: BNB/USDT:USDT:3m - hyperliquid does not have market symbol BNB/USDT:USDT
+2025-12-31 09:35:56 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: BNB/USDT:USDT:4h - hyperliquid does not have market symbol BNB/USDT:USDT
+2025-12-31 09:35:56 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: XRP/USDT:USDT:3m - hyperliquid does not have market symbol XRP/USDT:USDT
+2025-12-31 09:35:57 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: XRP/USDT:USDT:4h - hyperliquid does not have market symbol XRP/USDT:USDT
+2025-12-31 09:36:32 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: BTC/USDT:USDC:3m - hyperliquid does not have market symbol BTC/USDT:USDC
+2025-12-31 09:36:33 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: BTC/USDT:USDC:4h - hyperliquid does not have market symbol BTC/USDT:USDC
+2025-12-31 09:36:33 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: ETH/USDT:USDC:3m - hyperliquid does not have market symbol ETH/USDT:USDC
+2025-12-31 09:36:34 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: ETH/USDT:USDC:4h - hyperliquid does not have market symbol ETH/USDT:USDC
+2025-12-31 09:36:34 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: SOL/USDT:USDC:3m - hyperliquid does not have market symbol SOL/USDT:USDC
+2025-12-31 09:36:35 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: SOL/USDT:USDC:4h - hyperliquid does not have market symbol SOL/USDT:USDC
+2025-12-31 09:36:35 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: BNB/USDT:USDC:3m - hyperliquid does not have market symbol BNB/USDT:USDC
+2025-12-31 09:36:36 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: BNB/USDT:USDC:4h - hyperliquid does not have market symbol BNB/USDT:USDC
+2025-12-31 09:36:36 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: XRP/USDT:USDC:3m - hyperliquid does not have market symbol XRP/USDT:USDC
+2025-12-31 09:36:37 | ERROR    | langtrader.mock_trader | fetch_one:141 | ✗ Failed: XRP/USDT:USDC:4h - hyperliquid does not have market symbol XRP/USDT:USDC
+2025-12-31 09:52:30 | ERROR    | langtrader.market_analyzer | run:97 | ❌ ETH/USDC:USDC: LLM call timed out (60s): 
+2025-12-31 11:13:35 | ERROR    | langtrader.market | _fetch_order_book_metrics:214 |   BTC/USDT:USDT: failed to fetch order book: API Error
+2025-12-31 11:13:36 | ERROR    | langtrader.market | _fetch_trade_metrics:320 |   BTC/USDT:USDT: failed to fetch trades: API Error
+2025-12-31 11:17:45 | ERROR    | langtrader.market | _fetch_order_book_metrics:220 |   BTC/USDT:USDT: failed to fetch order book: API Error
+2025-12-31 11:17:45 | ERROR    | langtrader.market | _fetch_trade_metrics:325 |   BTC/USDT:USDT: failed to fetch trades: API Error
+2025-12-31 11:23:49 | ERROR    | langtrader.market | _fetch_order_book_metrics:220 |   BTC/USDT:USDT: failed to fetch order book: API Error
+2025-12-31 11:23:49 | ERROR    | langtrader.market | _fetch_trade_metrics:325 |   BTC/USDT:USDT: failed to fetch trades: API Error
+2025-12-31 11:41:14 | ERROR    | langtrader.market | _fetch_order_book_metrics:230 |   BTC/USDT:USDT: failed to fetch order book: API Error
+2025-12-31 11:41:14 | ERROR    | langtrader.market | _fetch_trade_metrics:335 |   BTC/USDT:USDT: failed to fetch trades: API Error
+2025-12-31 11:44:55 | ERROR    | langtrader.market | _fetch_order_book_metrics:230 |   BTC/USDT:USDT: failed to fetch order book: API Error
+2025-12-31 11:44:56 | ERROR    | langtrader.market | _fetch_trade_metrics:335 |   BTC/USDT:USDT: failed to fetch trades: API Error
+2025-12-31 11:47:15 | ERROR    | langtrader.market | _fetch_order_book_metrics:230 |   BTC/USDT:USDT: failed to fetch order book: API Error
+2025-12-31 11:47:16 | ERROR    | langtrader.market | _fetch_trade_metrics:335 |   BTC/USDT:USDT: failed to fetch trades: API Error
+2025-12-31 11:59:53 | ERROR    | langtrader.market | _fetch_trade_metrics:335 |   PUMP/USDC:USDC: failed to fetch trades: hyperliquid fetchTrades() requires a user parameter inside 'params' or the wallet address set
+2025-12-31 11:59:53 | ERROR    | langtrader.market | _fetch_trade_metrics:335 |   MON/USDC:USDC: failed to fetch trades: hyperliquid fetchTrades() requires a user parameter inside 'params' or the wallet address set
+2025-12-31 11:59:54 | ERROR    | langtrader.market | _fetch_trade_metrics:335 |   KPEPE/USDC:USDC: failed to fetch trades: hyperliquid fetchTrades() requires a user parameter inside 'params' or the wallet address set
+2025-12-31 11:59:54 | ERROR    | langtrader.market | _fetch_trade_metrics:335 |   MEME/USDC:USDC: failed to fetch trades: hyperliquid fetchTrades() requires a user parameter inside 'params' or the wallet address set
+2025-12-31 11:59:55 | ERROR    | langtrader.market | _fetch_trade_metrics:335 |   BLAST/USDC:USDC: failed to fetch trades: hyperliquid fetchTrades() requires a user parameter inside 'params' or the wallet address set
+2025-12-31 12:25:36 | ERROR    | langtrader.market | _fetch_trade_metrics:340 |   BLAST/USDC:USDC: failed to fetch trades: hyperliquid POST https://api.hyperliquid.xyz/info
+2025-12-31 12:25:51 | ERROR    | langtrader.market_analyzer | run:97 | ❌ KPEPE/USDC:USDC: LLM call timed out (60s): Connection error.
+2025-12-31 12:25:54 | ERROR    | langtrader.market_analyzer | run:97 | ❌ MON/USDC:USDC: LLM call timed out (60s): Connection error.
+2025-12-31 12:25:57 | ERROR    | langtrader.market_analyzer | run:97 | ❌ PUMP/USDC:USDC: LLM call timed out (60s): Connection error.
+2025-12-31 12:26:00 | ERROR    | langtrader.market_analyzer | run:97 | ❌ MEME/USDC:USDC: LLM call timed out (60s): Connection error.
+2025-12-31 12:26:03 | ERROR    | langtrader.market_analyzer | run:97 | ❌ BLAST/USDC:USDC: LLM call timed out (60s): Connection error.
+2025-12-31 12:26:06 | ERROR    | langtrader.decision | run:356 | ❌ Decision failed for KPEPE/USDC:USDC: Connection error.
+2025-12-31 12:26:10 | ERROR    | langtrader.decision | run:356 | ❌ Decision failed for MON/USDC:USDC: Connection error.
+2025-12-31 12:26:13 | ERROR    | langtrader.decision | run:356 | ❌ Decision failed for PUMP/USDC:USDC: Connection error.
+2025-12-31 12:26:16 | ERROR    | langtrader.decision | run:356 | ❌ Decision failed for MEME/USDC:USDC: Connection error.
+2025-12-31 12:26:19 | ERROR    | langtrader.decision | run:356 | ❌ Decision failed for BLAST/USDC:USDC: Connection error.
+2025-12-31 14:56:05 | ERROR    | langtrader.market_analyzer | run:97 | ❌ BLAST/USDC:USDC: LLM call timed out (60s): 
+2025-12-31 14:58:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 14:58:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 14:58:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 14:58:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 14:58:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 16:15:36 | ERROR    | langtrader.plugin_registry | create_instance:172 | 🚨 Plugin decision not found
+2025-12-31 16:15:36 | ERROR    | langtrader.workflow_builder | _load_nodes:377 | ❌ Failed to create instance for: decision
+2025-12-31 16:15:36 | ERROR    | langtrader.plugin_registry | create_instance:172 | 🚨 Plugin risk_monitor not found
+2025-12-31 16:15:36 | ERROR    | langtrader.workflow_builder | _load_nodes:377 | ❌ Failed to create instance for: risk_monitor
+2025-12-31 16:44:56 | ERROR    | langtrader.batch_decision | run:460 | ❌ LLM 调用失败: Error code: 400 - {'error': {'message': "Invalid schema for response_format 'BatchDecisionResult': In context=(), 'additionalProperties' is required to be supplied and to be false.", 'type': 'invalid_request_error', 'param': 'response_format', 'code': None}}
+2025-12-31 17:34:22 | ERROR    | langtrader.trader | create_order:170 | ❌ Create order failed: hyperliquid requires "walletAddress" credential
+2025-12-31 17:34:26 | ERROR    | langtrader.trader | create_order:170 | ❌ Create order failed: hyperliquid requires "walletAddress" credential
+2025-12-31 17:47:17 | ERROR    | langtrader.trader | create_order:170 | ❌ Create order failed: hyperliquid requires "walletAddress" credential
+2025-12-31 17:47:21 | ERROR    | langtrader.trader | create_order:170 | ❌ Create order failed: hyperliquid requires "walletAddress" credential
+2025-12-31 17:52:05 | ERROR    | langtrader.market_analyzer | run:97 | ❌ MON/USDC:USDC: LLM call timed out (60s): 
+2025-12-31 18:19:07 | ERROR    | langtrader.market | _fetch_order_book_metrics:230 |   BTC/USDC:USDC: failed to fetch order book: hyperliquid POST https://api.hyperliquid-testnet.xyz/info
+2025-12-31 18:20:14 | ERROR    | langtrader.market_analyzer | run:97 | ❌ BTC/USDC:USDC: LLM call timed out (60s): 
+2025-12-31 18:26:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 18:26:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 18:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection timeout (retry 2/5)
+2025-12-31 18:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection timeout (retry 2/5)
+2025-12-31 18:34:19 | ERROR    | langtrader.market_analyzer | run:97 | ❌ SOL/USDC:USDC: LLM call timed out (60s): 
+2025-12-31 18:37:34 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 18:37:34 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 18:48:39 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 18:48:39 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 19:00:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 19:00:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 19:00:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection timeout (retry 2/5)
+2025-12-31 19:00:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection timeout (retry 2/5)
+2025-12-31 19:00:43 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection timeout (retry 3/5)
+2025-12-31 19:00:43 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection timeout (retry 3/5)
+2025-12-31 19:22:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 19:22:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 19:28:36 | ERROR    | langtrader.trader | create_order:170 | ❌ Create order failed: hyperliquid requires "walletAddress" credential
+2025-12-31 19:33:44 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 19:33:44 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 19:44:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 19:44:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2025-12-31 20:00:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 20:00:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 20:16:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 20:16:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 20:16:49 | ERROR    | langtrader.market_analyzer | run:97 | ❌ BTC/USDC:USDC: LLM call timed out (60s): 
+2025-12-31 20:32:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2025-12-31 20:32:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 20:32:49 | ERROR    | langtrader.market_analyzer | run:97 | ❌ SOL/USDC:USDC: LLM call timed out (60s): 
+2025-12-31 20:47:27 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 20:47:27 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2025-12-31 20:48:39 | ERROR    | langtrader.batch_decision | run:459 | ❌ LLM 调用超时 (90s)
+2025-12-31 21:17:26 | ERROR    | langtrader.trader | create_order:170 | ❌ Create order failed: hyperliquid requires "walletAddress" credential
+2025-12-31 21:17:30 | ERROR    | langtrader.trader | create_order:170 | ❌ Create order failed: hyperliquid requires "walletAddress" credential
+2025-12-31 21:27:11 | ERROR    | langtrader.trader | create_order:171 | ❌ Create order failed: hyperliquid  market orders require price to calculate the max slippage price. Default slippage can be set in options(default is 5%).
+2025-12-31 21:27:15 | ERROR    | langtrader.trader | create_order:171 | ❌ Create order failed: hyperliquid  market orders require price to calculate the max slippage price. Default slippage can be set in options(default is 5%).
+2026-01-01 09:09:55 | ERROR    | langtrader.trader | create_order:171 | ❌ Create order failed: hyperliquid  market orders require price to calculate the max slippage price. Default slippage can be set in options(default is 5%).
+2026-01-01 09:24:55 | ERROR    | langtrader.trader | create_order:179 | ❌ Create order failed: hyperliquid  market orders require price to calculate the max slippage price. Default slippage can be set in options(default is 5%).
+2026-01-01 09:41:45 | ERROR    | langtrader.market_analyzer | run:97 | ❌ SOL/USDC:USDC: LLM call timed out (60s): 
+2026-01-01 10:06:25 | ERROR    | langtrader.debate_tools | create_web_search_tool:661 | ❌ Failed to create Tavily tool: 1 validation error for TavilySearchAPIWrapper
+  Value error, Did not find tavily_api_key, please add an environment variable `TAVILY_API_KEY` which contains it, or pass `tavily_api_key` as a named parameter. [type=value_error, input_value={}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/value_error
+2026-01-01 10:27:47 | ERROR    | langtrader.debate | _init_agents:268 |    ❌ Failed to create agent risk_manager: create_agent() got an unexpected keyword argument 'prompt'
+2026-01-01 10:27:47 | ERROR    | langtrader.debate | _init_agents:268 |    ❌ Failed to create agent portfolio_manager: create_agent() got an unexpected keyword argument 'prompt'
+2026-01-01 10:27:47 | ERROR    | langtrader.debate | _init_agents:268 |    ❌ Failed to create agent contrarian: create_agent() got an unexpected keyword argument 'prompt'
+2026-01-01 10:27:47 | ERROR    | langtrader.debate | run:515 | ❌ No agents available, skipping debate
+2026-01-01 10:27:51 | ERROR    | langtrader.trader | create_order:179 | ❌ Create order failed: hyperliquid  market orders require price to calculate the max slippage price. Default slippage can be set in options(default is 5%).
+2026-01-01 10:27:55 | ERROR    | langtrader.trader | create_order:179 | ❌ Create order failed: hyperliquid  market orders require price to calculate the max slippage price. Default slippage can be set in options(default is 5%).
+2026-01-01 11:00:15 | ERROR    | langtrader.trader | create_order:179 | ❌ Create order failed: 'NoneType' object has no attribute 'get'
+2026-01-01 11:00:20 | ERROR    | langtrader.trader | create_order:179 | ❌ Create order failed: 'NoneType' object has no attribute 'get'
+2026-01-01 11:26:53 | ERROR    | langtrader.trader | create_order:188 | ❌ Create order failed: 'NoneType' object has no attribute 'get'
+2026-01-01 11:31:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 11:31:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 11:43:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 11:43:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 11:49:56 | ERROR    | langtrader.trader | create_order:188 | ❌ Create order failed: float() argument must be a string or a real number, not 'NoneType'
+2026-01-01 11:55:26 | ERROR    | langtrader.market_analyzer | run:97 | ❌ BTC/USDC:USDC: LLM call timed out (60s): 
+2026-01-01 11:57:06 | ERROR    | langtrader.trader | create_take_profit_order:321 | ❌ Create take profit failed: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce only order would increase position. asset=0"}]}}}
+2026-01-01 12:22:06 | ERROR    | langtrader.trader | create_stop_loss_order:306 | ❌ Create stop loss failed: [<class 'decimal.ConversionSyntax'>]
+2026-01-01 12:22:06 | ERROR    | langtrader.trader | create_take_profit_order:344 | ❌ Create take profit failed: hyperliquid createTakeProfitOrder() is not supported yet
+2026-01-01 12:22:11 | ERROR    | langtrader.trader | create_stop_loss_order:306 | ❌ Create stop loss failed: [<class 'decimal.ConversionSyntax'>]
+2026-01-01 12:22:11 | ERROR    | langtrader.trader | create_take_profit_order:344 | ❌ Create take profit failed: hyperliquid createTakeProfitOrder() is not supported yet
+2026-01-01 12:31:49 | ERROR    | langtrader.trader | create_stop_loss_order:306 | ❌ Create stop loss failed: [<class 'decimal.ConversionSyntax'>]
+2026-01-01 12:31:49 | ERROR    | langtrader.trader | create_take_profit_order:343 | ❌ Create take profit failed: hyperliquid  market orders require price to calculate the max slippage price. Default slippage can be set in options(default is 5%).
+2026-01-01 12:31:49 | ERROR    | langtrader.execution | _validate_open_params:288 | 🚨 SOL_put_options: Invalid stop_loss_price=None
+2026-01-01 12:31:49 | ERROR    | langtrader.execution | _validate_open_params:288 | 🚨 ETH/USDC:USDC: Invalid stop_loss_price=None
+2026-01-01 12:45:38 | ERROR    | langtrader.agent_factory | invoke_agent_with_proposal:241 | ❌ Agent contrarian error: _create_placeholder_web_search_tool.<locals>.placeholder_search() got an unexpected keyword argument 'max_results'
+2026-01-01 12:46:24 | ERROR    | langtrader.trader | create_stop_loss_order:309 | ❌ Create stop loss failed: [<class 'decimal.ConversionSyntax'>]
+2026-01-01 12:46:30 | ERROR    | langtrader.trader | create_stop_loss_order:309 | ❌ Create stop loss failed: [<class 'decimal.ConversionSyntax'>]
+2026-01-01 13:03:07 | ERROR    | langtrader.market | _fetch_order_book_metrics:230 |   SOL/USDC:USDC: failed to fetch order book: hyperliquid POST https://api.hyperliquid-testnet.xyz/info
+2026-01-01 13:03:18 | ERROR    | langtrader.market | _fetch_order_book_metrics:230 |   BTC/USDC:USDC: failed to fetch order book: hyperliquid POST https://api.hyperliquid-testnet.xyz/info
+2026-01-01 13:03:29 | ERROR    | langtrader.market | _fetch_trade_metrics:340 |   SOL/USDC:USDC: failed to fetch trades: hyperliquid POST https://api.hyperliquid-testnet.xyz/info
+2026-01-01 13:03:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 13:03:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 13:04:38 | ERROR    | langtrader.market_analyzer | run:97 | ❌ SOL/USDC:USDC: LLM call timed out (60s): 
+2026-01-01 13:16:33 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 13:16:33 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 13:27:47 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 13:27:47 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 13:47:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 13:47:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 14:03:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 14:03:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 14:04:05 | ERROR    | langtrader.market_analyzer | run:97 | ❌ SOL/USDC:USDC: LLM call timed out (60s): 
+2026-01-01 14:21:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 14:21:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 14:37:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-01 14:37:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 14:48:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 14:48:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 14:59:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 14:59:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 15:16:14 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 15:16:14 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 15:33:44 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-01 15:33:44 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-01 15:49:46 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 3/5)
+2026-01-01 15:49:46 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-01 15:50:10 | ERROR    | langtrader.market_analyzer | run:97 | ❌ SOL/USDC:USDC: LLM call timed out (60s): 
+2026-01-01 16:01:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 16:01:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 16:12:43 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 16:12:43 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 16:24:01 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 16:24:01 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 16:25:22 | ERROR    | langtrader.batch_decision | run:459 | ❌ LLM 调用超时 (90s)
+2026-01-01 16:35:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 16:35:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 16:46:31 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-01 16:46:31 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 11:11:59 | ERROR    | langtrader.plugin_registry | discover_plugins:102 | 🚨 Failed to import module: langtrader_core.graph.nodes.market_state
+2026-01-02 11:11:59 | ERROR    | langtrader.plugin_registry | discover_plugins:109 | 🚨 Failed to discover plugins in package: langtrader_core.graph.nodes
+2026-01-02 11:12:07 | ERROR    | langtrader.plugin_registry | discover_plugins:102 | 🚨 Failed to import module: langtrader_core.graph.nodes.market_state
+2026-01-02 11:12:07 | ERROR    | langtrader.plugin_registry | discover_plugins:109 | 🚨 Failed to discover plugins in package: langtrader_core.graph.nodes
+2026-01-02 11:12:07 | ERROR    | langtrader.plugin_registry | create_instance:172 | 🚨 Plugin market_state not found
+2026-01-02 11:12:07 | ERROR    | langtrader.workflow_builder | _load_nodes:352 | ❌ Failed to create instance for: market_state
+2026-01-02 11:12:07 | ERROR    | langtrader.plugin_registry | create_instance:172 | 🚨 Plugin quant_signal_filter not found
+2026-01-02 11:12:07 | ERROR    | langtrader.workflow_builder | _load_nodes:352 | ❌ Failed to create instance for: quant_signal_filter
+2026-01-02 11:12:41 | ERROR    | langtrader.plugin_registry | discover_plugins:102 | 🚨 Failed to import module: langtrader_core.graph.nodes.market_state
+2026-01-02 11:12:41 | ERROR    | langtrader.plugin_registry | discover_plugins:109 | 🚨 Failed to discover plugins in package: langtrader_core.graph.nodes
+2026-01-02 11:12:49 | ERROR    | langtrader.plugin_registry | discover_plugins:102 | 🚨 Failed to import module: langtrader_core.graph.nodes.market_state
+2026-01-02 11:12:49 | ERROR    | langtrader.plugin_registry | discover_plugins:109 | 🚨 Failed to discover plugins in package: langtrader_core.graph.nodes
+2026-01-02 11:12:49 | ERROR    | langtrader.plugin_registry | create_instance:172 | 🚨 Plugin market_state not found
+2026-01-02 11:12:49 | ERROR    | langtrader.workflow_builder | _load_nodes:352 | ❌ Failed to create instance for: market_state
+2026-01-02 11:12:49 | ERROR    | langtrader.plugin_registry | create_instance:172 | 🚨 Plugin quant_signal_filter not found
+2026-01-02 11:12:49 | ERROR    | langtrader.workflow_builder | _load_nodes:352 | ❌ Failed to create instance for: quant_signal_filter
+2026-01-02 11:24:30 | ERROR    | langtrader.trader | create_take_profit_order:470 | ❌ Invalid take profit order: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce only order would increase position. asset=3"}]}}}
+2026-01-02 11:24:37 | ERROR    | langtrader.trader | create_take_profit_order:470 | ❌ Invalid take profit order: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce only order would increase position. asset=0"}]}}}
+2026-01-02 11:43:37 | ERROR    | langtrader.batch_decision | run:414 | ❌ LLM 调用超时 (90s)
+2026-01-02 11:51:40 | ERROR    | langtrader.batch_decision | run:414 | ❌ LLM 调用超时 (90s)
+2026-01-02 12:00:10 | ERROR    | langtrader.batch_decision | run:414 | ❌ LLM 调用超时 (90s)
+2026-01-02 12:15:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:15:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:15:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:15:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:15:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:15:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:15:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:15:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:15:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:26:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 2/5)
+2026-01-02 12:26:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 2/5)
+2026-01-02 12:26:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 2/5)
+2026-01-02 12:26:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 2/5)
+2026-01-02 12:26:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 2/5)
+2026-01-02 12:26:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 2/5)
+2026-01-02 12:26:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:26:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:26:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:30:36 | ERROR    | langtrader.market | _fetch_trade_metrics:340 |   KSHIB/USDC:USDC: failed to fetch trades: hyperliquid POST https://api.hyperliquid-testnet.xyz/info
+2026-01-02 12:35:08 | ERROR    | langtrader.execution | _execute_open:625 | ❌ OP/USDC:USDC: Failed to fetch price: hyperliquid POST https://api.hyperliquid-testnet.xyz/info
+2026-01-02 12:38:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 3/5)
+2026-01-02 12:38:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 3/5)
+2026-01-02 12:38:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 3/5)
+2026-01-02 12:38:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 3/5)
+2026-01-02 12:38:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:38:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:38:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:38:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:38:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:38:37 | ERROR    | langtrader.market | _get_klines:424 | Failed to fetch 3m data for KSHIB/USDC:USDC: hyperliquid POST https://api.hyperliquid-testnet.xyz/info
+2026-01-02 12:48:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 2/5)
+2026-01-02 12:48:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 4/5)
+2026-01-02 12:48:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:48:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:48:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:48:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:48:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:48:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:48:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 3/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 5/5)
+2026-01-02 12:56:15 | ERROR    | langtrader.stream_manager | _watch_stream:257 | Max retries reached for PUMP/USDC:USDC 3m, giving up
+2026-01-02 12:57:21 | ERROR    | langtrader.batch_decision | run:414 | ❌ LLM 调用超时 (90s)
+2026-01-02 13:07:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 4/5)
+2026-01-02 13:07:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 13:07:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 13:07:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 13:07:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 13:07:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 13:07:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 13:07:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 13:35:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 13:35:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 13:35:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 13:35:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 5/5)
+2026-01-02 13:35:29 | ERROR    | langtrader.stream_manager | _watch_stream:257 | Max retries reached for MEME/USDC:USDC 3m, giving up
+2026-01-02 13:35:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 13:35:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 13:35:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 13:35:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 13:51:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 13:51:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 13:51:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 13:51:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 13:51:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 3/5)
+2026-01-02 13:51:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 3/5)
+2026-01-02 13:51:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 13:52:47 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-02 13:56:02 | ERROR    | langtrader.debate | _synthesize_changes:430 | ❌ Failed to synthesize changes: 
+2026-01-02 13:57:02 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 OP/USDC:USDC: Invalid stop_loss_price=-0.04
+2026-01-02 13:57:02 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 INJ/USDC:USDC: Invalid stop_loss_price=-0.04
+2026-01-02 13:57:02 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 MEME/USDC:USDC: Invalid stop_loss_price=-0.05
+2026-01-02 14:02:48 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 3/5)
+2026-01-02 14:02:48 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 3/5)
+2026-01-02 14:02:48 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 3/5)
+2026-01-02 14:02:48 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 4/5)
+2026-01-02 14:02:48 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 4/5)
+2026-01-02 14:02:48 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 14:02:48 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 14:03:46 | ERROR    | langtrader.batch_decision | run:414 | ❌ LLM 调用超时 (90s)
+2026-01-02 14:03:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 14:03:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 4/5)
+2026-01-02 14:03:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 4/5)
+2026-01-02 14:03:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 4/5)
+2026-01-02 14:03:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 14:03:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KSHIB/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 5/5)
+2026-01-02 14:03:50 | ERROR    | langtrader.stream_manager | _watch_stream:257 | Max retries reached for KSHIB/USDC:USDC 3m, giving up
+2026-01-02 14:03:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error FIL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 5/5)
+2026-01-02 14:03:50 | ERROR    | langtrader.stream_manager | _watch_stream:257 | Max retries reached for FIL/USDC:USDC 3m, giving up
+2026-01-02 14:15:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error INJ/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 5/5)
+2026-01-02 14:15:12 | ERROR    | langtrader.stream_manager | _watch_stream:257 | Max retries reached for INJ/USDC:USDC 3m, giving up
+2026-01-02 14:15:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error OP/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 5/5)
+2026-01-02 14:15:12 | ERROR    | langtrader.stream_manager | _watch_stream:257 | Max retries reached for OP/USDC:USDC 3m, giving up
+2026-01-02 14:15:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 5/5)
+2026-01-02 14:15:12 | ERROR    | langtrader.stream_manager | _watch_stream:257 | Max retries reached for KPEPE/USDC:USDC 3m, giving up
+2026-01-02 14:15:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 14:15:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 14:26:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 14:26:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 14:27:43 | ERROR    | langtrader.batch_decision | run:414 | ❌ LLM 调用超时 (90s)
+2026-01-02 14:37:37 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 14:37:37 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1000 (retry 1/5)
+2026-01-02 15:23:26 | ERROR    | langtrader.market | _fetch_trade_metrics:363 |   BTC/USDT:USDT: failed to fetch trades: 'MockTrader' object has no attribute 'exchange_name'
+2026-01-02 15:23:37 | ERROR    | langtrader.execution | _validate_close_position:585 | 🚨 BTC/USDT:USDT: No position found to close
+2026-01-02 15:23:37 | ERROR    | langtrader.execution | _validate_open_params:520 | 🚨 BTC/USDT:USDT: Invalid position_size_usd=0.0
+2026-01-02 15:58:17 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-02 15:59:33 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 MON/USDC:USDC: Invalid stop_loss_price=-0.05
+2026-01-02 15:59:33 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 MEME/USDC:USDC: Invalid stop_loss_price=-0.05
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:19 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:35:45 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-02 16:38:23 | ERROR    | langtrader.run_once | main:265 | ❌ Fatal error: 1 validation error for ExecutionResult
+status
+  Input should be 'skipped', 'pending', 'success' or 'failed' [type=literal_error, input_value='rejected', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 256, in main
+    await run_once.run()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 180, in run
+    result_dict = await builder.run_with_tracing(self.state, config)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/plugins/workflow.py", line 300, in run_with_tracing
+    return await self.compiled_graph.ainvoke(state, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3158, in ainvoke
+    async for chunk in self.astream(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 2971, in astream
+    async for _ in runner.atick(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 304, in atick
+    await arun_with_retry(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 705, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 473, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 270, in run
+    return await self._execute_batch(state)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 335, in _execute_batch
+    result = await self._execute_open_with_validation(ai_decision, state, symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 481, in _execute_open_with_validation
+    return ExecutionResult(
+           ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/pydantic/main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ExecutionResult
+status
+  Input should be 'skipped', 'pending', 'success' or 'failed' [type=literal_error, input_value='rejected', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+During task with name 'execution' and id '9814a488-48c0-9040-7452-5470b65cad71'
+2026-01-02 16:44:01 | ERROR    | langtrader.trader | _check_exchange_status:151 | ❌ Network error checking exchange status: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-02 16:44:01 | ERROR    | langtrader.run_once | main:265 | ❌ Fatal error: hyperliquid POST https://api.hyperliquid.xyz/info
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 779, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 734, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/connector.py", line 642, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/connector.py", line 1209, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/connector.py", line 1532, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/connector.py", line 1148, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 217, in fetch
+    async with session_method(yarl.URL(url, encoded=True),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 1510, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 624, in _request
+    with timer:
+         ^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 237, in main
+    await run_once.async_init()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 82, in async_init
+    await self.trader.async_init()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/services/trader.py", line 108, in async_init
+    await self._check_exchange_status()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/services/trader.py", line 128, in _check_exchange_status
+    status = await self.exchange.fetch_status()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/hyperliquid.py", line 397, in fetch_status
+    response = await self.publicPostInfo(self.extend(request, params))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 994, in request
+    return await self.fetch2(path, api, method, params, headers, body, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 988, in fetch2
+    raise e
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 978, in fetch2
+    return await self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 253, in fetch
+    raise RequestTimeout(details) from e
+ccxt.base.errors.RequestTimeout: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MEME/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-02 16:58:42 | ERROR    | langtrader.trader | create_order:307 | ❌ Exchange error: hyperliquid  market orders require price to calculate the max slippage price. Default slippage can be set in options(default is 5%).
+2026-01-02 16:58:42 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 BTC/USDC:USDC: Invalid stop_loss_price=None
+2026-01-02 16:58:42 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 ETH/USDC:USDC: Invalid stop_loss_price=None
+2026-01-02 16:58:42 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 XRP/USDC:USDC: Invalid stop_loss_price=None
+2026-01-02 16:58:42 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 USDC_YIELD/USDC:USDC: Invalid stop_loss_price=None
+2026-01-02 16:58:42 | ERROR    | langtrader.execution | _validate_open_params:524 | 🚨 HEDGE_SHORT_BTC/USDC:USDC: Invalid stop_loss_price=None
+2026-01-02 17:14:37 | ERROR    | langtrader.coin | process_one_coin:264 | ✗ Failed to fetch 4h data for BLAST/USDC:USDC: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-02 17:14:38 | ERROR    | langtrader.coin | process_one_coin:264 | ✗ Failed to fetch 4h data for XRP/USDC:USDC: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-02 17:14:39 | ERROR    | langtrader.coin | process_one_coin:264 | ✗ Failed to fetch 4h data for PENGU/USDC:USDC: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-02 17:14:40 | ERROR    | langtrader.coin | process_one_coin:264 | ✗ Failed to fetch 4h data for AVAX/USDC:USDC: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-02 17:15:37 | ERROR    | langtrader.market | _fetch_trade_metrics:363 |   KPEPE/USDC:USDC: failed to fetch trades: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-02 17:23:38 | ERROR    | langtrader.run_once | main:265 | ❌ Fatal error: 1 validation error for ExecutionResult
+status
+  Input should be 'skipped', 'pending', 'success' or 'failed' [type=literal_error, input_value='rejected', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 256, in main
+    await run_once.run()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 180, in run
+    result_dict = await builder.run_with_tracing(self.state, config)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/plugins/workflow.py", line 300, in run_with_tracing
+    return await self.compiled_graph.ainvoke(state, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3158, in ainvoke
+    async for chunk in self.astream(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 2971, in astream
+    async for _ in runner.atick(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 304, in atick
+    await arun_with_retry(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 705, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 473, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 270, in run
+    return await self._execute_batch(state)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 335, in _execute_batch
+    result = await self._execute_open_with_validation(ai_decision, state, symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 481, in _execute_open_with_validation
+    return ExecutionResult(
+           ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/pydantic/main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ExecutionResult
+status
+  Input should be 'skipped', 'pending', 'success' or 'failed' [type=literal_error, input_value='rejected', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+During task with name 'execution' and id 'ae82af7b-198a-c292-ca4b-98147682b13d'
+2026-01-02 17:38:16 | ERROR    | langtrader.debate | __init__:120 | 🚨 Context not found
+2026-01-02 18:05:42 | ERROR    | langtrader.run_once | main:265 | ❌ Fatal error: 1 validation error for ExecutionResult
+status
+  Input should be 'skipped', 'pending', 'success' or 'failed' [type=literal_error, input_value='rejected', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 256, in main
+    await run_once.run()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 180, in run
+    result_dict = await builder.run_with_tracing(self.state, config)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/plugins/workflow.py", line 300, in run_with_tracing
+    return await self.compiled_graph.ainvoke(state, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3158, in ainvoke
+    async for chunk in self.astream(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 2971, in astream
+    async for _ in runner.atick(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 304, in atick
+    await arun_with_retry(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 705, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 473, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 270, in run
+    return await self._execute_batch(state)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 335, in _execute_batch
+    result = await self._execute_open_with_validation(ai_decision, state, symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 481, in _execute_open_with_validation
+    return ExecutionResult(
+           ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/pydantic/main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ExecutionResult
+status
+  Input should be 'skipped', 'pending', 'success' or 'failed' [type=literal_error, input_value='rejected', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+During task with name 'execution' and id 'bdb7e232-c525-55b8-6633-337b545b6bd6'
+2026-01-02 18:16:41 | ERROR    | langtrader.agent_factory | invoke_agent_with_proposal:252 | ❌ Agent contrarian error: Failed to parse structured output for tool 'AgentResponse': Failed to parse data to AgentResponse: 1 validation error for AgentResponse
+vote
+  Field required [type=missing, input_value={'analysis': '总体仓... (-15% +3% slippage)']}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing.
+2026-01-02 18:16:41 | ERROR    | langtrader.run_once | main:265 | ❌ Fatal error: 'Trader' object has no attribute 'logger'
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 256, in main
+    await run_once.run()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 180, in run
+    result_dict = await builder.run_with_tracing(self.state, config)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/plugins/workflow.py", line 300, in run_with_tracing
+    return await self.compiled_graph.ainvoke(state, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3158, in ainvoke
+    async for chunk in self.astream(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 2971, in astream
+    async for _ in runner.atick(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 304, in atick
+    await arun_with_retry(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 705, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 473, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 270, in run
+    return await self._execute_batch(state)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 339, in _execute_batch
+    result = await self._execute_close_with_validation(ai_decision, state, symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 509, in _execute_close_with_validation
+    return await self._execute_close(decision)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 746, in _execute_close
+    result = await self.trader.close_position(symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/services/trader.py", line 645, in close_position
+    self.logger.info(f"📤 close_position called: symbol={symbol}, amount={amount}")
+    ^^^^^^^^^^^
+AttributeError: 'Trader' object has no attribute 'logger'
+During task with name 'execution' and id '75a569ee-d91c-4824-6e2c-37d9569101d3'
+2026-01-02 18:40:31 | ERROR    | langtrader.trader | close_position:686 | 🚨 MON/USDC:USDC: Exception in close_position - AttributeError: 'Position' object has no attribute 'entry_price'
+2026-01-02 18:40:31 | ERROR    | langtrader.execution | _execute_close:803 | ❌ MON/USDC:USDC: Close position failed - 'Position' object has no attribute 'entry_price'
+2026-01-02 18:40:31 | ERROR    | langtrader.run_once | main:265 | ❌ Fatal error: 1 validation error for ExecutionResult
+status
+  Input should be 'skipped', 'pending', 'success' or 'failed' [type=literal_error, input_value='rejected', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 256, in main
+    await run_once.run()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 180, in run
+    result_dict = await builder.run_with_tracing(self.state, config)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/plugins/workflow.py", line 300, in run_with_tracing
+    return await self.compiled_graph.ainvoke(state, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3158, in ainvoke
+    async for chunk in self.astream(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 2971, in astream
+    async for _ in runner.atick(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 304, in atick
+    await arun_with_retry(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 705, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 473, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 270, in run
+    return await self._execute_batch(state)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 335, in _execute_batch
+    result = await self._execute_open_with_validation(ai_decision, state, symbol)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/execution.py", line 481, in _execute_open_with_validation
+    return ExecutionResult(
+           ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/pydantic/main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ExecutionResult
+status
+  Input should be 'skipped', 'pending', 'success' or 'failed' [type=literal_error, input_value='rejected', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+During task with name 'execution' and id '8a3848dd-5a7f-9f98-035b-1b6695d6e8af'
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 19:34:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:05:04 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 20:45:45 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:02:20 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 3/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:18:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 4/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 21:29:05 | ERROR    | langtrader.stream_manager | get_latest_ohlcv:332 | Failed to fetch OHLCV for BTC/USDC:USDC 3m: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:08:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:24:58 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error AVAX/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 22:44:33 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-02 22:46:41 | ERROR    | langtrader.agent_factory | invoke_agent_with_proposal:252 | ❌ Agent contrarian error: Failed to parse structured output for tool 'AgentResponse': Failed to parse data to AgentResponse: 1 validation error for AgentResponse
+vote
+  Field required [type=missing, input_value={'analysis': '总体看...76% / ETH -3.84%）']}}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing.
+2026-01-02 23:14:24 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-02 23:37:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:15:52 | ERROR    | langtrader.market | _fetch_trade_metrics:363 |   BLAST/USDC:USDC: failed to fetch trades: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 00:53:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:10:29 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 01:12:06 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-03 01:47:25 | ERROR    | langtrader.agent_factory | invoke_agent_with_proposal:252 | ❌ Agent contrarian error: Unterminated string starting at: line 1 column 18 (char 17)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:07:52 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 02:08:28 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:27:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 02:45:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 03:01:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:18:23 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:33:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 04:35:43 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-03 04:48:07 | ERROR    | langtrader.market | _fetch_trade_metrics:363 |   PUMP/USDC:USDC: failed to fetch trades: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 04:48:16 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 05:33:27 | ERROR    | langtrader.agent_factory | invoke_agent_with_proposal:252 | ❌ Agent risk_manager error: Failed to parse structured output for tool 'AgentResponse': Failed to parse data to AgentResponse: 1 validation error for AgentResponse
+vote
+  Field required [type=missing, input_value={'analysis': '总体保...险等级可控。']}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing.
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 05:57:24 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:14:26 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 06:45:02 | ERROR    | langtrader.agent_factory | invoke_agent_with_proposal:252 | ❌ Agent contrarian error: Failed to parse structured output for tool 'AgentResponse': Failed to parse data to AgentResponse: 1 validation error for AgentResponse
+vote
+  Field required [type=missing, input_value={'analysis': '总体策...更严苛场景。']}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.12/v/missing.
+2026-01-03 07:04:03 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:25:05 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 07:34:50 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:50:54 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 08:51:59 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-03 09:33:51 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-03 09:49:56 | ERROR    | langtrader.market_analyzer | run:124 | ❌ LLM abatch call timed out (120s)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error DOGE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 10:09:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 12:19:29 | ERROR    | langtrader.debate_decision | _run_analyst:244 | ❌ Analyst 失败: Error code: 400 - {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "message": "Invalid schema for response_format \'AnalystOutput\': In context=(), \'required\' is required to be supplied and to be an array including every key in properties. Extra required key \'key_levels\' supplied.",\n    "type": "invalid_request_error",\n    "param": "text.format.schema",\n    "code": "invalid_json_schema"\n  }\n}', 'provider_name': 'Azure'}}, 'user_id': 'user_35JUu73map9hqyJrMfYb7TMRg7b'}
+2026-01-03 12:27:47 | ERROR    | langtrader.debate_decision | _run_analyst:244 | ❌ Analyst 失败: Error code: 400 - {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "message": "Invalid schema for response_format \'AnalystOutput\': In context=(), \'required\' is required to be supplied and to be an array including every key in properties. Extra required key \'key_levels\' supplied.",\n    "type": "invalid_request_error",\n    "param": "text.format.schema",\n    "code": "invalid_json_schema"\n  }\n}', 'provider_name': 'Azure'}}, 'user_id': 'user_35JUu73map9hqyJrMfYb7TMRg7b'}
+2026-01-03 12:41:49 | ERROR    | langtrader.trader | create_order:307 | ❌ Exchange error: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce-only is invalid for spot trading."}]}}}
+2026-01-03 12:48:02 | ERROR    | langtrader.trader | create_order:307 | ❌ Exchange error: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce-only is invalid for spot trading."}]}}}
+2026-01-03 12:48:07 | ERROR    | langtrader.trader | create_order:307 | ❌ Exchange error: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce-only is invalid for spot trading."}]}}}
+2026-01-03 12:54:45 | ERROR    | langtrader.execution | _execute_open:644 | ❌ KPEPE/USDC: Failed to fetch price: hyperliquid does not have market symbol KPEPE/USDC
+2026-01-03 12:54:45 | ERROR    | langtrader.execution | _execute_open:644 | ❌ BLAST/USDC: Failed to fetch price: hyperliquid does not have market symbol BLAST/USDC
+2026-01-03 13:01:08 | ERROR    | langtrader.trader | create_order:307 | ❌ Exchange error: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce-only is invalid for spot trading."}]}}}
+2026-01-03 13:01:12 | ERROR    | langtrader.trader | create_order:307 | ❌ Exchange error: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce-only is invalid for spot trading."}]}}}
+2026-01-03 13:08:32 | ERROR    | langtrader.trader | create_order:307 | ❌ Exchange error: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce-only is invalid for spot trading."}]}}}
+2026-01-03 13:08:37 | ERROR    | langtrader.trader | create_order:307 | ❌ Exchange error: hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Reduce-only is invalid for spot trading."}]}}}
+2026-01-03 13:26:55 | ERROR    | langtrader.debate_decision | _run_analyst:265 | ❌ Analyst 失败: 
+2026-01-03 13:28:47 | ERROR    | langtrader.execution | _validate_open_position:544 | 🚨 PUMP/USDC:USDC: Short invalid: SL(5.0) <= TP(12.0)
+2026-01-03 13:49:43 | ERROR    | langtrader.debate_decision | _run_analyst:266 | ❌ Analyst 失败: 
+2026-01-03 13:50:56 | ERROR    | langtrader.execution | _validate_open_position:459 | 🚨 KPEPE/USDC:USDC: Short invalid: SL(6.0) <= TP(20.0)
+2026-01-03 14:02:46 | ERROR    | langtrader.execution | _validate_open_position:497 | 🚨 BTC/USDC:USDC: Short invalid: SL(6.0) <= TP(15.0)
+2026-01-03 14:08:49 | ERROR    | langtrader.execution | _validate_open_position:497 | 🚨 BTC/USDC:USDC: Short invalid: SL(3.0) <= TP(9.0)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:29:18 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:45:22 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 14:55:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:07:25 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:23:12 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:38:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 16:39:44 | ERROR    | langtrader.debate_decision | _run_analyst:372 | ❌ Analyst 失败: 
+2026-01-03 17:20:48 | ERROR    | langtrader.debate_decision | _run_analyst:372 | ❌ Analyst 失败: 
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:24:53 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection timeout (retry 2/5)
+2026-01-03 17:25:41 | ERROR    | langtrader.run_once | run:166 | ❌ Failed to refresh account/positions: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-03 17:25:52 | ERROR    | langtrader.run_once | main:265 | ❌ Fatal error: hyperliquid POST https://api.hyperliquid.xyz/info
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client_reqrep.py", line 539, in start
+    message, payload = await protocol.read()  # type: ignore[union-attr]
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/streams.py", line 680, in read
+    await self._waiter
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 217, in fetch
+    async with session_method(yarl.URL(url, encoded=True),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 1510, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 779, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 757, in _connect_and_send_request
+    await resp.start(conn)
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client_reqrep.py", line 534, in start
+    with self._timer:
+         ^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 256, in main
+    await run_once.run()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 180, in run
+    result_dict = await builder.run_with_tracing(self.state, config)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/plugins/workflow.py", line 296, in run_with_tracing
+    return await self.compiled_graph.ainvoke(state, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 3158, in ainvoke
+    async for chunk in self.astream(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/main.py", line 2971, in astream
+    async for _ in runner.atick(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_runner.py", line 304, in atick
+    await arun_with_retry(
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/pregel/_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 705, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/langgraph/_internal/_runnable.py", line 473, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/graph/nodes/coins_pick.py", line 101, in run
+    top_20_oi_coins = await self.coin.select_io_top(limit=20)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/services/coin.py", line 115, in select_io_top
+    open_interests = await self.trader.exchange.fetchOpenInterests()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/hyperliquid.py", line 3926, in fetch_open_interests
+    swapMarkets = await self.fetch_swap_markets()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/hyperliquid.py", line 672, in fetch_swap_markets
+    response = await self.publicPostInfo(self.extend(request, params))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 994, in request
+    return await self.fetch2(path, api, method, params, headers, body, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 988, in fetch2
+    raise e
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 978, in fetch2
+    return await self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 253, in fetch
+    raise RequestTimeout(details) from e
+ccxt.base.errors.RequestTimeout: hyperliquid POST https://api.hyperliquid.xyz/info
+During task with name 'coins_pick' and id 'd3fdcf36-7d50-ee45-dacb-14756522e7e6'
+2026-01-03 18:36:04 | ERROR    | langtrader.debate_decision | _run_analyst:372 | ❌ Analyst 失败: 
+2026-01-03 18:48:21 | ERROR    | langtrader.market | _fetch_order_book_metrics:253 |   SOL/USDC:USDC: failed to fetch order book: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-03 19:54:41 | ERROR    | langtrader.debate_decision | _run_analyst:437 | ❌ Analyst 失败: 
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 20:10:42 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-03 21:22:52 | ERROR    | langtrader.market | _fetch_trade_metrics:363 |   PENGU/USDC:USDC: failed to fetch trades: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-03 21:51:35 | ERROR    | langtrader.debate_decision | _run_analyst:455 | ❌ Analyst 失败: 
+2026-01-03 22:49:27 | ERROR    | langtrader.debate_decision | _run_analyst:492 | ❌ Analyst 失败: 
+2026-01-03 22:51:24 | ERROR    | langtrader.trader | create_order:282 | ❌ Invalid order: ETH/USDC:USDC - hyperliquid {"status":"ok","response":{"type":"order","data":{"statuses":[{"error":"Order must have minimum value of $10. asset=1"}]}}}
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:46:07 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-03 23:59:22 | ERROR    | langtrader.debate_decision | _run_analyst:498 | ❌ Analyst 失败: 
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:25:11 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 00:46:00 | ERROR    | langtrader.market | _fetch_order_book_metrics:253 |   SOL/USDC:USDC: failed to fetch order book: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 2/5)
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 2/5)
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 00:46:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 01:01:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:18:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:34:59 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 3/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 02:51:02 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:08:51 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 2/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 04:14:28 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection to wss://api.hyperliquid.xyz/ws timed out due to a ping-pong keepalive missing on time (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 04:53:03 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:09:32 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 2/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:26:17 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 3/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:43:41 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 06:59:57 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:16:36 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 07:25:08 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PENGU/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error PUMP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error XRP/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error MON/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SUI/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BTC/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error KPEPE/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error ETH/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error SOL/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:31:09 | ERROR    | langtrader.stream_manager | _watch_stream:253 | ❌ Stream error BLAST/USDC:USDC 3m: Connection closed by remote server, closing code 1006 (retry 1/5)
+2026-01-04 08:43:55 | ERROR    | langtrader.trader | _check_exchange_status:151 | ❌ Network error checking exchange status: hyperliquid POST https://api.hyperliquid.xyz/info
+2026-01-04 08:43:55 | ERROR    | langtrader.run_once | main:265 | ❌ Fatal error: hyperliquid POST https://api.hyperliquid.xyz/info
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 779, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 734, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/connector.py", line 642, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/connector.py", line 1209, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/connector.py", line 1532, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/connector.py", line 1148, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 217, in fetch
+    async with session_method(yarl.URL(url, encoded=True),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 1510, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/client.py", line 624, in _request
+    with timer:
+         ^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/aiohttp/helpers.py", line 713, in __exit__
+    raise asyncio.TimeoutError from exc_val
+TimeoutError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 237, in main
+    await run_once.async_init()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/examples/run_once.py", line 82, in async_init
+    await self.trader.async_init()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/services/trader.py", line 108, in async_init
+    await self._check_exchange_status()
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/packages/langtrader_core/services/trader.py", line 128, in _check_exchange_status
+    status = await self.exchange.fetch_status()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/hyperliquid.py", line 397, in fetch_status
+    response = await self.publicPostInfo(self.extend(request, params))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 994, in request
+    return await self.fetch2(path, api, method, params, headers, body, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 988, in fetch2
+    raise e
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 978, in fetch2
+    return await self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tomiezhang/Desktop/dev/LangTarder_Agents/.venv/lib/python3.12/site-packages/ccxt/async_support/base/exchange.py", line 253, in fetch
+    raise RequestTimeout(details) from e
+ccxt.base.errors.RequestTimeout: hyperliquid POST https://api.hyperliquid.xyz/info

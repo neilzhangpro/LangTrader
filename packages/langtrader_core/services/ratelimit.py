@@ -1,45 +1,39 @@
+"""
+限流服务（单例模式）
+
+为 API 调用提供间隔限流和时间窗口限流。
+"""
 import asyncio
 from collections import deque
+
+from langtrader_core.services.singleton import Singleton
 from langtrader_core.utils import get_logger
+
 logger = get_logger("rate_limiter")
 
-class RateLimiter:
-    """
-    Async Rate limiter with time window management (Singleton pattern)
-    Ensures all API calls comply with both:
-    1. Interval limit: minimum time between consecutive requests
-    2. Window limit: maximum requests within a time window
-    """
-    _instance = None  # Class instance to store the singleton instance
-    _lock = None  # Async lock for thread-safe singleton creation
 
-    def __new__(cls):
-        """
-        Create or return the singleton instance
-        """
-        if cls._instance is None:
-            cls._instance = super(RateLimiter, cls).__new__(cls)
-            cls._instance._initialized = False
-        return cls._instance
-
-    def __init__(self):
-        """
-        Initialize the rate limiter (only once for singleton)
-        """
-        if self._initialized:
-            return
-        
-        # Interval-based rate limiting
+class RateLimiter(Singleton):
+    """
+    异步限流器（单例模式）
+    
+    支持两种限流策略：
+    1. 间隔限流：连续请求之间的最小间隔
+    2. 窗口限流：时间窗口内的最大请求数
+    """
+    
+    def _init_singleton(self):
+        """初始化限流器"""
+        # 间隔限流
         self._last_request_time = 0
         self._rate_limit_seconds = 0
         
-        # Time window-based rate limiting
-        self._request_times = deque()  # Track timestamps of recent requests
-        self._max_requests_per_minute = 20  # Increased limit for better throughput
-        self._time_window = 60  # Time window in seconds (1 minute)
+        # 窗口限流
+        self._request_times = deque()
+        self._max_requests_per_minute = 20
+        self._time_window = 60
         
-        self._lock = asyncio.Lock()
-        self._initialized = True
+        self._async_lock = asyncio.Lock()
+        logger.info("RateLimiter singleton initialized")
     
     def set_rate_limit(self, rate_limit_ms: int):
         """
@@ -56,10 +50,10 @@ class RateLimiter:
     
     async def wait_if_needed(self):
         """
-        Async wait if needed before sending the next request
-        Enforces both interval-based and time window-based rate limits
+        异步等待（如果需要）
+        同时执行间隔限流和窗口限流检查
         """
-        async with self._lock:
+        async with self._async_lock:
             # Use asyncio event loop time for consistency
             loop = asyncio.get_event_loop()
             current_time = loop.time()

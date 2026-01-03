@@ -12,12 +12,13 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages"))
 
 from langtrader_core.data import SessionLocal, init_db
+from langtrader_core.data.models.bot import Bot
 from langtrader_core.utils import get_logger
 from langtrader_core.graph.state import State
 from langtrader_core.services.trader import Trader
 from langtrader_core.services.stream_manager import DynamicStreamManager
-from langtrader_core.services.cache import Cache
-from langtrader_core.services.ratelimit import RateLimiter
+from langtrader_core.services.container import ServiceContainer
+from langtrader_core.services.config_manager import BotConfig
 from langtrader_core.services.performance import PerformanceService
 from langtrader_core.data.repositories.trade_history import TradeHistoryRepository
 from langtrader_core.plugins.registry import registry, PluginContext
@@ -46,9 +47,10 @@ class RunOnce:
         self.bot_id = bot_id
         self.graph = None
         
-        # ✅ 在初始化时创建共享实例
-        self.cache = Cache()
-        self.rate_limiter = RateLimiter()
+        # ✅ 使用服务容器管理共享实例
+        self.container = ServiceContainer.get_instance(self.session)
+        self.cache = self.container.get_cache()
+        self.rate_limiter = self.container.get_rate_limiter()
 
     async def async_init(self):
         """异步初始化"""
@@ -65,10 +67,15 @@ class RunOnce:
         self.exchange_config = config['exchange']
         self.workflow_config = config['workflow']
         
+        # 加载 Bot 模型（用于 BotConfig）
+        bot_model = self.session.get(Bot, self.bot_id)
+        self.bot_config_wrapper = BotConfig(bot_model)
+        
         logger.info(f"✅ Bot: {self.bot_config['name']}")
         logger.info(f"✅ Exchange: {self.exchange_config['name']}")
         logger.info(f"✅ Workflow: {self.workflow_config['name']}")
         logger.info(f"✅ Trading Mode: {self.bot_config['trading_mode']}")
+        logger.info(f"✅ Timeframes: {self.bot_config_wrapper.timeframes}")
         
         # 2. 初始化 Trader
         self.trader = Trader(self.exchange_config)
@@ -92,7 +99,7 @@ class RunOnce:
         self.trade_history_repo = TradeHistoryRepository(self.session)
         self.performance_service = PerformanceService(self.session)
         
-        # 6. 创建插件上下文（包含共享实例）
+        # 6. 创建插件上下文（包含共享实例和配置）
         context = PluginContext(
             trader=self.trader,
             stream_manager=self.stream_manager,
@@ -101,6 +108,7 @@ class RunOnce:
             rate_limiter=self.rate_limiter,
             trade_history_repo=self.trade_history_repo,
             performance_service=self.performance_service,
+            bot_config=self.bot_config_wrapper,  # 新增：传递 BotConfig
         )
         
         # 7. 列出已发现的插件
@@ -128,9 +136,14 @@ class RunOnce:
             initial_balance=self.initial_balance,
         )
         
+        # 10. 根据 cycle_interval 动态调整缓存 TTL
+        interval = self.bot_config['cycle_interval_seconds']
+        self.cache.set_cycle_interval(interval)
+        
         logger.info("✅ Async initialization completed")
         logger.info(f"   Initial balance: {self.initial_balance} USDC")
         logger.info(f"   Initial positions: {len(self.positions)}")
+        logger.info(f"   Cycle interval: {interval}s")
         
         return self
 
@@ -138,6 +151,29 @@ class RunOnce:
         """运行交易周期"""
         logger.info(f"🔄 Running trading cycle...")
         
+        # ========== 每轮开始：重置状态 ==========
+        # 1. 清理临时数据（避免上一轮数据残留）
+        self.state.reset_for_new_cycle()
+        logger.debug("State reset for new cycle")
+        
+        # 2. 清理过期缓存（防止内存无限增长）
+        cleaned = self.cache.cleanup_expired()
+        if cleaned > 0:
+            logger.debug(f"🧹 Cleaned {cleaned} expired cache entries")
+        
+        # 3. 刷新账户和持仓（从交易所获取最新状态）
+        try:
+            self.state.account = await self.trader.get_account_info()
+            self.state.positions = await self.trader.get_positions()
+            balance = self.state.account.total.get('USDC', 0) or self.state.account.total.get('USDT', 0)
+            logger.info(f"📊 Refreshed: balance={balance:.2f}, positions={len(self.state.positions)}")
+        except Exception as e:
+            logger.error(f"❌ Failed to refresh account/positions: {e}")
+        
+        # 4. 刷新数据库会话（避免过期连接）
+        self.session.expire_all()
+        
+        # ========== 运行工作流 ==========
         config: RunnableConfig = {
             "configurable": {
                 "thread_id": f"bot_{self.bot_id}"
@@ -148,7 +184,7 @@ class RunOnce:
         builder = self.workflow_builder
         result_dict = await builder.run_with_tracing(self.state, config)
         
-        # 更新状态
+        # 更新状态（工作流返回的结果）
         if result_dict and isinstance(result_dict, dict):
             if 'symbols' in result_dict:
                 self.state.symbols = result_dict['symbols']
@@ -221,6 +257,13 @@ async def main():
             logger.info("\n" + "=" * 60)
             logger.info(f"🔁 CYCLE #{cycle} - {datetime.now()}")
             logger.info("=" * 60)
+            
+            # 每 50 个周期刷新数据库 Session，避免连接老化
+            if cycle > 1 and cycle % 50 == 0:
+                logger.info("🔄 Refreshing database session (every 50 cycles)...")
+                run_once.session.close()
+                run_once.session = SessionLocal()
+                run_once.container.session = run_once.session
             
             await run_once.run()
             

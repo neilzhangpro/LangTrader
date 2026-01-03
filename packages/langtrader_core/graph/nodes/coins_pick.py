@@ -100,12 +100,13 @@ class CoinsPick(NodePlugin):
         if self.use_open_interest:
             top_20_oi_coins = await self.coin.select_io_top(limit=20)
         
-        top_20_raw_coins = self.coin.select_top(limit=20)
-        logger.info(f"  Raw coins (volume): {len(top_20_raw_coins)}")
+        # 按成交量排序获取 top 20
+        top_20_raw_coins = await self.coin.select_top(limit=20)
+        logger.info(f"  Top coins (by volume): {len(top_20_raw_coins)}")
         logger.info(f"  Open Interest coins: {len(top_20_oi_coins)}")
         
-        # 合并去重
-        combined_coins = self.coin.combine_unique_coins(top_20_oi_coins, top_20_raw_coins, limit=5)
+        # 合并去重（limit 设大一些，给后续数据过滤留有余量）
+        combined_coins = self.coin.combine_unique_coins(top_20_oi_coins, top_20_raw_coins, limit=10)
         logger.info(f"  Combined unique: {len(combined_coins)} coins")
         
         # 评分排序

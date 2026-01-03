@@ -135,11 +135,32 @@ class Coin:
         
         return []
     
-    def select_top(self, limit=20) -> List[str]:
+    async def select_top(self, limit=20) -> List[str]:
         """
-        Select the top coins (sync - no API call needed)
+        Select the top coins by volume and spread (async)
+        
+        流程：
+        1. 静态过滤：过滤出符合条件的永续合约
+        2. 成交量排序：按成交量降序，点差升序排序
+        
+        Args:
+            limit: 返回数量限制
+            
+        Returns:
+            按成交量排序的币种列表
         """
-        return self._static_filter(limit=limit)
+        # 先静态过滤（扩大范围以便后续排序）
+        filtered_symbols = self._static_filter(limit=100)
+        
+        if not filtered_symbols:
+            logger.warning("No symbols passed static filter")
+            return []
+        
+        # 按成交量和点差排序
+        ranked_coins = await self._top_20_coins(filtered_symbols, limit=limit)
+        logger.info(f"Top {limit} by volume: {ranked_coins[:5]}...")
+        
+        return ranked_coins
 
     async def _top_20_coins(self, symbols: List[str], limit=20) -> List[str]:
         """
@@ -167,7 +188,11 @@ class Coin:
 
     def combine_unique_coins(self, io_top_coins: List[str], top_coins: List[str], limit: int = 5) -> List[str]:
         """
-        合并去重 io top coins 和 top coins
+        合并去重 io top coins 和 top coins（交替选择）
+        
+        策略：交替从两个列表中选择，确保两个维度都有代表性
+        - OI 高的币通常代表市场关注度高
+        - 成交量高的币通常流动性好
         
         Args:
             io_top_coins: 按 Open Interest 排序的币种
@@ -175,17 +200,37 @@ class Coin:
             limit: 返回数量限制
             
         Returns:
-            去重后的币种列表
+            去重后的币种列表（交替选择）
         """
-        return list(dict.fromkeys(io_top_coins + top_coins))[:limit]
+        result = []
+        seen = set()
+        
+        # 交替从两个列表中选择
+        i, j = 0, 0
+        while len(result) < limit:
+            # 从 OI 列表中选择
+            while i < len(io_top_coins) and io_top_coins[i] in seen:
+                i += 1
+            if i < len(io_top_coins) and len(result) < limit:
+                result.append(io_top_coins[i])
+                seen.add(io_top_coins[i])
+                i += 1
+            
+            # 从成交量列表中选择
+            while j < len(top_coins) and top_coins[j] in seen:
+                j += 1
+            if j < len(top_coins) and len(result) < limit:
+                result.append(top_coins[j])
+                seen.add(top_coins[j])
+                j += 1
+            
+            # 如果两个列表都遍历完了，退出
+            if i >= len(io_top_coins) and j >= len(top_coins):
+                break
+        
+        logger.debug(f"Combined coins (interleaved): {result}")
+        return result
     
-    # 保留旧方法名作为别名（向后兼容）
-    def combin_uni_coins(self, io_top_coins: List[str], top_coins: List[str], limit: int = 5) -> List[str]:
-        """
-        [Deprecated] 使用 combine_unique_coins 替代
-        """
-        return self.combine_unique_coins(io_top_coins, top_coins, limit)
-
     async def score_coins(self, coins: List[str]) -> List[str]:
         """
         对币种列表评分并排序
@@ -207,35 +252,53 @@ class Coin:
                 logger.info(f"Processing coin {idx}/{len(coins)}: {coin}")
                 
                 try:
-                    # Concurrently fetch both timeframes
+                    # 尝试获取 3m 和 4h 数据
                     klines_3m_raw, klines_4h_raw = await asyncio.gather(
                         self._fetch_ohlcv(coin, timeframe='3m', limit=100),
                         self._fetch_ohlcv(coin, timeframe='4h', limit=100),
                         return_exceptions=True
                     )
                     
-                    # Check for exceptions
-                    if isinstance(klines_3m_raw, Exception):
-                        logger.error(f"✗ Failed to fetch 3m data for {coin}: {klines_3m_raw}")
-                        return None
+                    # 检查 4h 数据
                     if isinstance(klines_4h_raw, Exception):
                         logger.error(f"✗ Failed to fetch 4h data for {coin}: {klines_4h_raw}")
                         return None
-                    
-                    logger.debug(f"Got {len(klines_3m_raw)} 3m and {len(klines_4h_raw)} 4h candles")
-                    
-                    # Verify data
-                    if not klines_3m_raw or len(klines_3m_raw) < 20:
-                        logger.warning(f"Skipping {coin}: insufficient 3m data")
-                        return None
-                    
                     if not klines_4h_raw or len(klines_4h_raw) < 20:
                         logger.warning(f"Skipping {coin}: insufficient 4h data")
                         return None
                     
-                    # 使用统一的转换函数
-                    klines_3m = ohlcv_to_klines(klines_3m_raw)
+                    # 检查 3m 数据，如果不足则尝试回退到 5m
+                    klines_short = None
+                    if isinstance(klines_3m_raw, Exception) or not klines_3m_raw or len(klines_3m_raw) < 20:
+                        # 回退：尝试使用 5m 数据
+                        logger.debug(f"{coin}: 3m data insufficient, trying 5m...")
+                        try:
+                            klines_5m_raw = await self._fetch_ohlcv(coin, timeframe='5m', limit=100)
+                            if klines_5m_raw and len(klines_5m_raw) >= 20:
+                                klines_short = ohlcv_to_klines(klines_5m_raw)
+                                logger.debug(f"{coin}: Using 5m data as fallback")
+                            else:
+                                # 继续回退到 15m
+                                klines_15m_raw = await self._fetch_ohlcv(coin, timeframe='15m', limit=100)
+                                if klines_15m_raw and len(klines_15m_raw) >= 20:
+                                    klines_short = ohlcv_to_klines(klines_15m_raw)
+                                    logger.debug(f"{coin}: Using 15m data as fallback")
+                                else:
+                                    logger.warning(f"Skipping {coin}: insufficient short-term data (tried 3m/5m/15m)")
+                                    return None
+                        except Exception as e:
+                            logger.warning(f"Skipping {coin}: fallback data fetch failed: {e}")
+                            return None
+                    else:
+                        klines_short = ohlcv_to_klines(klines_3m_raw)
+                    
+                    klines_3m = klines_short  # 统一变量名（可能是 3m/5m/15m）
                     klines_4h = ohlcv_to_klines(klines_4h_raw)
+                    
+                    # 过滤数据量不足的币种（至少需要 20 根 K 线）
+                    if len(klines_3m) < 20 or len(klines_4h) < 20:
+                        logger.warning(f"Skipping {coin}: insufficient kline data (short={len(klines_3m)}, 4h={len(klines_4h)})")
+                        return None
                     
                     # Using 3m Klines to get the current price
                     current_price = klines_3m[-1].close

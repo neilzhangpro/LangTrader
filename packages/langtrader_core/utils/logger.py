@@ -1,16 +1,21 @@
 # packages/langtrader_core/utils/logger.py
+"""
+交易系统日志管理
+
+提供统一的日志配置，支持控制台彩色输出和文件轮转。
+"""
 import logging
 import sys
 from pathlib import Path
 from typing import Optional
-from datetime import datetime
 from logging.handlers import RotatingFileHandler
+
+from langtrader_core.services.singleton import Singleton
 
 # 尝试使用 rich 库增强日志显示（可选）
 try:
     from rich.logging import RichHandler
     from rich.console import Console
-    from rich.traceback import install
     RICH_AVAILABLE = True
 except ImportError:
     RICH_AVAILABLE = False
@@ -19,7 +24,6 @@ except ImportError:
 class ColoredFormatter(logging.Formatter):
     """带颜色的日志格式化器"""
     
-    # ANSI 颜色代码
     COLORS = {
         'DEBUG': '\033[36m',      # 青色
         'INFO': '\033[32m',       # 绿色
@@ -30,36 +34,25 @@ class ColoredFormatter(logging.Formatter):
     RESET = '\033[0m'
     
     def format(self, record):
-        # 添加颜色
         log_color = self.COLORS.get(record.levelname, '')
         record.levelname = f"{log_color}{record.levelname}{self.RESET}"
         return super().format(record)
 
 
-class TradingLogger:
-    """交易系统统一日志管理器"""
+class TradingLogger(Singleton):
+    """
+    交易系统统一日志管理器
+    继承 Singleton 基类实现线程安全的单例
+    """
     
-    _instance: Optional['TradingLogger'] = None
-    _initialized = False
-    
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-    
-    def __init__(self):
-        if self._initialized:
-            return
-        
+    def _init_singleton(self):
+        """初始化日志管理器"""
         self.logger = logging.getLogger('langtrader')
         self.logger.setLevel(logging.DEBUG)
         
         # 避免重复添加 handler
-        if self.logger.handlers:
-            return
-        
-        self._setup_handlers()
-        self._initialized = True
+        if not self.logger.handlers:
+            self._setup_handlers()
     
     def _setup_handlers(self):
         """配置日志处理器"""

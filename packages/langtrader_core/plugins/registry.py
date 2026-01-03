@@ -33,7 +33,10 @@ class PluginContext:
     llm_factory: Optional['LLMFactory'] = None
     trade_history_repo: Optional['TradeHistoryRepository'] = None
     performance_service: Optional['PerformanceService'] = None
+    bot_config: Optional['BotConfig'] = None  # Bot 配置
     config: Dict[str, Any] = field(default_factory=dict)
+    bot: Optional[Any] = None                 # Bot 模型实例
+    bot_id: Optional[int] = None              # Bot ID
 
 class PluginRegistry:
     """

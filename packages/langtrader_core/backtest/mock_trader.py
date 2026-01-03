@@ -7,6 +7,7 @@ from typing import List, Dict, Optional, Any
 from datetime import datetime
 import asyncio
 from langtrader_core.graph.state import Account, Position, OrderResult, OpenPositionResult
+from langtrader_core.services.fee_calculator import FeeCalculator
 from langtrader_core.utils import get_logger
 
 logger = get_logger("mock_trader")
@@ -321,7 +322,22 @@ class MockTrader:
         """异步初始化（匹配 Trader 接口）"""
         logger.info("Initializing MockTrader...")
         self.markets = await self.data_source.get_markets()
-        logger.info(f"✅ MockTrader initialized with {len(self.markets)} markets")
+        
+        # 验证markets是否包含费率信息
+        if self.markets:
+            sample_symbols = list(self.markets.keys())[:3]
+            logger.info(f"✅ MockTrader initialized with {len(self.markets)} markets")
+            
+            # 显示几个市场的费率信息
+            for sym in sample_symbols:
+                market = self.markets.get(sym)
+                if market:
+                    maker = market.get('maker', 'N/A')
+                    taker = market.get('taker', 'N/A')
+                    logger.debug(f"   {sym}: maker={maker}, taker={taker}")
+        else:
+            logger.warning("⚠️ No markets loaded, will use default fee rates")
+        
         return self
     
     async def fetch_ohlcv(
@@ -352,6 +368,10 @@ class MockTrader:
         
         return result
     
+    def _get_fee_rate(self, symbol: str, order_type: str = 'market') -> float:
+        """获取手续费率（优先使用markets，否则使用默认值）"""
+        return FeeCalculator.get_trading_fee_rate(self, symbol, order_type)
+    
     async def create_order(
         self,
         symbol: str,
@@ -362,7 +382,11 @@ class MockTrader:
         params: Dict = None,
         **kwargs
     ) -> Dict:
-        """模拟下单"""
+        """
+        模拟下单
+        
+        注意：amount是USD金额，不是币数量（与execution.py的调用约定一致）
+        """
         current_price = await self._get_current_price(symbol)
         
         if current_price == 0:
@@ -375,9 +399,15 @@ class MockTrader:
         else:
             fill_price = current_price * (1 - self.slippage)
         
-        # 计算手续费
-        notional = amount * fill_price
-        fee = notional * self.commission
+        # 🔧 修复：amount是USD金额，需要转换为币数量
+        coin_amount = FeeCalculator.convert_usd_to_coin_amount(amount, fill_price)
+        
+        # 🔧 修复：计算名义价值（应该≈amount）
+        notional = coin_amount * fill_price
+        
+        # 🔧 修复：从markets获取真实费率
+        fee_rate = self._get_fee_rate(symbol, order_type)
+        fee = FeeCalculator.calculate_fee(notional, fee_rate)
         
         # 更新余额
         if side == "buy":
@@ -390,8 +420,8 @@ class MockTrader:
             "symbol": symbol,
             "type": order_type,
             "side": side,
-            "amount": amount,
-            "filled": amount,
+            "amount": coin_amount,  # 返回币数量（符合CCXT标准）
+            "filled": coin_amount,
             "remaining": 0,
             "average": fill_price,
             "status": "closed",
@@ -399,7 +429,10 @@ class MockTrader:
             "timestamp": self.data_source.current_time,
         }
         
-        logger.info(f"📝 Mock: {side} {amount} {symbol} @ {fill_price:.2f} (fee: {fee:.4f})")
+        logger.info(
+            f"📝 Mock: {side} {coin_amount:.6f} {symbol} @ {fill_price:.2f} "
+            f"(notional: ${notional:.2f}, fee: ${fee:.4f} @ {fee_rate*100:.4f}%)"
+        )
         return order
     
     async def open_position(

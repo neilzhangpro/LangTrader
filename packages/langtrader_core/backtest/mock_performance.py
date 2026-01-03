@@ -61,12 +61,19 @@ class MockPerformanceService:
             entry_time: 入场时间戳 (ms)
             exit_time: 出场时间戳 (ms)
         """
-        # 计算盈亏
+        # 🔧 修复：正确计算盈亏
+        # amount 是币的数量，计算 USD 价值差
         if side == 'buy':
-            pnl_usd = (exit_price - entry_price) * amount
+            # 多头：成本 = entry_price * amount，价值 = exit_price * amount
+            cost_basis = entry_price * amount
+            value_now = exit_price * amount
+            pnl_usd = value_now - cost_basis
             pnl_percent = ((exit_price - entry_price) / entry_price) * 100
         else:  # sell (short)
-            pnl_usd = (entry_price - exit_price) * amount
+            # 空头：入场价值 = entry_price * amount，平仓成本 = exit_price * amount
+            value_entry = entry_price * amount
+            cost_exit = exit_price * amount
+            pnl_usd = value_entry - cost_exit
             pnl_percent = ((entry_price - exit_price) / entry_price) * 100
         
         trade = MockTrade(
@@ -187,25 +194,36 @@ class MockPerformanceService:
         return float((mean_return - risk_free_rate) / std_return)
     
     def _calculate_max_drawdown(self, returns_pct: List[float]) -> float:
-        """计算最大回撤"""
+        """
+        计算最大回撤
+        
+        Args:
+            returns_pct: 收益率序列 (%)，如 [5.0, -3.0, 2.0] 表示 +5%, -3%, +2%
+            
+        Returns:
+            最大回撤（比例），如 0.15 表示 15%
+        """
         if not returns_pct:
             return 0.0
         
-        cumulative = [0.0]
+        # 计算累计净值（从 1.0 开始，使用复利计算）
+        equity = [1.0]
         for r in returns_pct:
-            cumulative.append(cumulative[-1] + r)
+            equity.append(equity[-1] * (1 + r / 100))
         
-        peak = cumulative[0]
+        # 计算最大回撤（相对于峰值的比例）
+        peak = equity[0]
         max_dd = 0.0
         
-        for value in cumulative:
+        for value in equity:
             if value > peak:
                 peak = value
-            drawdown = peak - value
-            if drawdown > max_dd:
-                max_dd = drawdown
+            if peak > 0:
+                drawdown = (peak - value) / peak
+                if drawdown > max_dd:
+                    max_dd = drawdown
         
-        return max_dd
+        return max_dd  # 返回比例，如 0.15 表示 15%
     
     def get_recent_trades_summary(
         self, 

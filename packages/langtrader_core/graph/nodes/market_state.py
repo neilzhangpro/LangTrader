@@ -7,6 +7,8 @@ from langtrader_core.graph.state import State
 from langtrader_core.services.market import Market
 from langtrader_core.utils import get_logger
 
+import ccxt
+
 logger = get_logger("market_state")
 
 
@@ -38,18 +40,26 @@ class MarketState(NodePlugin):
         stream_manager = context.stream_manager if context else None
         cache = context.cache if context else None          # ← 从 context 获取
         rate_limiter = context.rate_limiter if context else None  # ← 从 context 获取
+        bot_config = context.bot_config if context else None  # ← 从 context 获取 BotConfig
         
         # 使用注入的共享实例创建 Market 服务
         self.market = Market(
             trader=trader,
             stream_manager=stream_manager,
             cache=cache,
-            rate_limiter=rate_limiter
+            rate_limiter=rate_limiter,
+            bot_config=bot_config  # 新增：传递 BotConfig
         )
 
     async def run(self, state: State):
         """
         获取市场数据并计算指标
+        
+        异常处理策略：
+        - NetworkError: 可重试错误，记录警告
+        - ExchangeNotAvailable: 交易所不可用，跳过本轮
+        - ExchangeError: 交易所 API 错误，记录并跳过
+        - 其他: 未知错误，记录并继续
         """
         try:
             state.market_data = await self.market.run(state)
@@ -60,7 +70,7 @@ class MarketState(NodePlugin):
                 if data.get('indicators') and len(data.get('indicators', {})) > 0
             )
             
-            logger.info(f"✅ Indicators calculated: {symbols_with_indicators}/{len(state.market_data)} symbols")
+            logger.info(f"Indicators calculated: {symbols_with_indicators}/{len(state.market_data)} symbols")
             
             # 显示前几个币种的指标数量
             for idx, (symbol, data) in enumerate(list(state.market_data.items())[:3]):
@@ -69,11 +79,20 @@ class MarketState(NodePlugin):
             
             # 显示当前持仓
             for item in state.positions:
-                logger.info(f"current hold positions: {item}")
+                logger.info(f"Current hold position: {item}")
                 
+        except ccxt.NetworkError as e:
+            # 网络错误（可重试）
+            logger.warning(f"Network error (retryable): {e}")
+        except ccxt.ExchangeNotAvailable as e:
+            # 交易所不可用
+            logger.error(f"Exchange not available: {e}")
+        except ccxt.ExchangeError as e:
+            # 交易所 API 错误
+            logger.error(f"Exchange error: {e}")
         except Exception as e:
-            logger.error(f"Error getting market state: {e}")
-            return state
+            # 未知错误
+            logger.exception(f"Unexpected error in market state: {e}")
         finally:
             logger.info("Market state node finished")
         

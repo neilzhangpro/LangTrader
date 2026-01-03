@@ -63,7 +63,7 @@ class QuantSignalFilter(NodePlugin):
                 self.weights
             )
             
-            # 保存到 indicators 字典，供 decision.py 读取
+            # 保存到 indicators 字典，供 batch_decision.py 读取
             symbol_data['indicators']['quant_signal'] = signal
             
             # 统一过滤逻辑（回测和实盘一致，确保回测结果可靠）

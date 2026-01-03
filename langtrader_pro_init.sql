@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict NoPkOa2glTqbIYR9zqqVHiUIaEgKYOe3yZd9SYVtziPMw7naHdb20eRHtfb3y2e
+\restrict dwXPBo7YTaQphLqNLya3YGU6R7SuchByLV7hJxZWLuXQERnlCmZwZkgGJwgFgyg
 
 -- Dumped from database version 14.19 (Homebrew)
 -- Dumped by pg_dump version 14.19 (Homebrew)
@@ -53,7 +53,11 @@ CREATE TABLE public.bots (
     prompt character varying(255) DEFAULT 'None'::character varying NOT NULL,
     quant_signal_weights jsonb DEFAULT '{"trend": 0.4, "volume": 0.2, "momentum": 0.3, "sentiment": 0.1}'::jsonb,
     quant_signal_threshold integer DEFAULT 50,
-    risk_limits jsonb DEFAULT '{"max_single_symbol_pct": 0.3, "max_consecutive_losses": 5, "max_total_exposure_pct": 0.8}'::jsonb
+    risk_limits jsonb DEFAULT '{"max_single_symbol_pct": 0.3, "max_consecutive_losses": 5, "max_total_exposure_pct": 0.8}'::jsonb,
+    trading_timeframes jsonb DEFAULT '["3m", "4h"]'::jsonb,
+    ohlcv_limits jsonb DEFAULT '{"3m": 100, "4h": 100}'::jsonb,
+    indicator_configs jsonb DEFAULT '{"atr_period": 14, "rsi_period": 7, "ema_periods": [20, 50, 200], "macd_config": {"fast": 12, "slow": 26, "signal": 9}, "stochastic_d": 3, "stochastic_k": 14, "bollinger_std": 2.0, "bollinger_period": 20}'::jsonb,
+    tavily_search_key character varying(255) DEFAULT 'None'::character varying NOT NULL
 );
 
 
@@ -134,6 +138,34 @@ COMMENT ON COLUMN public.bots.quant_signal_threshold IS '量化信号最低得�
 --
 
 COMMENT ON COLUMN public.bots.risk_limits IS '动态风险管理阈值配置';
+
+
+--
+-- Name: COLUMN bots.trading_timeframes; Type: COMMENT; Schema: public; Owner: tomiezhang
+--
+
+COMMENT ON COLUMN public.bots.trading_timeframes IS '交易时间框架列表 (如 ["3m", "4h", "1h"])';
+
+
+--
+-- Name: COLUMN bots.ohlcv_limits; Type: COMMENT; Schema: public; Owner: tomiezhang
+--
+
+COMMENT ON COLUMN public.bots.ohlcv_limits IS '各时间框架K线数据获取数量 (如 {"3m": 100, "4h": 100})';
+
+
+--
+-- Name: COLUMN bots.indicator_configs; Type: COMMENT; Schema: public; Owner: tomiezhang
+--
+
+COMMENT ON COLUMN public.bots.indicator_configs IS '技术指标参数配置 (EMA周期、RSI周期、MACD参数等)';
+
+
+--
+-- Name: COLUMN bots.tavily_search_key; Type: COMMENT; Schema: public; Owner: tomiezhang
+--
+
+COMMENT ON COLUMN public.bots.tavily_search_key IS '辩论环节Agent需要使用的搜索工具API key';
 
 
 --
@@ -237,7 +269,8 @@ CREATE TABLE public.exchanges (
     createdat timestamp with time zone DEFAULT now() NOT NULL,
     updatedat timestamp with time zone DEFAULT now() NOT NULL,
     testnet boolean DEFAULT false NOT NULL,
-    "IoTop" boolean DEFAULT false NOT NULL
+    "IoTop" boolean DEFAULT false NOT NULL,
+    slippage double precision DEFAULT 0.05
 );
 
 
@@ -378,6 +411,82 @@ ALTER TABLE public.node_configs_id_seq OWNER TO tomiezhang;
 --
 
 ALTER SEQUENCE public.node_configs_id_seq OWNED BY public.node_configs.id;
+
+
+--
+-- Name: system_configs; Type: TABLE; Schema: public; Owner: tomiezhang
+--
+
+CREATE TABLE public.system_configs (
+    id integer NOT NULL,
+    config_key character varying(100) NOT NULL,
+    config_value text NOT NULL,
+    value_type character varying(50) DEFAULT 'string'::character varying,
+    category character varying(50),
+    description text,
+    is_editable boolean DEFAULT true,
+    updated_at timestamp without time zone DEFAULT now(),
+    updated_by character varying(100)
+);
+
+
+ALTER TABLE public.system_configs OWNER TO tomiezhang;
+
+--
+-- Name: TABLE system_configs; Type: COMMENT; Schema: public; Owner: tomiezhang
+--
+
+COMMENT ON TABLE public.system_configs IS '系统全局配置管理 - 存储所有可配置参数';
+
+
+--
+-- Name: COLUMN system_configs.config_key; Type: COMMENT; Schema: public; Owner: tomiezhang
+--
+
+COMMENT ON COLUMN public.system_configs.config_key IS '配置键（唯一，点分隔命名空间）';
+
+
+--
+-- Name: COLUMN system_configs.value_type; Type: COMMENT; Schema: public; Owner: tomiezhang
+--
+
+COMMENT ON COLUMN public.system_configs.value_type IS '值类型：string, integer, float, boolean, json';
+
+
+--
+-- Name: COLUMN system_configs.category; Type: COMMENT; Schema: public; Owner: tomiezhang
+--
+
+COMMENT ON COLUMN public.system_configs.category IS '配置类别：cache, trading, api, system';
+
+
+--
+-- Name: COLUMN system_configs.is_editable; Type: COMMENT; Schema: public; Owner: tomiezhang
+--
+
+COMMENT ON COLUMN public.system_configs.is_editable IS '是否允许通过 UI 编辑';
+
+
+--
+-- Name: system_configs_id_seq; Type: SEQUENCE; Schema: public; Owner: tomiezhang
+--
+
+CREATE SEQUENCE public.system_configs_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.system_configs_id_seq OWNER TO tomiezhang;
+
+--
+-- Name: system_configs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: tomiezhang
+--
+
+ALTER SEQUENCE public.system_configs_id_seq OWNED BY public.system_configs.id;
 
 
 --
@@ -669,6 +778,13 @@ ALTER TABLE ONLY public.node_configs ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: system_configs id; Type: DEFAULT; Schema: public; Owner: tomiezhang
+--
+
+ALTER TABLE ONLY public.system_configs ALTER COLUMN id SET DEFAULT nextval('public.system_configs_id_seq'::regclass);
+
+
+--
 -- Name: trade_history id; Type: DEFAULT; Schema: public; Owner: tomiezhang
 --
 
@@ -788,6 +904,22 @@ ALTER TABLE ONLY public.llm_configs
 
 ALTER TABLE ONLY public.node_configs
     ADD CONSTRAINT node_configs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: system_configs system_configs_config_key_key; Type: CONSTRAINT; Schema: public; Owner: tomiezhang
+--
+
+ALTER TABLE ONLY public.system_configs
+    ADD CONSTRAINT system_configs_config_key_key UNIQUE (config_key);
+
+
+--
+-- Name: system_configs system_configs_pkey; Type: CONSTRAINT; Schema: public; Owner: tomiezhang
+--
+
+ALTER TABLE ONLY public.system_configs
+    ADD CONSTRAINT system_configs_pkey PRIMARY KEY (id);
 
 
 --
@@ -920,6 +1052,13 @@ CREATE INDEX idx_bots_exchange ON public.bots USING btree (exchange_id);
 
 
 --
+-- Name: idx_bots_indicator_configs; Type: INDEX; Schema: public; Owner: tomiezhang
+--
+
+CREATE INDEX idx_bots_indicator_configs ON public.bots USING gin (indicator_configs);
+
+
+--
 -- Name: idx_bots_llm; Type: INDEX; Schema: public; Owner: tomiezhang
 --
 
@@ -938,6 +1077,13 @@ CREATE INDEX idx_bots_quant_config ON public.bots USING gin (quant_signal_weight
 --
 
 CREATE INDEX idx_bots_risk_config ON public.bots USING gin (risk_limits);
+
+
+--
+-- Name: idx_bots_timeframes; Type: INDEX; Schema: public; Owner: tomiezhang
+--
+
+CREATE INDEX idx_bots_timeframes ON public.bots USING gin (trading_timeframes);
 
 
 --
@@ -980,6 +1126,20 @@ CREATE INDEX idx_llm_configs_provider ON public.llm_configs USING btree (provide
 --
 
 CREATE INDEX idx_node_configs_node ON public.node_configs USING btree (node_id);
+
+
+--
+-- Name: idx_system_configs_category; Type: INDEX; Schema: public; Owner: tomiezhang
+--
+
+CREATE INDEX idx_system_configs_category ON public.system_configs USING btree (category);
+
+
+--
+-- Name: idx_system_configs_key; Type: INDEX; Schema: public; Owner: tomiezhang
+--
+
+CREATE INDEX idx_system_configs_key ON public.system_configs USING btree (config_key);
 
 
 --
@@ -1088,5 +1248,5 @@ ALTER TABLE ONLY public.trade_history
 -- PostgreSQL database dump complete
 --
 
-\unrestrict NoPkOa2glTqbIYR9zqqVHiUIaEgKYOe3yZd9SYVtziPMw7naHdb20eRHtfb3y2e
+\unrestrict dwXPBo7YTaQphLqNLya3YGU6R7SuchByLV7hJxZWLuXQERnlCmZwZkgGJwgFgyg
 

@@ -5,13 +5,14 @@
 from datetime import datetime, timedelta
 from typing import Optional, List
 from sqlmodel import Session
+from langtrader_core.data.models.bot import Bot
 from langtrader_core.plugins.workflow import WorkflowBuilder
 from langtrader_core.plugins.registry import PluginContext
 from langtrader_core.graph.state import State
 from langtrader_core.backtest.mock_trader import MockTrader, ExchangeBacktestDataSource
 from langtrader_core.backtest.mock_performance import MockPerformanceService
-from langtrader_core.services.cache import Cache
-from langtrader_core.services.ratelimit import RateLimiter
+from langtrader_core.services.container import ServiceContainer
+from langtrader_core.services.config_manager import BotConfig
 from langtrader_core.data.repositories.trade_history import TradeHistoryRepository
 from langtrader_core.utils import get_logger
 
@@ -48,9 +49,11 @@ class BacktestEngine:
         self.current_cycle = 0
         self.total_cycles = 0
         
-        # 复用现有服务
-        self.cache = Cache()
-        self.rate_limiter = RateLimiter()
+        # 服务容器将在 initialize 中创建
+        self.container = None
+        self.cache = None
+        self.rate_limiter = None
+        self.bot_config_wrapper = None
     
     async def initialize(self, session: Session):
         """初始化回测环境"""
@@ -61,9 +64,19 @@ class BacktestEngine:
         logger.info(f"Period: {self.start_date} → {self.end_date}")
         logger.info(f"Initial Balance: ${self.initial_balance}")
         
+        # 0. 初始化服务容器
+        self.container = ServiceContainer.get_instance(session)
+        self.cache = self.container.get_cache()
+        self.rate_limiter = self.container.get_rate_limiter()
+        
         # 1. 加载 Bot 配置
         builder = WorkflowBuilder(session, self.bot_id)
         self.bot_config = builder.load_bot_config()
+        
+        # 加载 Bot 模型（用于 BotConfig）
+        bot_model = session.get(Bot, self.bot_id)
+        self.bot_config_wrapper = BotConfig(bot_model)
+        logger.info(f"✅ Bot Config: timeframes={self.bot_config_wrapper.timeframes}")
         
         # 2. 创建真实交易所实例（用于拉取历史数据）
         logger.info(f"Connecting to {self.bot_config['exchange']['name']}...")
@@ -121,12 +134,13 @@ class BacktestEngine:
         # 7. 创建插件上下文（用 MockTrader 和 MockPerformanceService）
         context = PluginContext(
             trader=self.mock_trader,
-            stream_manager=None,
+            stream_manager=None,  # 回测模式：显式传入 None
             database=session,
             cache=self.cache,
             rate_limiter=self.rate_limiter,
             trade_history_repo=TradeHistoryRepository(session),
             performance_service=self.mock_performance,  # 使用 Mock 绩效服务
+            bot_config=self.bot_config_wrapper,  # 新增：传递 BotConfig
         )
         
         # 8. 构建工作流
@@ -258,7 +272,7 @@ class BacktestEngine:
         logger.info(f"Trades: {report['total_trades']}")
         logger.info(f"Win Rate: {report['win_rate']:.1f}%")
         logger.info(f"Sharpe: {report['sharpe_ratio']:.2f}")
-        logger.info(f"Max Drawdown: {report['max_drawdown']:.2f}%")
+        logger.info(f"Max Drawdown: {report['max_drawdown']*100:.2f}%")
         logger.info("="*60)
         
         return report

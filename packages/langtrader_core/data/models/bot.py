@@ -36,13 +36,7 @@ class Bot(SQLModel, table=True):
     tracing_key: Optional[str] = Field(default=None)
     
     # 运行参数
-    max_concurrent_symbols: int = Field(default=5)
     cycle_interval_seconds: int = Field(default=180)
-    
-    # 风险管理
-    max_position_size_percent: Decimal = Field(default=Decimal("10.00"))
-    max_total_positions: int = Field(default=5)
-    max_leverage: int = Field(default=1)
     
     # 量化信号配置
     quant_signal_weights: Optional[Dict[str, float]] = Field(
@@ -51,12 +45,57 @@ class Bot(SQLModel, table=True):
     )
     quant_signal_threshold: int = Field(default=50)
     
-    # 动态风险管理配置
+    # ==================== 风控硬约束配置 ====================
+    # 所有风控参数集中在 risk_limits 字段，便于统一管理
+    # 执行节点会在下单前检查这些约束
     risk_limits: Optional[Dict[str, Any]] = Field(
         default={
-            "max_total_exposure_pct": 0.8,
-            "max_consecutive_losses": 5,
-            "max_single_symbol_pct": 0.3
+            # ========== 仓位控制 ==========
+            "max_total_exposure_pct": 0.8,        # 最大总敞口（占账户余额百分比）
+            "max_single_symbol_pct": 0.3,         # 单币种最大敞口
+            "max_leverage": 10,                   # 最大杠杆倍数
+            
+            # ========== 风险控制 ==========
+            "max_consecutive_losses": 5,          # 连续亏损次数上限（触发后暂停交易）
+            "max_daily_loss_pct": 0.05,           # 单日最大亏损（占账户百分比）
+            "max_drawdown_pct": 0.15,             # 最大回撤（触发后暂停交易）
+            
+            # ========== 资金费率控制 ==========
+            "max_funding_rate_pct": 0.001,        # 最大资金费率（0.1%），超过时不开仓
+            "funding_rate_check_enabled": True,   # 是否启用资金费率检查
+            
+            # ========== 订单约束 ==========
+            "min_position_size_usd": 10.0,        # 最小开仓金额（USD）
+            "max_position_size_usd": 10000.0,     # 最大开仓金额（USD）
+            "min_risk_reward_ratio": 2.0,         # 最小风险回报比
+            
+            # ========== 开关控制 ==========
+            "hard_stop_enabled": True,            # 是否启用硬止损
+            "pause_on_consecutive_loss": True,    # 连续亏损时是否暂停
+            "pause_on_max_drawdown": True,        # 触及最大回撤时是否暂停
+        },
+        sa_column=Column(JSON)
+    )
+    
+    # 动态配置字段（新增）
+    trading_timeframes: Optional[list] = Field(
+        default=["3m", "4h"],
+        sa_column=Column(JSON)
+    )
+    ohlcv_limits: Optional[Dict[str, int]] = Field(
+        default={"3m": 100, "4h": 100},
+        sa_column=Column(JSON)
+    )
+    indicator_configs: Optional[Dict[str, Any]] = Field(
+        default={
+            "ema_periods": [20, 50, 200],
+            "rsi_period": 7,
+            "macd_config": {"fast": 12, "slow": 26, "signal": 9},
+            "atr_period": 14,
+            "bollinger_period": 20,
+            "bollinger_std": 2.0,
+            "stochastic_k": 14,
+            "stochastic_d": 3
         },
         sa_column=Column(JSON)
     )
@@ -64,6 +103,9 @@ class Bot(SQLModel, table=True):
     # 资金管理
     initial_balance: Optional[Decimal] = None
     current_balance: Optional[Decimal] = None
+
+    # Agent搜索KEY
+    tavily_search_key: str = Field(default=None)
     
     # 时间戳
     created_at: datetime = Field(default_factory=datetime.now)

@@ -40,10 +40,20 @@ async def main():
     logger.info(f"Initial Balance: ${initial_balance}")
     logger.info(f"Max Cycles: {max_cycles or 'unlimited'}")
     
+
+    #硬编码
+    BACKTEST_SYMBOLS = [
+        "BTC/USDC:USDC",
+        "ETH/USDC:USDC", 
+        "SOL/USDC:USDC",
+        "BNB/USDC:USDC",
+        "XRP/USDC:USDC"
+    ]
     # 创建回测引擎
     engine = BacktestEngine(
         bot_id=bot_id,
         start_date=start_date,
+        symbols=BACKTEST_SYMBOLS,
         end_date=end_date,
         initial_balance=initial_balance,
         max_cycles=max_cycles  # 限制周期数用于快速测试

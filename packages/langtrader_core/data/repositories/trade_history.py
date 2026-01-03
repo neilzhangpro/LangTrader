@@ -194,4 +194,28 @@ class TradeHistoryRepository:
             .order_by(TradeHistory.opened_at.desc())
         )
         return self.session.exec(statement).first()
+    
+    def get_recent_trades(
+        self, 
+        bot_id: int, 
+        limit: int = 10
+    ) -> List[TradeHistory]:
+        """
+        获取最近的已平仓交易（用于计算连续亏损等）
+        
+        Args:
+            bot_id: 机器人ID
+            limit: 返回数量限制（默认最近 10 笔）
+        
+        Returns:
+            按关闭时间降序排列的已平仓交易列表
+        """
+        statement = (
+            select(TradeHistory)
+            .where(TradeHistory.bot_id == bot_id)
+            .where(TradeHistory.status == "closed")
+            .order_by(TradeHistory.closed_at.desc())
+            .limit(limit)
+        )
+        return list(self.session.exec(statement).all())
 

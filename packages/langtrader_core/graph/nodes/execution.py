@@ -1,27 +1,71 @@
+import math
 from langtrader_core.graph.state import (
-    State, AIDecision, ExecutionResult, OpenPositionResult
+    State, AIDecision, ExecutionResult, OpenPositionResult,
+    BatchDecisionResult, PortfolioDecision,
 )
 from langtrader_core.plugins.protocol import NodePlugin, NodeMetadata
 from langtrader_core.utils import get_logger
+from typing import Dict, Any, Optional, Tuple
 
 logger = get_logger("execution")
 
 
+# ==================== 风控硬约束检查结果 ====================
+class RiskCheckResult:
+    """风控检查结果"""
+    def __init__(self, passed: bool, reason: str = "", warning: str = ""):
+        self.passed = passed
+        self.reason = reason  # 如果失败，说明原因
+        self.warning = warning  # 警告信息（通过但需注意）
+    
+    def __bool__(self):
+        return self.passed
+
+
 class Execution(NodePlugin):
-    """执行决策节点"""
+    """
+    执行决策节点
+    
+    从 state.batch_decision 读取决策并执行：
+    - 按 priority 排序执行
+    - 检查可用余额
+    - 执行风控硬约束检查
+    
+    配置来源（统一从 bots.risk_limits 读取）：
+    风控约束与 debate_decision / batch_decision 共享同一配置源
+    """
     
     metadata = NodeMetadata(
         name="execution",
         display_name="Execution",
-        version="1.0.0",
+        version="2.1.0",
         author="LangTrader official",
-        description="The node that executes the decision.",
+        description="执行决策节点：执行风控硬约束检查并下单",
         category="Basic",
         tags=["execution", "official"],
-        insert_after="risk_monitor",
-        suggested_order=7,
+        insert_after="debate_decision",  # 模式2：跟在辩论决策后
+        suggested_order=5,
         auto_register=True
     )
+    
+    # 风控默认配置（仅作为 fallback，优先从 bot.risk_limits 读取）
+    # 注意：所有百分比使用 % 格式（如 80 表示 80%），与 debate/batch_decision 一致
+    DEFAULT_RISK_LIMITS = {
+        "max_total_allocation_pct": 80.0,      # 总仓位上限 80%
+        "max_single_allocation_pct": 30.0,     # 单币种上限 30%
+        "max_leverage": 10,
+        "max_consecutive_losses": 5,
+        "max_daily_loss_pct": 5.0,             # 单日最大亏损 5%
+        "max_drawdown_pct": 15.0,              # 最大回撤 15%
+        "max_funding_rate_pct": 0.1,           # 资金费率上限 0.1%
+        "funding_rate_check_enabled": True,
+        "min_position_size_usd": 10.0,
+        "max_position_size_usd": 10000.0,
+        "min_risk_reward_ratio": 2.0,
+        "hard_stop_enabled": True,
+        "pause_on_consecutive_loss": True,
+        "pause_on_max_drawdown": True,
+    }
 
     def __init__(self, context=None, config=None):
         super().__init__(context, config)
@@ -29,74 +73,408 @@ class Execution(NodePlugin):
         self.stream_manager = context.stream_manager if context else None
         self.trade_history_repo = context.trade_history_repo if context else None
         self.bot_id = None  # 在 run 中从 state 获取
+        
+        # ========== 统一配置加载 ==========
+        # 从 bot.risk_limits 读取风控约束（唯一配置源）
+        self.risk_limits = {}
+        if context and hasattr(context, 'bot') and context.bot:
+            self.risk_limits = context.bot.risk_limits or {}
+            logger.debug(f"Loaded risk_limits from bot: {list(self.risk_limits.keys())}")
+        
+        # 允许 config 覆盖（用于测试或特殊场景）
+        if config and 'risk_limits' in config:
+            self.risk_limits.update(config['risk_limits'])
+        
+        logger.info(f"✅ Execution initialized with risk_limits from bot")
+    
+    # ==================== 风控硬约束检查 ====================
+    # 所有风控参数从 bot.risk_limits 数据库配置加载
+    
+    def _load_risk_limits(self, state: State) -> Dict[str, Any]:
+        """
+        加载风控配置
+        
+        优先级：
+        1. bot.risk_limits (self.risk_limits)
+        2. 默认值 (DEFAULT_RISK_LIMITS)
+        
+        注意：所有百分比使用 % 格式（如 80 表示 80%），需要在使用时转换
+        """
+        # 合并默认值和 bot 配置
+        limits = {**self.DEFAULT_RISK_LIMITS, **self.risk_limits}
+        
+        # 转换为小数格式用于计算（如 80% -> 0.8）
+        return {
+            # 百分比转小数
+            "max_total_exposure_pct": limits.get('max_total_allocation_pct', 80) / 100,
+            "max_single_symbol_pct": limits.get('max_single_allocation_pct', 30) / 100,
+            "max_daily_loss_pct": limits.get('max_daily_loss_pct', 5) / 100,
+            "max_drawdown_pct": limits.get('max_drawdown_pct', 15) / 100,
+            "max_funding_rate_pct": limits.get('max_funding_rate_pct', 0.1) / 100,
+            
+            # 非百分比字段直接使用
+            "max_leverage": limits.get('max_leverage', 10),
+            "max_consecutive_losses": limits.get('max_consecutive_losses', 5),
+            "funding_rate_check_enabled": limits.get('funding_rate_check_enabled', True),
+            "min_position_size_usd": limits.get('min_position_size_usd', 10),
+            "max_position_size_usd": limits.get('max_position_size_usd', 10000),
+            "min_risk_reward_ratio": limits.get('min_risk_reward_ratio', 2.0),
+            "hard_stop_enabled": limits.get('hard_stop_enabled', True),
+            "pause_on_consecutive_loss": limits.get('pause_on_consecutive_loss', True),
+            "pause_on_max_drawdown": limits.get('pause_on_max_drawdown', True),
+        }
+    
+    def _check_risk_constraints(
+        self,
+        decision: AIDecision,
+        state: State,
+        position_size_usd: float,
+    ) -> RiskCheckResult:
+        """
+        风控硬约束检查（在下单前执行）
+        
+        检查项目：
+        1. 总敞口限制
+        2. 单币种敞口限制
+        3. 杠杆限制
+        4. 仓位大小限制
+        5. 连续亏损检查
+        6. 资金费率检查
+        7. 最大回撤检查
+        
+        Returns:
+            RiskCheckResult: 检查结果
+        """
+        limits = self._load_risk_limits(state)
+        symbol = decision.symbol
+        
+        logger.debug(f"🔒 Risk check for {symbol}: size=${position_size_usd:.2f}")
+        
+        # ========== 1. 仓位大小限制 ==========
+        min_size = limits.get('min_position_size_usd', 10.0)
+        max_size = limits.get('max_position_size_usd', 10000.0)
+        
+        if position_size_usd < min_size:
+            return RiskCheckResult(
+                passed=False,
+                reason=f"Position size ${position_size_usd:.2f} < min ${min_size:.2f}"
+            )
+        
+        if position_size_usd > max_size:
+            return RiskCheckResult(
+                passed=False,
+                reason=f"Position size ${position_size_usd:.2f} > max ${max_size:.2f}"
+            )
+        
+        # ========== 2. 杠杆限制 ==========
+        max_leverage = limits.get('max_leverage', 10)
+        if decision.leverage and decision.leverage > max_leverage:
+            return RiskCheckResult(
+                passed=False,
+                reason=f"Leverage {decision.leverage}x > max {max_leverage}x"
+            )
+        
+        # ========== 3. 总保证金使用率限制 ==========
+        # 统一使用「保证金」概念：已用保证金 / 可用余额
+        max_margin_usage = limits.get('max_total_exposure_pct', 0.8)
+        free_balance = 0.0
+        if state.account:
+            free_balance = state.account.free.get('USDT', 0) or state.account.free.get('USDC', 0)
+        
+        if free_balance > 0:
+            # 计算当前持仓已用保证金
+            # 保证金 = 名义价值 / 杠杆 = (amount * price) / leverage
+            current_margin = 0.0
+            if state.positions:
+                for pos in state.positions:
+                    # 使用 Position 的 margin_used 属性（已处理杠杆）
+                    current_margin += pos.margin_used
+                    logger.debug(f"   {pos.symbol}: notional=${pos.notional_value:.2f}, "
+                               f"leverage={pos.leverage}x, margin=${pos.margin_used:.2f}")
+            
+            # 新开仓的保证金 = position_size_usd（AI 分配的就是保证金）
+            new_margin = position_size_usd
+            total_margin = current_margin + new_margin
+            margin_usage_pct = total_margin / free_balance
+            
+            logger.debug(f"🔒 Margin check: current=${current_margin:.2f}, "
+                        f"new=${new_margin:.2f}, total=${total_margin:.2f}, "
+                        f"usage={margin_usage_pct*100:.1f}%")
+            
+            if margin_usage_pct > max_margin_usage:
+                return RiskCheckResult(
+                    passed=False,
+                    reason=f"Total margin usage {margin_usage_pct*100:.1f}% > max {max_margin_usage*100:.1f}%"
+                )
+        
+        # ========== 4. 单币种保证金限制 ==========
+        max_single_pct = limits.get('max_single_symbol_pct', 0.3)
+        if free_balance > 0:
+            single_pct = position_size_usd / free_balance
+            if single_pct > max_single_pct:
+                return RiskCheckResult(
+                    passed=False,
+                    reason=f"Single symbol margin {single_pct*100:.1f}% > max {max_single_pct*100:.1f}%"
+                )
+        
+        # ========== 5. 连续亏损检查 ==========
+        if limits.get('pause_on_consecutive_loss', True):
+            max_consecutive = limits.get('max_consecutive_losses', 5)
+            consecutive_losses = self._get_consecutive_losses(state)
+            
+            if consecutive_losses >= max_consecutive:
+                return RiskCheckResult(
+                    passed=False,
+                    reason=f"Consecutive losses {consecutive_losses} >= max {max_consecutive}, trading paused"
+                )
+        
+        # ========== 6. 资金费率检查 ==========
+        if limits.get('funding_rate_check_enabled', True):
+            max_funding = limits.get('max_funding_rate_pct', 0.001)
+            funding_rate = self._get_funding_rate(state, symbol)
+            
+            if funding_rate is not None and abs(funding_rate) > max_funding:
+                # 如果做多且资金费率为正（多头付费），或做空且资金费率为负（空头付费）
+                if (decision.action == "open_long" and funding_rate > max_funding) or \
+                   (decision.action == "open_short" and funding_rate < -max_funding):
+                    return RiskCheckResult(
+                        passed=False,
+                        reason=f"Funding rate {funding_rate*100:.4f}% exceeds limit {max_funding*100:.4f}%"
+                    )
+        
+        # ========== 7. 最大回撤检查 ==========
+        if limits.get('pause_on_max_drawdown', True):
+            max_drawdown = limits.get('max_drawdown_pct', 0.15)
+            current_drawdown = self._get_current_drawdown(state)
+            
+            if current_drawdown is not None and current_drawdown > max_drawdown:
+                return RiskCheckResult(
+                    passed=False,
+                    reason=f"Current drawdown {current_drawdown*100:.1f}% > max {max_drawdown*100:.1f}%, trading paused"
+                )
+        
+        # ========== 所有检查通过 ==========
+        logger.info(f"✅ {symbol}: Risk check passed")
+        return RiskCheckResult(passed=True)
+    
+    def _get_consecutive_losses(self, state: State) -> int:
+        """获取连续亏损次数"""
+        if not self.trade_history_repo or not self.bot_id:
+            return 0
+        
+        try:
+            # 从交易历史获取最近的交易
+            recent_trades = self.trade_history_repo.get_recent_trades(
+                self.bot_id, limit=10
+            )
+            
+            consecutive = 0
+            for trade in recent_trades:
+                if hasattr(trade, 'pnl_usd') and trade.pnl_usd is not None:
+                    if trade.pnl_usd < 0:
+                        consecutive += 1
+                    else:
+                        break  # 遇到盈利交易，停止计数
+            
+            return consecutive
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to get consecutive losses: {e}")
+            return 0
+    
+    def _get_funding_rate(self, state: State, symbol: str) -> Optional[float]:
+        """获取资金费率"""
+        market_data = state.market_data.get(symbol, {})
+        indicators = market_data.get('indicators', {})
+        return indicators.get('funding_rate')
+    
+    def _get_current_drawdown(self, state: State) -> Optional[float]:
+        """获取当前回撤"""
+        if not state.performance:
+            return None
+        
+        if hasattr(state.performance, 'max_drawdown'):
+            return state.performance.max_drawdown
+        
+        return None
 
     async def run(self, state: State):
-        """执行决策节点"""
+        """
+        执行决策节点
+        
+        优先使用 batch_decision（经过辩论的决策）
+        否则回退到 runs 中的旧版决策
+        """
         self.bot_id = state.bot_id
         
-        for symbol, run_record in state.runs.items():
-            if run_record.decision is None:
-                logger.warning(f"⚠️ {symbol}: No decision found, skipping")
-                continue
-
-            decision = run_record.decision
-
-            # 根据 action 类型分流处理
-            if decision.action in ("wait", "hold"):
-                logger.info(f"⏸️ {symbol}: action={decision.action}, no trade")
-                run_record.execution = ExecutionResult(
-                    symbol=symbol,
-                    action=decision.action,
-                    status="skipped",
-                    message="No action required"
-                )
-                continue
-
-            if decision.action in ("open_long", "open_short"):
-                # 开仓：需要验证参数和风险
-                if not self._validate_open_params(decision):
-                    run_record.execution = ExecutionResult(
-                        symbol=symbol,
-                        action=decision.action,
-                        status="failed",
-                        message="Invalid parameters"
-                    )
-                    continue
-                    
-                if not self._validate_open_position(decision):
-                    run_record.execution = ExecutionResult(
-                        symbol=symbol,
-                        action=decision.action,
-                        status="failed",
-                        message="Invalid position logic"
-                    )
-                    continue
-                    
-                # 通过验证，执行开仓
-                run_record.decision.risk_approved = True
-                result = await self._execute_open(decision, run_record.cycle_id)
-                run_record.execution = result
-
-            elif decision.action in ("close_long", "close_short"):
-                # 平仓：需要验证持仓存在
-                if not await self._validate_close_position(decision):
-                    run_record.execution = ExecutionResult(
-                        symbol=symbol,
-                        action=decision.action,
-                        status="failed",
-                        message="No position to close"
-                    )
-                    continue
-                    
-                # 通过验证，执行平仓
-                run_record.decision.risk_approved = True
-                result = await self._execute_close(decision)
-                run_record.execution = result
-
-            else:
-                logger.warning(f"⚠️ {symbol}: Unknown action={decision.action}")
-
+        logger.info("=" * 60)
+        logger.info("🚀 Execution 开始执行")
+        logger.info("=" * 60)
+        
+        # -------------------------
+        # 优先使用批量决策模式
+        # -------------------------
+        if state.batch_decision and state.batch_decision.decisions:
+            logger.info("📋 使用批量决策模式 (batch_decision)")
+            return await self._execute_batch(state)
+        
+        # -------------------------
+        # 没有决策，直接返回
+        # -------------------------
+        logger.warning("⚠️ 没有 batch_decision，跳过执行")
         return state
+    
+    async def _execute_batch(self, state: State) -> State:
+        """
+        执行批量决策
+        
+        特点：
+        1. 按优先级排序执行
+        2. 动态检查可用余额
+        3. 支持部分执行（余额不足时跳过低优先级决策）
+        """
+        batch = state.batch_decision
+        
+        # 过滤出需要执行的决策（非 wait/hold）
+        actionable = [d for d in batch.decisions if d.action not in ("wait", "hold")]
+        
+        if not actionable:
+            logger.info("⏸️ 无需执行的决策（全部 wait/hold）")
+            return state
+        
+        # 按优先级排序（priority 小的先执行）
+        sorted_decisions = sorted(actionable, key=lambda d: d.priority)
+        
+        logger.info(f"📊 待执行决策: {len(sorted_decisions)} 个")
+        for d in sorted_decisions:
+            logger.info(f"   P{d.priority}: {d.symbol} {d.action} alloc={d.allocation_pct:.1f}%")
+        
+        # 跟踪已使用的余额
+        used_balance = 0.0
+        free_balance = 0.0
+        if state.account:
+            free_balance = state.account.free.get('USDT', 0) or state.account.free.get('USDC', 0)
+        
+        # 依次执行
+        for portfolio_decision in sorted_decisions:
+            symbol = portfolio_decision.symbol
+            
+            # 计算该决策需要的资金
+            position_size_usd = (portfolio_decision.allocation_pct / 100) * free_balance
+            
+            # 检查剩余余额
+            remaining = free_balance - used_balance
+            if position_size_usd > remaining:
+                logger.warning(f"⚠️ {symbol}: 余额不足 (need ${position_size_usd:.2f}, remaining ${remaining:.2f})")
+                # 可以选择跳过或调整仓位
+                if remaining < position_size_usd * 0.5:
+                    logger.warning(f"⏭️ {symbol}: 跳过（剩余余额太少）")
+                    self._record_skip(state, symbol, portfolio_decision, "Insufficient balance")
+                    continue
+                else:
+                    # 使用剩余余额
+                    position_size_usd = remaining * 0.9  # 留10%安全边际
+                    logger.info(f"   调整仓位至 ${position_size_usd:.2f}")
+            
+            # 转换为 AIDecision 并执行
+            ai_decision = self._portfolio_to_ai_decision(portfolio_decision, position_size_usd)
+            
+            # 执行
+            if ai_decision.action in ("open_long", "open_short"):
+                result = await self._execute_open_with_validation(ai_decision, state, symbol)
+                if result.status == "success":
+                    used_balance += position_size_usd
+            elif ai_decision.action in ("close_long", "close_short"):
+                result = await self._execute_close_with_validation(ai_decision, state, symbol)
+            else:
+                result = ExecutionResult(
+                    symbol=symbol,
+                    action=ai_decision.action,
+                    status="skipped",
+                    message="Unknown action"
+                )
+            
+        
+        logger.info(f"💰 已使用余额: ${used_balance:.2f} / ${free_balance:.2f}")
+        
+        return state
+    
+    def _portfolio_to_ai_decision(self, pd: PortfolioDecision, position_size_usd: float) -> AIDecision:
+        """将 PortfolioDecision 转换为 AIDecision"""
+        return AIDecision(
+            symbol=pd.symbol,
+            action=pd.action,
+            leverage=pd.leverage,
+            position_size_usd=position_size_usd,
+            stop_loss_price=pd.stop_loss,
+            take_profit_price=pd.take_profit,
+            confidence=float(pd.confidence),
+            risk_approved=pd.risk_approved,
+            reasons=[pd.reasoning] if pd.reasoning else []
+        )
+    
+    def _record_skip(self, state: State, symbol: str, pd: PortfolioDecision, reason: str):
+        """记录跳过的决策（日志记录）"""
+        logger.debug(f"⏭️ {symbol}: Skipped - {reason}")
+    
+    async def _execute_open_with_validation(self, decision: AIDecision, state: State, symbol: str) -> ExecutionResult:
+        """执行开仓（带验证和风控检查）"""
+        # ========== 1. 验证参数 ==========
+        if not self._validate_open_params(decision):
+            return ExecutionResult(
+                symbol=symbol,
+                action=decision.action,
+                status="failed",
+                message="Invalid parameters"
+            )
+        
+        if not self._validate_open_position(decision):
+            return ExecutionResult(
+                symbol=symbol,
+                action=decision.action,
+                status="failed",
+                message="Invalid position logic"
+            )
+        
+        # ========== 2. 风控硬约束检查 ==========
+        risk_check = self._check_risk_constraints(
+            decision=decision,
+            state=state,
+            position_size_usd=decision.position_size_usd,
+        )
+        
+        if not risk_check.passed:
+            logger.warning(f"🛑 {symbol}: Risk check FAILED - {risk_check.reason}")
+            
+            # 记录到 alerts，供下一轮 AI 读取并调整策略
+            state.alerts.append(f"[{symbol}] 风控拒绝: {risk_check.reason}")
+            
+            return ExecutionResult(
+                symbol=symbol,
+                action=decision.action,
+                status="failed",  # ExecutionResult 只支持 skipped/pending/success/failed
+                message=f"Risk limit: {risk_check.reason}"
+            )
+        
+        if risk_check.warning:
+            logger.warning(f"⚠️ {symbol}: Risk warning - {risk_check.warning}")
+        
+        # ========== 3. 获取 cycle_id ==========
+        cycle_id = str(state.bot_id) if state.bot_id else None
+        
+        # ========== 4. 执行开仓 ==========
+        return await self._execute_open(decision, state, cycle_id)
+    
+    async def _execute_close_with_validation(self, decision: AIDecision, state: State, symbol: str) -> ExecutionResult:
+        """执行平仓（带验证）"""
+        if not await self._validate_close_position(decision, state):
+            return ExecutionResult(
+                symbol=symbol,
+                action=decision.action,
+                status="failed",
+                message="No position to close"
+            )
+        
+        return await self._execute_close(decision)
 
     def _validate_open_params(self, decision: AIDecision) -> bool:
         """验证开仓参数是否完整"""
@@ -148,16 +526,34 @@ class Execution(NodePlugin):
 
         return True
 
-    async def _validate_close_position(self, decision: AIDecision) -> bool:
-        """验证平仓决策"""
+    async def _validate_close_position(self, decision: AIDecision, state: State = None) -> bool:
+        """
+        验证平仓决策
+        
+        优化：优先使用 state.positions（每轮开始已刷新），避免重复 API 请求
+        """
         symbol = decision.symbol
+        logger.info(f"🔍 Validating close position: {symbol}")
 
         if self.trader is None:
             logger.error(f"🚨 {symbol}: Trader not available")
             return False
 
-        # 检查是否有持仓
-        position = await self.trader.get_position(symbol)
+        # 1. 优先从 state.positions 获取（每轮开始已刷新）
+        position = None
+        if state and state.positions:
+            logger.debug(f"📦 {symbol}: Checking state.positions ({len(state.positions)} positions)")
+            position = next((p for p in state.positions if p.symbol == symbol), None)
+            if position:
+                logger.info(f"📦 {symbol}: Found in cache - side={position.side}, amount={position.amount}")
+            else:
+                logger.info(f"📦 {symbol}: Not found in state.positions cache")
+        
+        # 2. 回退到 API 查询
+        if position is None:
+            logger.info(f"📡 {symbol}: Fetching position from exchange...")
+            position = await self.trader.get_position(symbol)
+        
         if position is None:
             logger.error(f"🚨 {symbol}: No position found to close")
             return False
@@ -172,8 +568,12 @@ class Execution(NodePlugin):
 
         return True
 
-    async def _execute_open(self, decision: AIDecision, cycle_id: str = None) -> ExecutionResult:
-        """执行开仓"""
+    async def _execute_open(self, decision: AIDecision, state: State = None, cycle_id: str = None) -> ExecutionResult:
+        """
+        执行开仓
+        
+        优化：优先使用 state.market_data 中的价格，避免重复请求交易所 API
+        """
         symbol = decision.symbol
         
         logger.info(f"🚀 Opening position: {symbol} {decision.action}")
@@ -193,15 +593,74 @@ class Execution(NodePlugin):
         side = "buy" if decision.action == "open_long" else "sell"
         position_side = "long" if decision.action == "open_long" else "short"
         
-        # 调用一键开仓
+        # 🔧 获取当前市场价格（优先使用 state 中已有的价格）
+        current_price = None
+        
+        # 1. 优先从 state.market_data 获取（避免重复请求）
+        if state and symbol in state.market_data:
+            indicators = state.market_data[symbol].get('indicators', {})
+            current_price = indicators.get('current_price')
+            if current_price and current_price > 0:
+                logger.debug(f"📦 {symbol}: Using cached price ${current_price:.4f}")
+        
+        # 2. 回退到 API 请求（仅在缓存无效时）
+        if not current_price or current_price <= 0:
+            try:
+                ticker = await self.trader.exchange.fetch_ticker(symbol)
+                current_price = ticker['last'] if ticker else None
+            except Exception as e:
+                logger.error(f"❌ {symbol}: Failed to fetch price: {e}")
+                return ExecutionResult(
+                    symbol=symbol,
+                    action=decision.action,
+                    status="failed",
+                    message=f"Failed to fetch price: {e}"
+                )
+        
+        if not current_price or current_price <= 0:
+            logger.error(f"❌ {symbol}: Unable to get current price")
+            return ExecutionResult(
+                symbol=symbol,
+                action=decision.action,
+                status="failed",
+                message="Unable to get current price"
+            )
+        
+        # 计算币的数量 = USD金额 / 价格
+        raw_amount = decision.position_size_usd / current_price
+        
+        # 🔧 修复：向上取整到交易所精度，避免精度截断后金额低于最低限制
+        # Hyperliquid 等交易所会对 amount 进行精度截断（向下取整），
+        # 导致 $10.03 -> 0.003228 ETH -> 截断为 0.0032 ETH -> $9.94 < $10 最低限制
+        amount_in_coins = raw_amount
+        if self.trader and self.trader.exchange:
+            market = self.trader.exchange.markets.get(symbol, {})
+            precision_info = market.get('precision', {})
+            
+            # 获取数量精度（小数位数）
+            amount_precision = precision_info.get('amount')
+            if amount_precision is not None:
+                # 向上取整到该精度，确保截断后金额仍然 >= 目标金额
+                multiplier = 10 ** int(amount_precision)
+                amount_in_coins = math.ceil(raw_amount * multiplier) / multiplier
+                
+                adjusted_usd = amount_in_coins * current_price
+                logger.debug(f"   🔧 Precision fix: {raw_amount:.8f} -> {amount_in_coins:.8f} "
+                           f"(precision={amount_precision}, adjusted=${adjusted_usd:.2f})")
+        
+        logger.info(f"   💱 Converting: ${decision.position_size_usd} @ ${current_price:.4f} = {amount_in_coins:.6f} {symbol.split('/')[0]}")
+        
+        # 调用一键开仓（使用币的数量）
+        # 注意：对于 Hyperliquid 等交易所，市价单需要传递 price 来计算滑点
         result = await self.trader.open_position(
             symbol=symbol,
             side=side,
-            amount=decision.position_size_usd,
+            amount=amount_in_coins,
             leverage=decision.leverage,
             stop_loss=decision.stop_loss_price,
             take_profit=decision.take_profit_price,
             order_type="market",
+            price=current_price,  # 传递当前价格用于滑点计算
         )
         
         # 构建执行结果
@@ -218,21 +677,24 @@ class Execution(NodePlugin):
                 orders=result,
             )
             
-            # 记录交易到数据库
+            # 记录交易到数据库（使用实际成交的币数量）
             if self.trade_history_repo and self.bot_id:
                 try:
+                    # 使用实际成交数量，如果没有则使用计算的币数量
+                    actual_amount = result.main.filled or amount_in_coins
+                    
                     self.trade_history_repo.create(
                         bot_id=self.bot_id,
                         symbol=symbol,
                         side=position_side,
                         action=decision.action,
-                        amount=result.main.filled or decision.position_size_usd,
+                        amount=actual_amount,
                         entry_price=result.main.average,
                         leverage=decision.leverage,
                         cycle_id=cycle_id,
                         order_id=result.main.order_id,
                     )
-                    logger.info(f"📝 Trade recorded: {symbol} {position_side}")
+                    logger.info(f"📝 Trade recorded: {symbol} {position_side} amount={actual_amount:.6f}")
                 except Exception as e:
                     logger.error(f"❌ Failed to record trade: {e}")
             
@@ -290,18 +752,26 @@ class Execution(NodePlugin):
                     exit_price = result.average
                     amount = float(open_trade.amount) if open_trade.amount else 0
                     
-                    # 计算盈亏
+                    # 🔧 修复：正确计算盈亏
+                    # amount 是币的数量，需要计算 USD 价值差
                     if open_trade.side == "long":
-                        pnl_usd = (exit_price - entry_price) * amount
+                        # 多头：买入时花费 entry_price * amount，卖出时获得 exit_price * amount
+                        cost_basis = entry_price * amount
+                        value_now = exit_price * amount
+                        pnl_usd = value_now - cost_basis
                     else:  # short
-                        pnl_usd = (entry_price - exit_price) * amount
+                        # 空头：卖出时获得 entry_price * amount，买回时花费 exit_price * amount
+                        value_entry = entry_price * amount
+                        cost_exit = exit_price * amount
+                        pnl_usd = value_entry - cost_exit
                     
                     # 扣除手续费
                     if result.fee:
                         pnl_usd -= result.fee
                     
-                    # 计算百分比
-                    pnl_percent = (pnl_usd / (entry_price * amount) * 100) if entry_price and amount else 0
+                    # 计算百分比（相对于成本）
+                    cost_basis = entry_price * amount if entry_price and amount else 0
+                    pnl_percent = (pnl_usd / cost_basis * 100) if cost_basis > 0 else 0
                     
                     # 更新交易记录
                     self.trade_history_repo.close_trade(
@@ -311,15 +781,17 @@ class Execution(NodePlugin):
                         pnl_percent=pnl_percent,
                         fee_paid=result.fee,
                     )
-                    logger.info(f"📝 Trade closed: {symbol} PnL: ${pnl_usd:.2f} ({pnl_percent:.2f}%)")
+                    logger.info(f"📝 Trade closed: {symbol} PnL: ${pnl_usd:.2f} ({pnl_percent:+.2f}%)")
                 except Exception as e:
                     logger.error(f"❌ Failed to update trade: {e}")
             
             return exec_result
         else:
+            error_msg = result.error or "Unknown error"
+            logger.error(f"❌ {symbol}: Close position failed - {error_msg}")
             return ExecutionResult(
                 symbol=symbol,
                 action=decision.action,
                 status="failed",
-                message=result.error or "Unknown error",
+                message=error_msg,
             )

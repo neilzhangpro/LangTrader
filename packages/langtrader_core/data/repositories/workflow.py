@@ -154,6 +154,53 @@ class WorkflowRepository:
         
         logger.debug(f"✅ Added edge: {from_node} -> {to_node}")
     
+    def clear_nodes_and_edges(self, workflow_id: int) -> tuple:
+        """
+        清空 workflow 的所有节点和边
+        
+        执行顺序（遵循外键约束）：
+        1. 删除所有边
+        2. 删除所有节点配置
+        3. 删除所有节点
+        
+        Args:
+            workflow_id: Workflow ID
+            
+        Returns:
+            tuple: (deleted_nodes_count, deleted_edges_count)
+        """
+        deleted_nodes = 0
+        deleted_edges = 0
+        
+        # 1. 删除该 workflow 的所有边
+        edges_stmt = select(WorkflowEdge).where(WorkflowEdge.workflow_id == workflow_id)
+        edges = self.session.exec(edges_stmt).all()
+        for edge in edges:
+            self.session.delete(edge)
+            deleted_edges += 1
+        
+        # 2. 获取该 workflow 的所有节点
+        nodes_stmt = select(WorkflowNode).where(WorkflowNode.workflow_id == workflow_id)
+        nodes = self.session.exec(nodes_stmt).all()
+        
+        # 3. 删除每个节点的配置，然后删除节点
+        for node in nodes:
+            # 删除节点配置
+            configs_stmt = select(NodeConfig).where(NodeConfig.node_id == node.id)
+            configs = self.session.exec(configs_stmt).all()
+            for config in configs:
+                self.session.delete(config)
+            
+            # 删除节点
+            self.session.delete(node)
+            deleted_nodes += 1
+        
+        # 提交事务
+        self.session.commit()
+        
+        logger.info(f"🧹 Cleared workflow {workflow_id}: {deleted_nodes} nodes, {deleted_edges} edges")
+        return (deleted_nodes, deleted_edges)
+    
     def export_to_dict(self, workflow_id: int) -> Dict[str, Any]:
         """导出 workflow 为字典（兼容 YAML 格式）"""
         workflow = self.get_workflow(workflow_id)

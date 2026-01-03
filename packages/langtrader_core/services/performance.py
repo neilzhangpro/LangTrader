@@ -42,7 +42,7 @@ class PerformanceMetrics:
         text += f"  Sharpe Ratio: {self.sharpe_ratio:.2f}\n"
         text += f"  Avg Return per Trade: {self.avg_return_pct:.2f}%\n"
         text += f"  Total Return: ${self.total_return_usd:.2f}\n"
-        text += f"  Max Drawdown: {self.max_drawdown:.2f}%\n"
+        text += f"  Max Drawdown: {self.max_drawdown*100:.2f}%\n"
         
         # 根据夏普比率给出策略建议
         if self.sharpe_ratio < -0.5:
@@ -196,31 +196,36 @@ class PerformanceService:
         计算最大回撤
         
         Args:
-            returns_pct: 收益率序列 (%)
+            returns_pct: 收益率序列 (%)，如 [5.0, -3.0, 2.0] 表示 +5%, -3%, +2%
             
         Returns:
-            最大回撤 (%)
+            最大回撤（比例），如 0.15 表示 15%
+            注意：返回比例而非百分比，便于与 risk_limits.max_drawdown_pct 直接比较
         """
         if not returns_pct:
             return 0.0
         
-        # 计算累计收益
-        cumulative = [0.0]
+        # 计算累计净值（从 1.0 开始，使用复利计算）
+        # 例如：[+5%, -3%] -> [1.0, 1.05, 1.0185]
+        equity = [1.0]
         for r in returns_pct:
-            cumulative.append(cumulative[-1] + r)
+            # r 是百分比（如 5.0 表示 5%），需要除以 100 转换为比例
+            equity.append(equity[-1] * (1 + r / 100))
         
-        # 计算最大回撤
-        peak = cumulative[0]
+        # 计算最大回撤（相对于峰值的比例）
+        peak = equity[0]
         max_dd = 0.0
         
-        for value in cumulative:
+        for value in equity:
             if value > peak:
                 peak = value
-            drawdown = peak - value
-            if drawdown > max_dd:
-                max_dd = drawdown
+            if peak > 0:
+                # 回撤 = (峰值 - 当前值) / 峰值
+                drawdown = (peak - value) / peak
+                if drawdown > max_dd:
+                    max_dd = drawdown
         
-        return max_dd
+        return max_dd  # 返回比例，如 0.15 表示 15%
     
     def get_recent_trades_summary(
         self, 

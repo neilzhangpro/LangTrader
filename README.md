@@ -1,438 +1,258 @@
-# LangTrader Agents
+<div align="center">
 
-An AI-powered cryptocurrency trading system built with LangGraph, combining quantitative analysis with Large Language Model decision-making.
+# 🤖 LangTrader Agents
 
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+**AI 驱动的量化交易系统 | AI-Powered Quantitative Trading System**
 
----
+基于 LangGraph 构建的智能加密货币交易代理，融合技术分析与大语言模型决策
 
-## Overview
+[![Python](https://img.shields.io/badge/Python-3.12+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![LangGraph](https://img.shields.io/badge/LangGraph-🦜-1C3C3C?style=for-the-badge)](https://github.com/langchain-ai/langgraph)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![CCXT](https://img.shields.io/badge/CCXT-Pro-000000?style=for-the-badge)](https://github.com/ccxt/ccxt)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-LangTrader Agents is a modular, plugin-based trading system that leverages AI to make informed trading decisions. The system integrates technical analysis, quantitative signals, and LLM reasoning to execute trades on cryptocurrency exchanges.
+<br/>
 
-### Key Features
+[![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)](https://openai.com/)
+[![Anthropic](https://img.shields.io/badge/Anthropic-Claude-191919?style=flat-square)](https://anthropic.com/)
+[![Ollama](https://img.shields.io/badge/Ollama-Local-000000?style=flat-square)](https://ollama.ai/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 
-- **AI-Driven Decisions** — Uses LLMs (OpenAI, Anthropic, Ollama) to analyse market conditions
-- **Quantitative Signal Filtering** — Pre-filters trading opportunities using technical indicators
-- **Dynamic Risk Management** — Configurable risk limits and position sizing
-- **Plugin Architecture** — Hot-swappable workflow nodes stored in database
-- **Backtesting Engine** — Test strategies on historical data without exchange connection
-- **Real-time Data** — WebSocket streams for live market data via CCXT Pro
-- **State Checkpointing** — LangGraph checkpoints for workflow recovery
+<br/>
 
----
+**⭐ 如果这个项目对你有帮助，请给一个 Star 支持！⭐**
 
-## System Architecture
+[English](#english) | [中文](#中文)
 
-```mermaid
-flowchart TB
-    subgraph External [External Services]
-        EX[Cryptocurrency Exchange]
-        LLM[LLM Provider]
-        DB[(PostgreSQL)]
-    end
-    
-    subgraph Core [LangTrader Core]
-        subgraph Services [Services Layer]
-            TR[Trader Service]
-            SM[Stream Manager]
-            MK[Market Service]
-            PS[Performance Service]
-            CA[Cache]
-            RL[Rate Limiter]
-        end
-        
-        subgraph Workflow [LangGraph Workflow]
-            CP[Coins Pick]
-            MS[Market State]
-            QF[Quant Filter]
-            MA[Market Analyzer]
-            DE[Decision]
-            RM[Risk Monitor]
-            EXE[Execution]
-        end
-        
-        subgraph Plugins [Plugin System]
-            REG[Plugin Registry]
-            CTX[Plugin Context]
-            WB[Workflow Builder]
-        end
-    end
-    
-    EX <-->|CCXT Pro| TR
-    EX <-->|WebSocket| SM
-    LLM <-->|API| MA
-    LLM <-->|API| DE
-    DB <-->|SQLModel| WB
-    DB <-->|SQLModel| PS
-    
-    TR --> MK
-    SM --> MK
-    MK --> Workflow
-    
-    REG --> WB
-    CTX --> Workflow
-    WB --> Workflow
-    
-    CP --> MS --> QF --> MA --> DE --> RM --> EXE
-```
+</div>
 
 ---
 
-## Trading Workflow
+## 中文
 
-The trading cycle follows a defined sequence of nodes, each responsible for a specific task:
+### 📖 项目简介
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant System as Trading System
-    participant Exchange
-    participant LLM as AI Model
-    
-    User->>System: Start Bot
-    
-    loop Every Cycle (3min default)
-        System->>Exchange: Fetch Market Data
-        Exchange-->>System: OHLCV, Funding Rates
-        
-        System->>System: 1. Select Coins (Open Interest)
-        System->>System: 2. Fetch Market State
-        System->>System: 3. Calculate Indicators
-        System->>System: 4. Quantitative Filter
-        
-        System->>LLM: 5. Market Analysis Prompt
-        LLM-->>System: Market Insights
-        
-        System->>LLM: 6. Decision Prompt
-        LLM-->>System: Trade Decision (JSON)
-        
-        System->>System: 7. Risk Validation
-        
-        alt Decision Approved
-            System->>Exchange: 8. Execute Trade
-            Exchange-->>System: Order Result
-        else Decision Rejected
-            System->>System: Log & Skip
-        end
-        
-        System->>System: Update State & Checkpoint
-    end
-```
+LangTrader Agents 是一个**模块化、可扩展**的 AI 量化交易系统。它将传统技术分析与大语言模型（LLM）的推理能力相结合，实现智能化的交易决策。
 
----
+系统采用 **LangGraph StateGraph** 作为工作流引擎，支持**热插拔节点**架构，所有配置存储于 PostgreSQL 数据库，支持**零重启热更新**。
 
-## Data Flow (Swimlane)
+### ✨ 核心特色
 
-```mermaid
-flowchart LR
-    subgraph Exchange [Exchange Layer]
-        E1[REST API]
-        E2[WebSocket]
-    end
-    
-    subgraph Data [Data Collection]
-        D1[OHLCV 3m/4h]
-        D2[Funding Rates]
-        D3[Open Interest]
-        D4[Account Balance]
-    end
-    
-    subgraph Analysis [Analysis Layer]
-        A1[Technical Indicators]
-        A2[Quant Signals]
-        A3[Performance Metrics]
-    end
-    
-    subgraph AI [AI Layer]
-        AI1[Market Analyzer]
-        AI2[Decision Engine]
-    end
-    
-    subgraph Execution [Execution Layer]
-        X1[Risk Monitor]
-        X2[Order Executor]
-        X3[Trade Recorder]
-    end
-    
-    E1 --> D1
-    E1 --> D2
-    E1 --> D3
-    E1 --> D4
-    E2 --> D1
-    
-    D1 --> A1
-    D2 --> A2
-    D3 --> A1
-    A1 --> A2
-    
-    A2 --> AI1
-    A3 --> AI2
-    AI1 --> AI2
-    
-    AI2 --> X1
-    X1 --> X2
-    X2 --> X3
-    X3 --> A3
-```
+<table>
+<tr>
+<td width="50%">
 
----
+#### 🔌 热插拔插件架构
+- 节点自动发现与注册
+- 运行时动态加载/卸载
+- 无需重启即可扩展功能
 
-## Project Structure
+#### 🤝 多 Agent 协作
+- **单 Agent 模式**：快速决策，低延迟
+- **多 Agent 辩论模式**：4 角色（分析师/多头/空头/风控）辩论，提高决策质量
+
+#### 🔧 集中配置管理
+- 数据库驱动配置（PostgreSQL）
+- 60 秒自动热重载
+- 零硬编码，完全可配置
+
+</td>
+<td width="50%">
+
+#### 🌐 70+ 交易所支持
+- 基于 CCXT Pro 统一接口
+- 支持 Hyperliquid、Binance、OKX 等
+- WebSocket 实时数据流
+
+#### 📊 量化信号引擎
+- 趋势/动量/波动率/成交量 多维度分析
+- 可配置权重和阈值
+- 自动过滤低质量信号
+
+#### 🛡️ 智能风控系统
+- 总敞口/单币种敞口限制
+- 连续亏损熔断
+- 资金费率监控
+- 执行失败反馈学习
+
+</td>
+</tr>
+</table>
+
+### 🏗️ 系统架构
 
 ```
-LangTrader_Agents/
-├── packages/
-│   └── langtrader_core/
-│       ├── backtest/           # Backtesting engine
-│       │   ├── engine.py
-│       │   ├── mock_trader.py
-│       │   └── mock_performance.py
-│       ├── data/               # Database models & repositories
-│       │   ├── models/
-│       │   └── repositories/
-│       ├── graph/              # LangGraph workflow
-│       │   ├── nodes/          # Workflow nodes
-│       │   └── state.py        # State definitions
-│       ├── plugins/            # Plugin system
-│       │   ├── protocol.py
-│       │   ├── registry.py
-│       │   └── workflow.py
-│       ├── services/           # Core services
-│       │   ├── trader.py
-│       │   ├── market.py
-│       │   ├── indicators.py
-│       │   └── ...
-│       └── prompts/            # LLM prompt templates
-├── examples/
-│   ├── run_once.py             # Single bot runner
-│   ├── run_backtest.py         # Backtest runner
-│   └── multi_bot_runner.py     # Multiple bots
-├── tests/                      # Unit tests
-├── scripts/                    # Database migrations
-├── configs/                    # Configuration files
-└── docs/                       # Documentation
+┌─────────────────────────────────────────────────────────────────┐
+│                      LangTrader Agents                          │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐ │
+│  │ coins    │→ │ market   │→ │ quant    │→ │ debate/batch     │ │
+│  │ _pick    │  │ _state   │  │ _filter  │  │ _decision        │ │
+│  └──────────┘  └──────────┘  └──────────┘  └────────┬─────────┘ │
+│                                                     ↓           │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │                     execution                             │   │
+│  └──────────────────────────────────────────────────────────┘   │
+├─────────────────────────────────────────────────────────────────┤
+│  Services: Trader | Market | Indicators | Performance | Cache   │
+├─────────────────────────────────────────────────────────────────┤
+│  LLM Factory: OpenAI | Anthropic | Ollama | DeepSeek | 智谱     │
+├─────────────────────────────────────────────────────────────────┤
+│  Exchange (CCXT Pro): 70+ Exchanges with WebSocket Support      │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
----
+### 📦 工作流节点
 
-## Getting Started
+| 节点 | 功能 | 特点 |
+|------|------|------|
+| `coins_pick` | 选币 | 按成交量/OI 动态筛选 |
+| `market_state` | 市场数据 | 多时间框架 K 线 + 指标计算 |
+| `quant_signal_filter` | 量化过滤 | 多维度评分，过滤噪音 |
+| `batch_decision` | 批量决策 | 单 Agent 快速决策 |
+| `debate_decision` | 辩论决策 | 4 Agent 多角色辩论 |
+| `execution` | 执行交易 | 风控验证 + 订单执行 |
 
-### Prerequisites
+### 🚀 快速开始
 
-- Python 3.12+
-- PostgreSQL 15+
-- Exchange API credentials (Hyperliquid, Binance, etc.)
-- LLM API key (OpenAI, Anthropic, or local Ollama)
+> ⚠️ **前端开发中** — Web 界面即将推出，敬请期待！
 
-### Installation
-
-1. **Clone the repository**
+目前支持命令行方式运行：
 
 ```bash
+# 1. 克隆项目
 git clone https://github.com/your-org/langtrader-agents.git
 cd langtrader-agents
-```
 
-2. **Install dependencies using uv**
-
-```bash
-# Install uv if not already installed
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Create virtual environment and install
+# 2. 安装依赖
 uv sync
-```
 
-3. **Set up environment variables**
-
-```bash
+# 3. 配置环境变量
 cp .env.example .env
+# 编辑 .env 填入数据库和 API 密钥
 
-# Edit .env with your credentials
-DATABASE_URL=postgresql://user:pass@localhost:5432/langtrader
-OPENAI_API_KEY=sk-...
-LANGSMITH_API_KEY=...  # Optional, for tracing
-```
-
-4. **Initialise the database**
-
-```bash
+# 4. 初始化数据库
 psql -d langtrader -f langtrader_pro_init.sql
-```
 
-5. **Configure your bot**
-
-The bot configuration is stored in the `bots` table. Key settings include:
-- Exchange credentials
-- LLM model selection
-- Risk parameters
-- Quantitative signal weights
-
----
-
-## Usage
-
-### Running Live Trading
-
-```bash
-# Run a single trading bot
+# 5. 运行
 uv run examples/run_once.py
-
-# Run multiple bots
-uv run examples/multi_bot_runner.py
 ```
 
-### Running Backtests
+📖 详细文档请查看 [docs/](docs/) 目录 | 📋 [更新日志](docs/CHANGELOG.md)
+
+---
+
+## English
+
+### 📖 Introduction
+
+LangTrader Agents is a **modular, extensible** AI-powered quantitative trading system. It combines traditional technical analysis with Large Language Model (LLM) reasoning capabilities for intelligent trading decisions.
+
+The system uses **LangGraph StateGraph** as the workflow engine, supports a **hot-swappable node** architecture, with all configurations stored in PostgreSQL database, enabling **zero-restart hot updates**.
+
+### ✨ Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🔌 Hot-Swappable Plugin Architecture
+- Auto-discovery and registration of nodes
+- Runtime dynamic loading/unloading
+- Extend functionality without restart
+
+#### 🤝 Multi-Agent Collaboration
+- **Single Agent Mode**: Fast decisions, low latency
+- **Multi-Agent Debate Mode**: 4 roles (Analyst/Bull/Bear/RiskManager) debate for better decisions
+
+#### 🔧 Centralized Configuration
+- Database-driven config (PostgreSQL)
+- 60-second auto hot-reload
+- Zero hardcoding, fully configurable
+
+</td>
+<td width="50%">
+
+#### 🌐 70+ Exchanges Supported
+- Unified interface via CCXT Pro
+- Supports Hyperliquid, Binance, OKX, etc.
+- WebSocket real-time data streams
+
+#### 📊 Quantitative Signal Engine
+- Multi-dimensional analysis: Trend/Momentum/Volatility/Volume
+- Configurable weights and thresholds
+- Auto-filter low-quality signals
+
+#### 🛡️ Intelligent Risk Management
+- Total/single exposure limits
+- Consecutive loss circuit breaker
+- Funding rate monitoring
+- Execution failure feedback learning
+
+</td>
+</tr>
+</table>
+
+### 🚀 Quick Start
+
+> ⚠️ **Frontend Under Development** — Web interface coming soon!
+
+Currently supports CLI execution:
 
 ```bash
-# Run backtest with default settings
-uv run examples/run_backtest.py
+# 1. Clone the repository
+git clone https://github.com/your-org/langtrader-agents.git
+cd langtrader-agents
 
-# Backtest will use historical data from exchange
-# Results are printed to console
+# 2. Install dependencies
+uv sync
+
+# 3. Configure environment
+cp .env.example .env
+# Edit .env with your database and API keys
+
+# 4. Initialize database
+psql -d langtrader -f langtrader_pro_init.sql
+
+# 5. Run
+uv run examples/run_once.py
 ```
 
-### Running Tests
-
-```bash
-# Run all tests
-uv run pytest tests/ -v
-
-# Run specific test file
-uv run pytest tests/test_mock_trader.py -v
-```
+📖 See [docs/](docs/) for detailed documentation | 📋 [Changelog](docs/CHANGELOG.md)
 
 ---
 
-## Configuration
+<div align="center">
 
-### Bot Configuration (Database)
+## ⭐ Star History
 
-| Field | Description | Default |
-|-------|-------------|---------|
-| `trading_mode` | `paper` or `live` | `paper` |
-| `max_concurrent_symbols` | Maximum coins to trade | 5 |
-| `cycle_interval_seconds` | Time between cycles | 180 |
-| `max_leverage` | Maximum leverage | 5 |
-| `max_position_size_percent` | Max position as % of balance | 10% |
+如果这个项目对你有帮助，请给我们一个 Star！
 
-### Quantitative Signal Weights
+If you find this project helpful, please give us a Star!
 
-```json
-{
-  "trend": 0.4,
-  "momentum": 0.3,
-  "volume": 0.2,
-  "sentiment": 0.1
-}
-```
-
-### Risk Limits
-
-```json
-{
-  "max_total_exposure_pct": 0.8,
-  "max_consecutive_losses": 5,
-  "max_single_symbol_pct": 0.3
-}
-```
+[![Star History Chart](https://api.star-history.com/svg?repos=your-org/langtrader-agents&type=Date)](https://star-history.com/#your-org/langtrader-agents&Date)
 
 ---
 
-## Workflow Nodes
+### 🙏 致谢 | Acknowledgements
 
-| Node | Purpose | Requires |
-|------|---------|----------|
-| `coins_pick` | Select trading coins based on volume/OI | Exchange |
-| `market_state` | Fetch OHLCV and calculate indicators | Exchange |
-| `quant_signal_filter` | Filter coins by quantitative score | - |
-| `market_analyzer` | AI analysis of market conditions | LLM |
-| `decision` | AI trading decision | LLM |
-| `risk_monitor` | Validate risk limits | - |
-| `execution` | Execute trades | Exchange |
+[![LangGraph](https://img.shields.io/badge/LangGraph-Workflow-1C3C3C?style=flat-square)](https://github.com/langchain-ai/langgraph)
+[![CCXT](https://img.shields.io/badge/CCXT-Exchange-000000?style=flat-square)](https://github.com/ccxt/ccxt)
+[![LangChain](https://img.shields.io/badge/LangChain-LLM-1C3C3C?style=flat-square)](https://github.com/langchain-ai/langchain)
+[![pandas-ta](https://img.shields.io/badge/pandas--ta-Indicators-150458?style=flat-square)](https://github.com/twopirllc/pandas-ta)
 
 ---
 
-## Extending the System
+### ⚠️ 免责声明 | Disclaimer
 
-### Creating a Custom Node
+本软件仅供教育和研究目的。加密货币交易涉及重大损失风险。作者不对使用本软件造成的任何财务损失负责。
 
-```python
-from langtrader_core.plugins.protocol import NodePlugin, NodeMetadata
-from langtrader_core.graph.state import State
-
-class MyCustomNode(NodePlugin):
-    metadata = NodeMetadata(
-        name="my_custom_node",
-        display_name="My Custom Node",
-        version="1.0.0",
-        author="Your Name",
-        description="Does something useful",
-        category="analysis",
-        insert_after="market_state",
-        suggested_order=2.5,
-    )
-    
-    async def run(self, state: State) -> State:
-        # Your logic here
-        return state
-```
-
-Nodes are automatically discovered and registered when placed in `packages/langtrader_core/graph/nodes/`.
+This software is for educational and research purposes only. Cryptocurrency trading involves significant risk of loss. The authors are not responsible for any financial losses incurred through the use of this software.
 
 ---
 
-## Troubleshooting
+**MIT License** | Copyright © 2024-2026
 
-### Common Issues
-
-| Issue | Solution |
-|-------|----------|
-| `Exchange not found` | Check exchange credentials in database |
-| `No markets loaded` | Ensure exchange supports CCXT Pro |
-| `LLM timeout` | Increase timeout or check API key |
-| `Checkpoint error` | Verify PostgreSQL connection |
-
-### Logs
-
-Logs are stored in `logs/langtrader.log`. Enable debug logging by setting:
-
-```python
-logger = get_logger("module_name", level="DEBUG")
-```
-
----
-
-## Contributing
-
-We welcome contributions! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## Disclaimer
-
-This software is provided for educational and research purposes only. Cryptocurrency trading involves significant risk of loss. The authors are not responsible for any financial losses incurred through the use of this software.
-
----
-
-## Licence
-
-This project is licensed under the MIT Licence - see the [LICENCE](LICENCE) file for details.
-
----
-
-## Acknowledgements
-
-- [LangGraph](https://github.com/langchain-ai/langgraph) — Workflow orchestration
-- [CCXT](https://github.com/ccxt/ccxt) — Exchange connectivity
-- [LangChain](https://github.com/langchain-ai/langchain) — LLM integration
-- [pandas-ta](https://github.com/twopirllc/pandas-ta) — Technical analysis
-
+</div>

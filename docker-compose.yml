@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  # =============================================================================
+  # PostgreSQL Database
+  # =============================================================================
+  db:
+    image: postgres:15-alpine
+    container_name: langtrader_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tomiezhang
+      POSTGRES_PASSWORD: "198493"
+      POSTGRES_DB: langtrader_pro
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./langtrader_pro_init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tomiezhang -d langtrader_pro"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================================================
+  # LangTrader API Service
+  # =============================================================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: langtrader_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Database
+      DATABASE_URL: postgresql://tomiezhang:198493@db:5432/langtrader_pro
+      
+      # API Configuration
+      API_KEYS: ${API_KEYS:-dev-key-123}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      DEBUG: ${DEBUG:-false}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      
+      # Optional: LangSmith
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+    volumes:
+      # Mount logs directory
+      - ./logs:/app/logs
+      # Mount for development (optional, remove in production)
+      # - ./packages:/app/packages:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    name: langtrader_network
+

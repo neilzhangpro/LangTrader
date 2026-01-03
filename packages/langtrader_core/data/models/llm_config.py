@@ -1,4 +1,14 @@
 # packages/langtrader_core/data/models/llm_config.py
+"""
+LLM 配置模型
+
+重试机制说明：
+- LangChain 内置支持 max_retries 参数
+- 参考: https://docs.langchain.com/oss/python/langchain/models#parameters
+- ChatOpenAI/ChatAnthropic 等模型都支持此参数
+- 当 API 调用失败时，SDK 会自动重试指定次数
+- 无需自定义重试装饰器或熔断器
+"""
 
 from sqlmodel import SQLModel, Field
 from typing import Optional
@@ -10,6 +20,11 @@ class LLMConfig(SQLModel, table=True):
     """
     LLM 配置模型
     统一管理所有 LLM 提供者和模型配置
+    
+    重试机制：
+    - max_retries 参数会传递给 LangChain 模型
+    - LangChain 会自动处理 API 调用失败的重试
+    - 默认重试 3 次，可在数据库中配置
     """
     __tablename__ = "llm_configs"
     

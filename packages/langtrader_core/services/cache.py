@@ -1,67 +1,55 @@
 """
-A cache system for the trading system (Singleton pattern).
-All services share the same cache instance for better efficiency.
+缓存服务（单例模式）
+
+为交易系统提供统一的缓存机制，避免重复 API 调用。
 """
 from dataclasses import dataclass
-from langtrader_core.utils import get_logger
-logger = get_logger("cache")
 from typing import Any, Optional
 import threading
 import time
 
+from langtrader_core.services.singleton import Singleton
+from langtrader_core.utils import get_logger
+
+logger = get_logger("cache")
+
+
 @dataclass
 class CacheItem:
-    """
-    A cache item containing data, timestamp, and TTL
-    """
+    """缓存条目"""
     data: Any
     timestamp: float
     ttl: float
 
-class Cache:
-    """
-    A cache system for the trading system (Singleton pattern)
-    Ensures all services share the same cache to avoid redundant API calls
-    """
-    _instance = None  # Class instance to store the singleton instance
-    _lock = threading.Lock()  # Lock for thread-safe singleton creation
 
-    def __new__(cls):
-        """
-        Create or return the singleton instance
-        Uses double-checked locking for thread safety
-        """
-        if cls._instance is None:
-            with cls._lock:
-                if cls._instance is None:
-                    cls._instance = super(Cache, cls).__new__(cls)
-                    cls._instance._initialized = False
-        return cls._instance
-
-    def __init__(self):
-        """
-        Initialize the cache (only once for singleton)
-        """
-        if self._initialized:
-            return
-        
+class Cache(Singleton):
+    """
+    缓存服务（单例模式）
+    继承 Singleton 基类实现线程安全的单例
+    """
+    
+    def _init_singleton(self):
+        """初始化缓存"""
         self.cache = {}
-        self._cache_lock = threading.Lock()  # Instance-level lock for cache operations
-
-        # Different cache TTL for different data types (in seconds)
-        self.cache_ttl = {
-            'tickers': 10,            # 10 seconds (更快的行情更新)
-            'ohlcv_3m': 300,          # 5 minutes (增加软过期，防止 WebSocket 挂掉后读取陈旧数据)
-            'ohlcv_4h': 3600,         # 1 hour (REST API，更及时的趋势判断)
-            'ohlcv': 600,             # 10 minutes (default for OHLCV)
-            'open_interests': 600,    # 10 minutes (更快的热度跟踪)
-            'markets': 3600,          # 1 hour (市场信息)
-            'coin_selection': 600,    # 10 minutes (更频繁地调整选币)
-            'backtest_ohlcv': 86400 * 7,  # 7天（回测数据长期缓存）
+        self._cache_lock = threading.Lock()
+        self.cache_ttl = self._get_default_ttls()
+        logger.info("Cache singleton initialized")
+    
+    @staticmethod
+    def _get_default_ttls() -> dict:
+        """获取默认TTL配置（向后兼容）"""
+        return {
+            'tickers': 30,            # 30 seconds (与选币到执行的时间间隔匹配)
+            'ohlcv_3m': 300,          # 5 minutes
+            'ohlcv_4h': 3600,         # 1 hour
+            'ohlcv': 600,             # 10 minutes
+            'open_interests': 600,    # 10 minutes
+            'markets': 3600,          # 1 hour
+            'coin_selection': 600,    # 10 minutes
+            'backtest_ohlcv': 86400 * 7,  # 7 days
+            'orderbook': 60,          # 60 seconds
+            'trades': 60,             # 60 seconds
         }
-        
-        self._initialized = True
-        logger.info("Cache singleton instance initialized")
 
     
     def _make_key(self, data_type: str, *args, **kwargs) -> str:
@@ -160,6 +148,44 @@ class Cache:
                 return None
             return time.time() - entry.timestamp
     
+    def set_cycle_interval(self, interval_seconds: int):
+        """
+        根据循环间隔动态调整缓存 TTL
+        
+        策略：选币缓存 TTL = cycle_interval * 0.9（略短于循环间隔）
+        确保每轮开始时选币缓存已过期，触发重新选币。
+        
+        Args:
+            interval_seconds: 交易周期间隔（秒）
+        """
+        # coin_selection 缓存应该在每轮开始前过期
+        new_ttl = max(60, int(interval_seconds * 0.9))
+        self.cache_ttl['coin_selection'] = new_ttl
+        logger.info(f"Cache TTL adjusted: coin_selection={new_ttl}s (cycle_interval={interval_seconds}s)")
+    
+    def invalidate(self, data_type: str, *args, **kwargs):
+        """
+        使指定类型的缓存失效
+        
+        Args:
+            data_type: 缓存类型（如 'coin_selection'）
+            args/kwargs: 可选，用于构建具体的 key
+        """
+        with self._cache_lock:
+            if args or kwargs:
+                # 删除特定 key
+                key = self._make_key(data_type, *args, **kwargs)
+                if key in self.cache:
+                    del self.cache[key]
+                    logger.debug(f"Cache invalidated: {key}")
+            else:
+                # 删除该类型的所有缓存
+                keys_to_delete = [k for k in self.cache.keys() if k.startswith(f"{data_type}:")]
+                for key in keys_to_delete:
+                    del self.cache[key]
+                if keys_to_delete:
+                    logger.debug(f"Cache invalidated: {len(keys_to_delete)} entries of type '{data_type}'")
+    
     def clear(self, data_type: Optional[str] = None):
         """
         Clear the cache
@@ -178,6 +204,38 @@ class Cache:
                 for key in keys_to_delete:
                     del self.cache[key]
                 logger.info(f"Cleared {len(keys_to_delete)} cache entries for type: {data_type}")
+
+    def cleanup_expired(self) -> int:
+        """
+        主动清理过期缓存条目
+        
+        遍历所有缓存条目，删除已过期的条目。
+        建议在每个交易周期开始时调用，防止内存无限增长。
+        
+        Returns:
+            清理的条目数量
+        """
+        with self._cache_lock:
+            now = time.time()
+            keys_to_delete = []
+            
+            for key, entry in self.cache.items():
+                # 从 key 中提取 data_type
+                data_type = key.split(':')[0]
+                ttl = self.cache_ttl.get(data_type, 0)
+                
+                # 检查是否过期
+                if ttl > 0 and now - entry.timestamp > ttl:
+                    keys_to_delete.append(key)
+            
+            # 删除过期条目
+            for key in keys_to_delete:
+                del self.cache[key]
+            
+            if keys_to_delete:
+                logger.debug(f"🧹 Cleaned up {len(keys_to_delete)} expired cache entries")
+            
+            return len(keys_to_delete)
 
     def get_stats(self) -> dict:
         """

@@ -136,8 +136,71 @@ class NodePlugin(ABC):
             config: 节点配置（从配置文件加载）
         """
         self.context = context
-        self.config = config or self.metadata.default_config.copy()
+        self._raw_config = config or {}
+        self.config = {**self.metadata.default_config, **self._raw_config}
         self._validate_config()
+    
+    # ==================== 公共配置加载方法 ====================
+    
+    def load_config_from_database(self, prefix: str = None) -> Dict[str, Any]:
+        """
+        从数据库加载节点配置
+        
+        Args:
+            prefix: 配置前缀，如 'batch_decision'、'debate'
+                   如果不提供，使用 metadata.name
+            
+        Returns:
+            配置字典
+        """
+        prefix = prefix or self.metadata.name
+        
+        if not self.context or not hasattr(self.context, 'database'):
+            return {}
+        
+        database = getattr(self.context, 'database', None)
+        if not database:
+            return {}
+        
+        config = {}
+        try:
+            from langtrader_core.services.config_manager import SystemConfig
+            
+            # database 可能是 Session 对象或有 get_session 方法的 wrapper
+            if hasattr(database, 'get_session'):
+                with database.get_session() as session:
+                    system_config = SystemConfig(session)
+                    all_configs = system_config.get_by_prefix(prefix)
+            else:
+                # database 直接是 Session 对象
+                system_config = SystemConfig(database)
+                all_configs = system_config.get_by_prefix(prefix)
+            
+            for key, value in all_configs.items():
+                # 移除前缀，如 'batch_decision.timeout' -> 'timeout'
+                short_key = key.replace(f"{prefix}.", "")
+                config[short_key] = value
+                    
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to load config from database ({prefix}): {e}")
+        
+        return config
+    
+    def get_config_value(self, key: str, default: Any = None) -> Any:
+        """
+        获取配置值
+        
+        优先级：实例配置 > 数据库配置 > 默认值
+        """
+        return self.config.get(key, default)
+    
+    def merge_config(self, db_config: Dict[str, Any], default_config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        合并配置（便捷方法）
+        
+        优先级：实例配置 > 数据库配置 > 默认配置
+        """
+        return {**default_config, **db_config, **self._raw_config}
     
     @abstractmethod
     async def run(self, state: State) -> State:
