@@ -22,4 +22,4 @@ wheels/
 .env.test
 .env.production
 .langtrader_pro_2025-12-31_090518.sql
-.logs/
+.logs/logs/

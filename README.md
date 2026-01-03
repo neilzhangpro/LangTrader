@@ -123,7 +123,7 @@ LangTrader Agents 是一个**模块化、可扩展**的 AI 量化交易系统。
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/your-org/langtrader-agents.git
+git clone https://github.com/neilzhangpro/LangTrader.git
 cd langtrader-agents
 
 # 2. 安装依赖
@@ -203,7 +203,7 @@ Currently supports CLI execution:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/langtrader-agents.git
+git clone https://github.com/neilzhangpro/LangTrader.git
 cd langtrader-agents
 
 # 2. Install dependencies
@@ -232,7 +232,7 @@ uv run examples/run_once.py
 
 If you find this project helpful, please give us a Star!
 
-[![Star History Chart](https://api.star-history.com/svg?repos=your-org/langtrader-agents&type=Date)](https://star-history.com/#your-org/langtrader-agents&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=neilzhangpro/LangTrader&type=Date)](https://star-history.com/#neilzhangpro/LangTrader&Date)
 
 ---
 
