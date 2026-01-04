@@ -23,6 +23,7 @@ from langtrader_core.services.performance import PerformanceService
 from langtrader_core.data.repositories.trade_history import TradeHistoryRepository
 from langtrader_core.plugins.registry import registry, PluginContext
 from langtrader_core.plugins.workflow import WorkflowBuilder
+from langtrader_core.services.status_file import write_bot_status, mark_bot_stopped
 from datetime import datetime
 from langchain_core.runnables import RunnableConfig
 
@@ -46,6 +47,8 @@ class RunOnce:
         self.session = SessionLocal()
         self.bot_id = bot_id
         self.graph = None
+        self.cycle = 0  # 当前周期数
+        self.last_error = None  # 最后一次错误
         
         # ✅ 使用服务容器管理共享实例
         self.container = ServiceContainer.get_instance(self.session)
@@ -198,7 +201,49 @@ class RunOnce:
                 logger.info(f"✓ Updated positions: {len(self.state.positions)}")
         
         logger.info(f"Current state: {len(self.state.symbols)} symbols selected")
+        
+        # ========== 写入状态文件（供 API 读取）==========
+        self._write_status_file(state="running")
+        
         return self.state
+    
+    def _write_status_file(self, state: str = "running", last_error: str = None):
+        """
+        写入状态文件，供 API 读取 bot 运行状态
+        
+        Args:
+            state: 运行状态 ('running', 'idle', 'error', 'stopped')
+            last_error: 最后一次错误信息
+        """
+        try:
+            # 获取余额
+            balance = 0.0
+            if self.state.account:
+                balance = self.state.account.total.get('USDC', 0) or self.state.account.total.get('USDT', 0)
+            
+            # 获取最后决策摘要
+            last_decision = None
+            if self.state.batch_decision:
+                decisions = self.state.batch_decision.decisions
+                if decisions:
+                    # 简化为：symbol:action 列表
+                    last_decision = ", ".join([f"{d.symbol}:{d.action}" for d in decisions[:3]])
+                    if len(decisions) > 3:
+                        last_decision += f"... (+{len(decisions)-3})"
+            
+            write_bot_status(
+                bot_id=self.bot_id,
+                cycle=self.cycle,
+                balance=balance,
+                initial_balance=self.initial_balance,
+                positions=self.state.positions or [],
+                symbols=self.state.symbols or [],
+                state=state,
+                last_decision=last_decision,
+                last_error=last_error or self.last_error,
+            )
+        except Exception as e:
+            logger.warning(f"Failed to write status file: {e}")
 
     async def cleanup(self):
         """清理资源"""
@@ -251,6 +296,8 @@ async def main():
         logger.info(f"Cycle interval: {interval}s")
         
         cycle = 0
+        consecutive_failures = 0
+        max_consecutive_failures = 5  # 连续失败 5 次后退出
         
         while True:
             cycle += 1
@@ -265,7 +312,27 @@ async def main():
                 run_once.session = SessionLocal()
                 run_once.container.session = run_once.session
             
-            await run_once.run()
+            # 周期级别错误隔离：单个周期失败不会导致程序退出
+            run_once.cycle = cycle  # 同步周期数
+            try:
+                await run_once.run()
+                consecutive_failures = 0  # 成功后重置计数
+                run_once.last_error = None
+            except Exception as e:
+                consecutive_failures += 1
+                run_once.last_error = str(e)[:200]  # 记录错误（截断）
+                logger.error(f"❌ Cycle #{cycle} failed ({consecutive_failures}/{max_consecutive_failures}): {e}", 
+                           exc_info=True)
+                
+                # 写入错误状态
+                run_once._write_status_file(state="error", last_error=run_once.last_error)
+                
+                # 连续失败熔断：超过阈值则退出
+                if consecutive_failures >= max_consecutive_failures:
+                    logger.critical(f"💀 Too many consecutive failures ({max_consecutive_failures}), shutting down...")
+                    break
+                
+                logger.warning(f"⚠️ Skipping this cycle, will retry in {interval}s...")
             
             logger.info(f"\n⏳ Sleeping {interval}s until next cycle...")
             await asyncio.sleep(interval)
@@ -273,10 +340,9 @@ async def main():
     except KeyboardInterrupt:
         logger.info("\n⚠️  Interrupted by user (Ctrl+C)")
     
-    except Exception as e:
-        logger.error(f"❌ Fatal error: {e}", exc_info=True)
-    
     finally:
+        # 标记 bot 为已停止
+        mark_bot_stopped(run_once.bot_id)
         await run_once.cleanup()
         logger.info("👋 Program ended")
 

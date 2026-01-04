@@ -232,6 +232,8 @@ async def get_bot_status(
 ):
     """
     Get real-time bot status
+    
+    从状态文件读取详细运行信息（周期数、余额、持仓等）
     """
     bot = bot_repo.get_by_id(bot_id)
     if not bot:
@@ -243,18 +245,29 @@ async def get_bot_status(
     is_running = bot_manager.is_running(bot_id)
     process_info = bot_manager.get_process_info(bot_id)
     
+    # 从状态文件读取详细运行信息
+    runtime_status = bot_manager.read_bot_status(bot_id)
+    
     status_data = BotStatus(
         bot_id=bot_id,
         bot_name=bot.name,
         is_running=is_running,
         is_active=bot.is_active,
         trading_mode=bot.trading_mode,
-        current_cycle=process_info.get("cycle", 0) if process_info else 0,
-        last_cycle_at=bot.last_active_at,
-        open_positions=0,  # TODO: Get from trader
-        symbols_trading=[],  # TODO: Get from state
+        # 优先使用状态文件中的信息
+        current_cycle=runtime_status.get("cycle", 0) if runtime_status else 0,
+        last_cycle_at=runtime_status.get("updated_at") if runtime_status else bot.last_active_at,
+        open_positions=runtime_status.get("positions_count", 0) if runtime_status else 0,
+        symbols_trading=runtime_status.get("symbols", []) if runtime_status else [],
         uptime_seconds=process_info.get("uptime") if process_info else None,
-        error_message=process_info.get("error") if process_info else None,
+        error_message=runtime_status.get("last_error") if runtime_status else (
+            process_info.get("error") if process_info else None
+        ),
+        # 新增：余额和最后决策
+        balance=runtime_status.get("balance") if runtime_status else None,
+        initial_balance=runtime_status.get("initial_balance") if runtime_status else None,
+        last_decision=runtime_status.get("last_decision") if runtime_status else None,
+        state=runtime_status.get("state") if runtime_status else ("running" if is_running else "stopped"),
     )
     
     return APIResponse(data=status_data)

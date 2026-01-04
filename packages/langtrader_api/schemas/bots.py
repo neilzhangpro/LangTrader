@@ -76,18 +76,28 @@ class BotDetail(BaseModel):
 
 
 class BotStatus(BaseModel):
-    """Real-time bot status"""
+    """
+    Real-time bot status
+    
+    从状态文件读取的详细运行信息
+    """
     bot_id: int
     bot_name: str
     is_running: bool
     is_active: bool
     trading_mode: str
     current_cycle: int = 0
-    last_cycle_at: Optional[datetime] = None
+    last_cycle_at: Optional[str] = None  # ISO 格式时间字符串
     open_positions: int = 0
     symbols_trading: List[str] = Field(default_factory=list)
     uptime_seconds: Optional[int] = None
     error_message: Optional[str] = None
+    
+    # 新增：从状态文件读取的详细信息
+    balance: Optional[float] = None  # 当前余额
+    initial_balance: Optional[float] = None  # 初始余额
+    last_decision: Optional[str] = None  # 最后一次决策摘要
+    state: str = "unknown"  # 运行状态: running, idle, error, stopped
 
 
 # =============================================================================

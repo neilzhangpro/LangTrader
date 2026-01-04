@@ -491,8 +491,9 @@ class DebateDecisionNode(NodePlugin):
         async def analyst_fallback(messages):
             logger.warning("⚠️ Analyst 使用 fallback - 返回中性分析")
             return AnalystOutput(
+                symbol="FALLBACK",     # 必填字段
                 trend="neutral",
-                key_levels=[],
+                key_levels=None,       # 类型应为 Optional[Dict]，不是 List
                 summary="分析失败，默认中性判断"
             )
         
@@ -516,10 +517,21 @@ class DebateDecisionNode(NodePlugin):
             return [result] if isinstance(result, AnalystOutput) else result
         except asyncio.TimeoutError:
             logger.error(f"❌ Analyst 超时 ({timeout}s) - 使用默认中性分析")
-            return [AnalystOutput(trend="neutral", key_levels=[], summary="分析超时，默认中性")]
+            return [AnalystOutput(
+                symbol="TIMEOUT",      # 必填字段
+                trend="neutral", 
+                key_levels=None,       # 类型应为 Optional[Dict]，不是 List
+                summary="分析超时，默认中性"
+            )]
         except Exception as e:
             logger.error(f"❌ Analyst 失败: {e}")
-            return []
+            # 返回 fallback 结果而非空列表，避免后续处理失败
+            return [AnalystOutput(
+                symbol="ERROR",
+                trend="neutral",
+                key_levels=None,
+                summary=f"分析出错: {str(e)[:50]}"
+            )]
     
     async def _run_phase2_parallel(
         self, 

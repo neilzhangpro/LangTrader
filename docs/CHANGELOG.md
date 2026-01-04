@@ -8,6 +8,41 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-01-04
+
+### 🐛 Bug 修复 / Bug Fixes
+
+#### AnalystOutput 验证错误修复
+- 修复 `debate_decision.py` 中 fallback 返回的 `AnalystOutput` 缺少 `symbol` 字段的问题
+- 修复 `key_levels` 字段类型错误（应为 `None` 而非 `[]`）
+
+### ✨ 新增功能 / New Features
+
+#### API 与 Bot 状态同步机制
+- **新增 `status_file.py` 服务**: 实现 Bot 运行状态的文件同步
+- **Bot 进程状态写入**: 每个交易周期结束后自动写入状态到 `status/bot_{id}.json`
+- **API 状态读取**: `GET /api/v1/bots/{id}/status` 现在返回详细运行信息：
+  - `cycle`: 当前周期数
+  - `balance`: 当前余额
+  - `positions_count`: 持仓数量
+  - `symbols_trading`: 当前监控的币种
+  - `last_decision`: 最后一次决策摘要
+  - `state`: 运行状态 (running/error/stopped)
+  - `last_error`: 最后一次错误信息
+
+### 📁 文件变更 / Changed Files
+
+| 文件 | 变更内容 |
+|------|---------|
+| `packages/langtrader_core/graph/nodes/debate_decision.py` | 修复 AnalystOutput fallback |
+| `packages/langtrader_core/services/status_file.py` | 新增状态文件服务 |
+| `examples/run_once.py` | 添加状态文件写入逻辑 |
+| `packages/langtrader_api/services/bot_manager.py` | 添加状态文件读取方法 |
+| `packages/langtrader_api/routes/v1/bots.py` | 更新 status 端点使用状态文件 |
+| `packages/langtrader_api/schemas/bots.py` | BotStatus 新增字段 |
+
+---
+
 ## [0.2.0] - 2026-01-04
 
 ### 🔧 稳定性优化 / Stability Improvements
