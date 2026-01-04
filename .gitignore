@@ -22,7 +22,7 @@ wheels/
 .env.test
 .env.production
 .langtrader_pro_2025-12-31_090518.sql
-.logs/logs/
+logs/
 
 # Bot 状态文件目录（运行时生成）
 status/
