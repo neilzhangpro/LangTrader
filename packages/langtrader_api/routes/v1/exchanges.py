@@ -23,6 +23,13 @@ from langtrader_core.data.models.exchange import exchange as Exchange
 router = APIRouter(prefix="/exchanges", tags=["Exchanges"])
 
 
+def mask_key(key: str) -> str:
+    """脱敏密钥显示"""
+    if not key or len(key) < 8:
+        return "***"
+    return f"{key[:4]}...{key[-4:]}"
+
+
 # =============================================================================
 # List & Get
 # =============================================================================
@@ -39,7 +46,6 @@ async def list_exchanges(
     """
     exchanges = exchange_repo.get_all()
     
-    # 脱敏处理
     result = []
     for ex in exchanges:
         result.append(ExchangeSummary(
@@ -72,12 +78,6 @@ async def get_exchange(
             detail=f"Exchange with id {exchange_id} not found"
         )
     
-    # 脱敏 API Key
-    def mask_key(key: str) -> str:
-        if not key or len(key) < 8:
-            return "***"
-        return f"{key[:4]}...{key[-4:]}"
-    
     return APIResponse(data=ExchangeDetail(
         id=ex['id'],
         name=ex['name'],
@@ -106,10 +106,9 @@ async def create_exchange(
     
     支持的交易所类型：binance, hyperliquid, okx, bybit 等
     """
-    # 创建交易所对象
     ex = Exchange(
-        name=request.name,
         type=request.type,
+        name=request.name,
         apikey=request.apikey,
         secretkey=request.secretkey,
         uid=request.uid,
@@ -122,19 +121,13 @@ async def create_exchange(
     db.commit()
     db.refresh(ex)
     
-    # 脱敏返回
-    def mask_key(key: str) -> str:
-        if not key or len(key) < 8:
-            return "***"
-        return f"{key[:4]}...{key[-4:]}"
-    
     return APIResponse(
         data=ExchangeDetail(
             id=ex.id,
             name=ex.name,
             type=ex.type,
             testnet=ex.testnet,
-            apikey_masked=mask_key(ex.apikey),
+            apikey_masked=mask_key(request.apikey),
             has_uid=bool(ex.uid),
             has_password=bool(ex.password),
             slippage=ex.slippage,
@@ -156,33 +149,21 @@ async def update_exchange(
     
     只更新提供的字段，未提供的字段保持不变
     """
-    # 获取原始数据
-    ex_data = exchange_repo.get_by_id(exchange_id)
-    if not ex_data:
+    ex = exchange_repo.get_by_id_model(exchange_id)
+    if not ex:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Exchange with id {exchange_id} not found"
         )
     
-    # 获取 ORM 对象
-    from sqlmodel import select
-    stmt = select(Exchange).where(Exchange.id == exchange_id)
-    ex = db.exec(stmt).first()
-    
-    # 更新字段
     update_data = request.model_dump(exclude_unset=True)
+    
     for field, value in update_data.items():
         setattr(ex, field, value)
     
     db.add(ex)
     db.commit()
     db.refresh(ex)
-    
-    # 脱敏返回
-    def mask_key(key: str) -> str:
-        if not key or len(key) < 8:
-            return "***"
-        return f"{key[:4]}...{key[-4:]}"
     
     return APIResponse(
         data=ExchangeDetail(
@@ -210,7 +191,7 @@ async def delete_exchange(
     
     警告：删除后无法恢复，关联的 Bot 将无法正常运行
     """
-    ex = exchange_repo.get_by_id(exchange_id)
+    ex = exchange_repo.get_by_id_model(exchange_id)
     if not ex:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -366,4 +347,3 @@ async def get_exchange_balance(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to fetch balance: {str(e)}"
         )
-

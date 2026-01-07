@@ -219,3 +219,27 @@ class TradeHistoryRepository:
         )
         return list(self.session.exec(statement).all())
 
+    def get_all(
+        self,
+        status: Optional[str] = None,
+        limit: int = 500
+    ) -> List[TradeHistory]:
+        """
+        获取所有 bot 的交易历史
+        
+        Args:
+            status: 状态过滤 ('open', 'closed', None=全部)
+            limit: 返回数量限制
+        
+        Returns:
+            按开仓时间降序排列的交易列表
+        """
+        statement = select(TradeHistory)
+        
+        if status:
+            statement = statement.where(TradeHistory.status == status)
+        
+        statement = statement.order_by(TradeHistory.opened_at.desc()).limit(limit)
+        
+        return list(self.session.exec(statement).all())
+

@@ -1,4 +1,15 @@
-version: "3.8"
+# ============================================================================
+# LangTrader Docker Compose Configuration
+#
+# 安全说明：
+# - 所有敏感信息从环境变量读取，不硬编码
+# - 使用前请创建 .env 文件并配置以下变量：
+#   - POSTGRES_USER
+#   - POSTGRES_PASSWORD
+#   - POSTGRES_DB
+#   - API_KEYS (JSON 格式，如 '["your-secure-key"]')
+#   - SECRET_KEY
+# ============================================================================
 
 services:
   # =============================================================================
@@ -9,16 +20,16 @@ services:
     container_name: langtrader_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: tomiezhang
-      POSTGRES_PASSWORD: "198493"
-      POSTGRES_DB: langtrader_pro
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-langtrader_pro}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./langtrader_pro_init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tomiezhang -d langtrader_pro"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-langtrader_pro}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -35,12 +46,14 @@ services:
     ports:
       - "8000:8000"
     environment:
-      # Database
-      DATABASE_URL: postgresql://tomiezhang:198493@db:5432/langtrader_pro
+      # Database - 从环境变量构建连接字符串
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-langtrader_pro}
       
-      # API Configuration
-      API_KEYS: ${API_KEYS:-dev-key-123}
-      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      # Security - 必须配置
+      API_KEYS: ${API_KEYS:?API_KEYS is required}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+      
+      # Application
       DEBUG: ${DEBUG:-false}
       ENVIRONMENT: ${ENVIRONMENT:-production}
       
@@ -49,8 +62,8 @@ services:
     volumes:
       # Mount logs directory
       - ./logs:/app/logs
-      # Mount for development (optional, remove in production)
-      # - ./packages:/app/packages:ro
+      # Mount status directory for bot status files
+      - ./status:/app/status
     depends_on:
       db:
         condition: service_healthy
@@ -61,6 +74,30 @@ services:
       retries: 3
       start_period: 40s
 
+  # =============================================================================
+  # LangTrader Frontend (Next.js)
+  # =============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # 构建时注入的环境变量（会被打包到前端代码）
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-ws://localhost:8000}
+    container_name: langtrader_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # 运行时环境变量
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-ws://localhost:8000}
+      # 注意：API_KEY 不应暴露在前端，将在后续实现 BFF 模式
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
   postgres_data:
     driver: local
@@ -68,4 +105,3 @@ volumes:
 networks:
   default:
     name: langtrader_network
-

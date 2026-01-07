@@ -68,6 +68,8 @@ class BotStatus:
     last_decision: Optional[str]  # 最后一次决策摘要
     last_error: Optional[str]
     updated_at: str
+    # 辩论决策数据（完整记录辩论过程）
+    debate_decision: Optional[Dict[str, Any]] = None
     
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典"""
@@ -76,6 +78,9 @@ class BotStatus:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "BotStatus":
         """从字典创建"""
+        # 处理可能缺失的 debate_decision 字段
+        if 'debate_decision' not in data:
+            data['debate_decision'] = None
         return cls(**data)
 
 
@@ -89,6 +94,7 @@ def write_bot_status(
     state: str = "running",
     last_decision: Optional[str] = None,
     last_error: Optional[str] = None,
+    debate_decision: Optional[Dict[str, Any]] = None,
 ) -> bool:
     """
     写入 Bot 状态到文件
@@ -103,6 +109,7 @@ def write_bot_status(
         state: 运行状态 ('running', 'idle', 'error', 'stopped')
         last_decision: 最后一次决策摘要
         last_error: 最后一次错误信息
+        debate_decision: AI 辩论决策数据（完整记录辩论过程）
     
     Returns:
         是否写入成功
@@ -136,6 +143,7 @@ def write_bot_status(
             last_decision=last_decision,
             last_error=last_error,
             updated_at=datetime.now().isoformat(),
+            debate_decision=debate_decision,
         )
         
         # 写入文件

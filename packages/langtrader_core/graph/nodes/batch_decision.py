@@ -15,11 +15,13 @@ from langtrader_core.graph.state import (
     BatchDecisionResult, 
     PortfolioDecision,
     PerformanceMetrics,
+    DebateDecisionResult,
 )
 from langtrader_core.utils import get_logger
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.runnables import RunnableLambda
 from pathlib import Path
+from datetime import datetime
 import json
 import asyncio
 
@@ -88,6 +90,7 @@ class BatchDecision(NodePlugin):
         self.performance_service = context.performance_service if hasattr(context, 'performance_service') else None
         self.trader = context.trader if hasattr(context, 'trader') else None
         self.database = context.database if hasattr(context, 'database') else None
+        self.bot = context.bot if hasattr(context, 'bot') else None  # 保存 bot 引用用于获取 llm_id
         
         if not self.llm_factory:
             logger.error("🚨 LLM factory not found in context")
@@ -96,8 +99,8 @@ class BatchDecision(NodePlugin):
         # ========== 统一配置加载 ==========
         # 1. 从 bot.risk_limits 读取风控约束（唯一配置源）
         self.risk_limits = {}
-        if hasattr(context, 'bot') and context.bot:
-            self.risk_limits = context.bot.risk_limits or {}
+        if self.bot:
+            self.risk_limits = self.bot.risk_limits or {}
             logger.debug(f"Loaded risk_limits from bot: {list(self.risk_limits.keys())}")
         
         # 2. 从 system_configs 读取节点配置
@@ -134,9 +137,20 @@ class BatchDecision(NodePlugin):
         logger.info(f"   max_total={self.node_config['max_total_allocation_pct']}%, max_single={self.node_config['max_single_allocation_pct']}%")
     
     def _get_llm(self):
-        """获取或创建 LLM 实例"""
+        """
+        获取或创建 LLM 实例
+        
+        优先级：bot.llm_id > default LLM
+        """
         if self._llm is None:
-            self._llm = self.llm_factory.create_default()
+            # 优先使用 bot 配置的 LLM
+            if self.bot and hasattr(self.bot, 'llm_id') and self.bot.llm_id:
+                logger.info(f"Using bot-specific LLM: llm_id={self.bot.llm_id}")
+                self._llm = self.llm_factory.create_from_id(self.bot.llm_id)
+            else:
+                # 否则使用默认 LLM
+                logger.info("Using default LLM")
+                self._llm = self.llm_factory.create_default()
             logger.info(f"✅ LLM created: {self._llm.model_name}")
         return self._llm
     
@@ -542,6 +556,16 @@ class BatchDecision(NodePlugin):
         # 5. 保存到 state
         # -------------------------
         state.batch_decision = batch_result
+        
+        # 同时写入 debate_decision 供前端展示（无辩论过程，仅有最终决策）
+        state.debate_decision = DebateDecisionResult(
+            analyst_outputs=[],
+            bull_suggestions=[],
+            bear_suggestions=[],
+            final_decision=batch_result,
+            debate_summary=f"Batch decision: {len(batch_result.decisions)} decisions",
+            completed_at=datetime.now(),
+        )
         
         logger.info("=" * 60)
         logger.info(f"🎯 BatchDecision 完成")

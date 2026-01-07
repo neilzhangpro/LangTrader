@@ -95,8 +95,14 @@ class PluginAutoSync:
                     logger.warning(f"⚠️  Workflow {workflow_id} not found, skipping auto-sync")
                     return stats
                 
-                # 🧹 阶段1：清空所有节点和边
-                logger.info(f"🧹 Phase 1: Clearing all nodes and edges for workflow {workflow_id}...")
+                # 🔒 如果 workflow 已有节点，说明已配置过，跳过自动同步
+                # 这样用户在前端手动编辑的 workflow 配置不会被覆盖
+                if workflow.nodes and len(workflow.nodes) > 0:
+                    logger.info(f"ℹ️  Workflow {workflow_id} already has {len(workflow.nodes)} nodes, skipping auto-sync")
+                    return stats
+                
+                # 🧹 阶段1：清空所有节点和边（仅首次同步时执行）
+                logger.info(f"🧹 Phase 1: Initializing empty workflow {workflow_id}...")
                 cleared_nodes, cleared_edges = self.workflow_repo.clear_nodes_and_edges(workflow_id)
                 stats["cleared_nodes"] = cleared_nodes
                 stats["cleared_edges"] = cleared_edges

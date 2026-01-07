@@ -198,9 +198,18 @@ class WorkflowBuilder:
                 "tracing_project": self.bot.tracing_project,
                 "cycle_interval_seconds": self.bot.cycle_interval_seconds,
                 "llm_config": self.llm_config,
+                # 核心运行参数
+                "max_leverage": getattr(self.bot, 'max_leverage', 3),
+                "max_concurrent_symbols": getattr(self.bot, 'max_concurrent_symbols', 5),
+                # 量化信号配置
                 "quant_signal_weights": getattr(self.bot, 'quant_signal_weights', None),
                 "quant_signal_threshold": getattr(self.bot, 'quant_signal_threshold', 50),
-                "risk_limits": getattr(self.bot, 'risk_limits', None),  # 风控配置唯一来源
+                # 风控配置唯一来源
+                "risk_limits": getattr(self.bot, 'risk_limits', None),
+                # 动态配置
+                "trading_timeframes": getattr(self.bot, 'trading_timeframes', ["3m", "4h"]),
+                "ohlcv_limits": getattr(self.bot, 'ohlcv_limits', {"3m": 100, "4h": 100}),
+                "indicator_configs": getattr(self.bot, 'indicator_configs', None),
             },
             "exchange": self.exchange_config,
             "workflow": {

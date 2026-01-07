@@ -29,14 +29,16 @@ async def list_trades(
     List trade history with filters
     """
     # Get trades using repository
-    trades = trade_repo.get_trades(
-        bot_id=bot_id,
-        symbol=symbol,
-        limit=page_size * 10  # Get more for filtering
-    )
+    if bot_id:
+        trades = trade_repo.get_by_bot(bot_id=bot_id, limit=page_size * 10)
+    else:
+        # 获取所有 bot 的交易历史
+        trades = trade_repo.get_all(limit=page_size * 10)
     
     # Apply additional filters
     filtered = trades
+    if symbol:
+        filtered = [t for t in filtered if t.symbol == symbol]
     if status:
         filtered = [t for t in filtered if t.status == status]
     if side:
@@ -85,7 +87,7 @@ async def get_trade_summary(
         start_date = None
     
     # Get trades
-    trades = trade_repo.get_trades(bot_id=bot_id, limit=1000)
+    trades = trade_repo.get_by_bot(bot_id=bot_id, limit=1000)
     
     # Filter by date
     if start_date:
@@ -137,7 +139,7 @@ async def get_daily_performance(
     
     # Get trades for the period
     start_date = datetime.now() - timedelta(days=days)
-    trades = trade_repo.get_trades(bot_id=bot_id, limit=10000)
+    trades = trade_repo.get_by_bot(bot_id=bot_id, limit=10000)
     trades = [t for t in trades if t.opened_at >= start_date]
     
     # Group by date

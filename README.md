@@ -7,9 +7,10 @@
 基于 LangGraph 构建的智能加密货币交易代理，融合技术分析与大语言模型决策
 
 [![Python](https://img.shields.io/badge/Python-3.12+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-🦜-1C3C3C?style=for-the-badge)](https://github.com/langchain-ai/langgraph)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![CCXT](https://img.shields.io/badge/CCXT-Pro-000000?style=for-the-badge)](https://github.com/ccxt/ccxt)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 <br/>
@@ -17,7 +18,7 @@
 [![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)](https://openai.com/)
 [![Anthropic](https://img.shields.io/badge/Anthropic-Claude-191919?style=flat-square)](https://anthropic.com/)
 [![Ollama](https://img.shields.io/badge/Ollama-Local-000000?style=flat-square)](https://ollama.ai/)
-[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com/)
+[![CCXT](https://img.shields.io/badge/CCXT-Pro-000000?style=flat-square)](https://github.com/ccxt/ccxt)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 
 <br/>
@@ -27,6 +28,87 @@
 [English](#english) | [中文](#中文)
 
 </div>
+
+---
+
+## 📸 项目截图 | Screenshots
+
+<table>
+<tr>
+<td width="50%">
+
+### Dashboard
+<!-- TODO: 添加 Dashboard 截图 -->
+<p align="center">
+  <img src="docs/images/dashboard.png" alt="Dashboard" width="100%"/>
+  <br/>
+  <em>主控制台 - 显示所有 Bot 状态概览</em>
+</p>
+
+</td>
+<td width="50%">
+
+### Bot Detail
+<!-- TODO: 添加 Bot Detail 截图 -->
+<p align="center">
+  <img src="docs/images/bot-detail.png" alt="Bot Detail" width="100%"/>
+  <br/>
+  <em>Bot 详情页 - 余额、持仓、PnL 实时监控</em>
+</p>
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### AI Decision
+<!-- TODO: 添加 AI Decision 截图 -->
+<p align="center">
+  <img src="docs/images/ai-decision.png" alt="AI Decision" width="100%"/>
+  <br/>
+  <em>AI 决策可视化 - 辩论过程与最终决策</em>
+</p>
+
+</td>
+<td width="50%">
+
+### Workflow Editor
+<!-- TODO: 添加 Workflow Editor 截图 -->
+<p align="center">
+  <img src="docs/images/workflow-editor.png" alt="Workflow Editor" width="100%"/>
+  <br/>
+  <em>工作流编辑器 - 可视化拖拽配置</em>
+</p>
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### Trade History
+<!-- TODO: 添加 Trade History 截图 -->
+<p align="center">
+  <img src="docs/images/trade-history.png" alt="Trade History" width="100%"/>
+  <br/>
+  <em>交易历史 - 完整交易记录追溯</em>
+</p>
+
+</td>
+<td width="50%">
+
+### Settings
+<!-- TODO: 添加 Settings 截图 -->
+<p align="center">
+  <img src="docs/images/settings.png" alt="Settings" width="100%"/>
+  <br/>
+  <em>配置管理 - 交易所/LLM/系统参数</em>
+</p>
+
+</td>
+</tr>
+</table>
+
+> 📷 **注**: 截图目录 `docs/images/` 需要手动添加项目截图
 
 ---
 
@@ -81,27 +163,52 @@ LangTrader Agents 是一个**模块化、可扩展**的 AI 量化交易系统。
 </tr>
 </table>
 
+### 🛠️ 技术栈
+
+| 层级 | 技术 | 说明 |
+|------|------|------|
+| **Frontend** | Next.js 15, React 19, TailwindCSS, TanStack Query | 现代化 Web 界面 |
+| **Backend** | FastAPI, Python 3.12+, SQLModel | 高性能异步 API |
+| **Database** | PostgreSQL 15+ | 配置存储与状态持久化 |
+| **Workflow** | LangGraph, LangChain | AI 工作流编排 |
+| **Exchange** | CCXT Pro | 70+ 交易所统一接口 |
+| **LLM** | OpenAI, Anthropic, Ollama, DeepSeek | 多提供商支持 |
+| **Deploy** | Docker Compose | 一键容器化部署 |
+
 ### 🏗️ 系统架构
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                      LangTrader Agents                          │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐ │
-│  │ coins    │→ │ market   │→ │ quant    │→ │ debate/batch     │ │
-│  │ _pick    │  │ _state   │  │ _filter  │  │ _decision        │ │
-│  └──────────┘  └──────────┘  └──────────┘  └────────┬─────────┘ │
-│                                                     ↓           │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │                     execution                             │   │
-│  └──────────────────────────────────────────────────────────┘   │
-├─────────────────────────────────────────────────────────────────┤
-│  Services: Trader | Market | Indicators | Performance | Cache   │
-├─────────────────────────────────────────────────────────────────┤
-│  LLM Factory: OpenAI | Anthropic | Ollama | DeepSeek | 智谱     │
-├─────────────────────────────────────────────────────────────────┤
-│  Exchange (CCXT Pro): 70+ Exchanges with WebSocket Support      │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           LangTrader Agents                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │                        Frontend (Next.js)                            │    │
+│  │   Dashboard │ Bot Management │ Workflow Editor │ Trade History       │    │
+│  └──────────────────────────────┬──────────────────────────────────────┘    │
+│                                 │ REST API / WebSocket                       │
+│  ┌──────────────────────────────▼──────────────────────────────────────┐    │
+│  │                        Backend (FastAPI)                             │    │
+│  │   Auth │ Bot Control │ Status │ Trades │ Performance │ Configs       │    │
+│  └──────────────────────────────┬──────────────────────────────────────┘    │
+│                                 │                                            │
+│  ┌──────────────────────────────▼──────────────────────────────────────┐    │
+│  │                    LangGraph Workflow Engine                         │    │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │    │
+│  │  │ coins    │→│ market   │→│ quant    │→│ debate/  │→│execution │   │    │
+│  │  │ _pick    │ │ _state   │ │ _filter  │ │ batch    │ │          │   │    │
+│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘   │    │
+│  └─────────────────────────────────────────────────────────────────────┘    │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐   │
+│  │  Services: Trader │ Market │ Indicators │ Performance │ Cache        │   │
+│  ├──────────────────────────────────────────────────────────────────────┤   │
+│  │  LLM Factory: OpenAI │ Anthropic │ Ollama │ DeepSeek │ 智谱          │   │
+│  ├──────────────────────────────────────────────────────────────────────┤   │
+│  │  Exchange (CCXT Pro): 70+ Exchanges with WebSocket Support           │   │
+│  └──────────────────────────────────────────────────────────────────────┘   │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### 📦 工作流节点
@@ -117,28 +224,86 @@ LangTrader Agents 是一个**模块化、可扩展**的 AI 量化交易系统。
 
 ### 🚀 快速开始
 
-> ⚠️ **前端开发中** — Web 界面即将推出，敬请期待！
-
-目前支持命令行方式运行：
+#### 方式一：Docker 部署（推荐）
 
 ```bash
 # 1. 克隆项目
 git clone https://github.com/neilzhangpro/LangTrader.git
 cd langtrader-agents
 
-# 2. 安装依赖
+# 2. 配置环境变量
+cp .env.example .env
+# 编辑 .env 填入数据库密码和 API 密钥
+
+# 3. 一键启动
+docker compose up -d --build
+
+# 4. 访问界面
+# 前端: http://localhost:3000
+# API: http://localhost:8000/api/docs
+```
+
+#### 方式二：本地开发
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/neilzhangpro/LangTrader.git
+cd langtrader-agents
+
+# 2. 安装 Python 依赖
 uv sync
 
-# 3. 配置环境变量
+# 3. 安装前端依赖
+cd frontend && npm install && cd ..
+
+# 4. 配置环境变量
 cp .env.example .env
 # 编辑 .env 填入数据库和 API 密钥
 
-# 4. 初始化数据库
+# 5. 初始化数据库
 psql -d langtrader -f langtrader_pro_init.sql
 
-# 5. 运行
-uv run examples/run_once.py
+# 6. 启动后端
+uv run uvicorn langtrader_api.main:app --reload
+
+# 7. 启动前端
+cd frontend && npm run dev
 ```
+
+### 📂 项目结构
+
+```
+langtrader-agents/
+├── frontend/                # Next.js 前端应用
+│   ├── app/                 # 页面路由
+│   ├── components/          # React 组件
+│   ├── lib/api/             # API 客户端
+│   └── types/               # TypeScript 类型
+├── packages/
+│   ├── langtrader_api/      # FastAPI 后端
+│   │   ├── routes/v1/       # API 路由
+│   │   ├── schemas/         # Pydantic 模型
+│   │   └── services/        # 业务服务
+│   └── langtrader_core/     # 核心交易逻辑
+│       ├── graph/nodes/     # 工作流节点插件
+│       ├── services/        # 交易/市场/指标服务
+│       ├── data/            # 数据模型与仓库
+│       └── plugins/         # 插件系统
+├── examples/                # 示例脚本
+├── docs/                    # 文档
+├── docker-compose.yml       # Docker 编排
+└── pyproject.toml           # Python 项目配置
+```
+
+### 🤝 贡献指南
+
+欢迎提交 Issue 和 Pull Request！
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 提交 Pull Request
 
 📖 详细文档请查看 [docs/](docs/) 目录 | 📋 [更新日志](docs/CHANGELOG.md)
 
@@ -195,30 +360,100 @@ The system uses **LangGraph StateGraph** as the workflow engine, supports a **ho
 </tr>
 </table>
 
+### 🛠️ Tech Stack
+
+| Layer | Technology | Description |
+|-------|------------|-------------|
+| **Frontend** | Next.js 15, React 19, TailwindCSS, TanStack Query | Modern Web UI |
+| **Backend** | FastAPI, Python 3.12+, SQLModel | High-performance async API |
+| **Database** | PostgreSQL 15+ | Config storage & state persistence |
+| **Workflow** | LangGraph, LangChain | AI workflow orchestration |
+| **Exchange** | CCXT Pro | 70+ exchanges unified interface |
+| **LLM** | OpenAI, Anthropic, Ollama, DeepSeek | Multi-provider support |
+| **Deploy** | Docker Compose | One-click containerized deployment |
+
 ### 🚀 Quick Start
 
-> ⚠️ **Frontend Under Development** — Web interface coming soon!
-
-Currently supports CLI execution:
+#### Option 1: Docker Deployment (Recommended)
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/neilzhangpro/LangTrader.git
 cd langtrader-agents
 
-# 2. Install dependencies
+# 2. Configure environment
+cp .env.example .env
+# Edit .env with your database password and API keys
+
+# 3. Start all services
+docker compose up -d --build
+
+# 4. Access the interfaces
+# Frontend: http://localhost:3000
+# API Docs: http://localhost:8000/api/docs
+```
+
+#### Option 2: Local Development
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/neilzhangpro/LangTrader.git
+cd langtrader-agents
+
+# 2. Install Python dependencies
 uv sync
 
-# 3. Configure environment
+# 3. Install frontend dependencies
+cd frontend && npm install && cd ..
+
+# 4. Configure environment
 cp .env.example .env
 # Edit .env with your database and API keys
 
-# 4. Initialize database
+# 5. Initialize database
 psql -d langtrader -f langtrader_pro_init.sql
 
-# 5. Run
-uv run examples/run_once.py
+# 6. Start backend
+uv run uvicorn langtrader_api.main:app --reload
+
+# 7. Start frontend
+cd frontend && npm run dev
 ```
+
+### 📂 Project Structure
+
+```
+langtrader-agents/
+├── frontend/                # Next.js frontend app
+│   ├── app/                 # Page routes
+│   ├── components/          # React components
+│   ├── lib/api/             # API clients
+│   └── types/               # TypeScript types
+├── packages/
+│   ├── langtrader_api/      # FastAPI backend
+│   │   ├── routes/v1/       # API routes
+│   │   ├── schemas/         # Pydantic models
+│   │   └── services/        # Business services
+│   └── langtrader_core/     # Core trading logic
+│       ├── graph/nodes/     # Workflow node plugins
+│       ├── services/        # Trading/Market/Indicator services
+│       ├── data/            # Data models & repositories
+│       └── plugins/         # Plugin system
+├── examples/                # Example scripts
+├── docs/                    # Documentation
+├── docker-compose.yml       # Docker orchestration
+└── pyproject.toml           # Python project config
+```
+
+### 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit Issues and Pull Requests.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 📖 See [docs/](docs/) for detailed documentation | 📋 [Changelog](docs/CHANGELOG.md)
 

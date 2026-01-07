@@ -25,6 +25,9 @@ class Workflow(SQLModel, table=True):
     category: str = Field(default="trading")
     tags: Optional[List[str]] = Field(default=None, sa_column=Column(ARRAY(String)))
     
+    # 状态
+    is_active: bool = Field(default=True)
+    
     # 时间戳
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
@@ -44,6 +47,8 @@ class WorkflowNode(SQLModel, table=True):
     
     name: str  # 节点实例名
     plugin_name: str  # 插件名
+    display_name: Optional[str] = None  # 显示名称
+    description: Optional[str] = None  # 节点描述
     
     enabled: bool = Field(default=True)
     execution_order: int = Field(default=0)

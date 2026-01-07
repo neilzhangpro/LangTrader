@@ -1,17 +1,26 @@
 """
 LangTrader API - FastAPI Application Entry Point
+
+安全特性：
+- API Key 认证
+- 速率限制（防止滥用）
+- 加密存储敏感信息
+- WebSocket 安全认证
 """
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from langtrader_api.config import settings
 from langtrader_api.dependencies import init_services, shutdown_services
 from langtrader_api.routes.v1 import router as v1_router
 from langtrader_api.websocket.handlers import router as ws_router
 from langtrader_api.middleware.error_handler import setup_exception_handlers
+from langtrader_api.middleware.rate_limiter import limiter, rate_limit_exceeded_handler
 from langtrader_api.services.bot_manager import bot_manager
 
 
@@ -115,9 +124,13 @@ GET /api/v1/bots
 POST /api/v1/bots/{bot_id}/start
 ```
 
-### 3. Monitor via WebSocket
+### 3. Monitor via WebSocket (Secure Method)
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/trading/1?api_key=your-key');
+// 推荐方式：连接后发送认证消息
+const ws = new WebSocket('ws://localhost:8000/ws/trading/1');
+ws.onopen = () => {
+    ws.send(JSON.stringify({action: "auth", api_key: "your-key"}));
+};
 ws.onmessage = (event) => console.log(JSON.parse(event.data));
 ```
 
@@ -155,7 +168,13 @@ Errors return appropriate HTTP status codes with details:
 
 ## Rate Limiting
 
-API requests are limited to **120 requests per minute** per API key.
+API requests are rate limited to prevent abuse:
+- **Default**: 120 requests/minute per API key
+- **Authentication**: 10 requests/minute (brute-force protection)
+- **Trading operations**: 30 requests/minute
+- **Backtests**: 5 requests/minute
+
+Exceeding the limit returns HTTP 429 with `Retry-After` header.
 
 ## WebSocket Channels
 
@@ -190,6 +209,16 @@ app = FastAPI(
 )
 
 # =============================================================================
+# Rate Limiting
+# =============================================================================
+
+# 注册限流器到 app
+app.state.limiter = limiter
+
+# 注册速率限制异常处理
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
+
+# =============================================================================
 # Middleware
 # =============================================================================
 
@@ -197,8 +226,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["X-API-Key", "Content-Type", "Authorization"],
 )
 
 # Setup exception handlers
@@ -225,6 +254,7 @@ async def root():
         "environment": settings.ENVIRONMENT,
         "docs": "/api/docs",
         "health": "/api/v1/health",
+        "rate_limit": f"{settings.RATE_LIMIT_PER_MINUTE}/minute",
     }
 
 
@@ -245,4 +275,3 @@ def run_server():
 
 if __name__ == "__main__":
     run_server()
-

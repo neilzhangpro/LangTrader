@@ -27,6 +27,7 @@ class ProcessInfo:
     started_at: datetime
     cycle: int = 0
     error: Optional[str] = None
+    log_handle: Optional[Any] = None  # 日志文件句柄，用于重定向 stdout/stderr
     
 
 class BotManager:
@@ -39,7 +40,13 @@ class BotManager:
     
     def __init__(self):
         self._processes: Dict[int, ProcessInfo] = {}
-        self._project_root = Path(__file__).parent.parent.parent.parent.parent
+        # 计算项目根目录路径：
+        # __file__ = .../packages/langtrader_api/services/bot_manager.py
+        # .parent (1) = .../packages/langtrader_api/services/
+        # .parent (2) = .../packages/langtrader_api/
+        # .parent (3) = .../packages/
+        # .parent (4) = .../  (项目根目录)
+        self._project_root = Path(__file__).parent.parent.parent.parent
     
     def start_bot(self, bot_id: int, dry_run: bool = False) -> bool:
         """
@@ -51,6 +58,10 @@ class BotManager:
             
         Returns:
             True if started successfully
+            
+        Note:
+            Bot 日志会被重定向到 logs/bot_{id}.log 文件，
+            避免使用 subprocess.PIPE 导致缓冲区满时进程阻塞。
         """
         if bot_id in self._processes:
             raise ValueError(f"Bot {bot_id} is already running")
@@ -61,8 +72,9 @@ class BotManager:
         if not script_path.exists():
             raise FileNotFoundError(f"Bot script not found: {script_path}")
         
-        # Use uv to run the script
-        cmd = ["uv", "run", str(script_path)]
+        # 在 Docker 容器中使用 python 直接运行（venv 已激活在 PATH 中）
+        # 在本地开发时也可以使用 python 运行
+        cmd = ["python", str(script_path)]
         
         # Add bot_id argument (modify run_once.py to accept this)
         # For now, we'll set it as environment variable
@@ -72,13 +84,22 @@ class BotManager:
         if dry_run:
             env["DRY_RUN"] = "1"
         
+        # 创建日志目录和文件
+        # 重定向 stdout/stderr 到日志文件，避免 PIPE 缓冲区满导致进程阻塞
+        log_dir = self._project_root / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_file = log_dir / f"bot_{bot_id}.log"
+        
+        # 打开日志文件（追加模式），保存句柄以便后续关闭
+        log_handle = open(log_file, 'a', encoding='utf-8', buffering=1)  # 行缓冲
+        
         # Start process
         process = subprocess.Popen(
             cmd,
             cwd=str(self._project_root),
             env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stdout=log_handle,
+            stderr=subprocess.STDOUT,  # stderr 也写入 stdout（同一个日志文件）
             # Don't create new process group on Windows
             start_new_session=True if os.name != 'nt' else False,
         )
@@ -87,6 +108,7 @@ class BotManager:
             bot_id=bot_id,
             process=process,
             started_at=datetime.now(),
+            log_handle=log_handle,
         )
         
         return True
@@ -109,7 +131,8 @@ class BotManager:
         process = info.process
         
         if process.poll() is not None:
-            # Process already finished
+            # Process already finished, close log handle and cleanup
+            self._close_log_handle(info)
             del self._processes[bot_id]
             return True
         
@@ -131,12 +154,32 @@ class BotManager:
                 process.kill()
                 process.wait()
             
+            # 关闭日志文件句柄
+            self._close_log_handle(info)
+            
+            # 更新状态文件，标记为已停止
+            from langtrader_core.services.status_file import mark_bot_stopped
+            mark_bot_stopped(bot_id)
+            
             del self._processes[bot_id]
             return True
             
         except Exception as e:
             self._processes[bot_id].error = str(e)
             return False
+    
+    def _close_log_handle(self, info: ProcessInfo):
+        """
+        关闭进程的日志文件句柄
+        
+        Args:
+            info: ProcessInfo 对象
+        """
+        if info.log_handle:
+            try:
+                info.log_handle.close()
+            except Exception:
+                pass
     
     async def stop_all(self):
         """Stop all running bots (called on shutdown)"""
@@ -152,11 +195,13 @@ class BotManager:
         if bot_id not in self._processes:
             return False
         
-        process = self._processes[bot_id].process
+        info = self._processes[bot_id]
+        process = info.process
         
         # Check if process is still alive
         if process.poll() is not None:
-            # Process has finished
+            # Process has finished, close log handle and cleanup
+            self._close_log_handle(info)
             del self._processes[bot_id]
             return False
         
@@ -213,16 +258,28 @@ class BotManager:
         """
         Get recent logs for a bot
         
-        Note: This is a simple implementation that reads from log files.
-        In production, consider using a proper logging system.
+        首先尝试读取 bot 专属日志文件 (logs/bot_{id}.log)，
+        如果不存在则回退到全局日志文件 (logs/langtrader.log)。
         """
-        log_file = self._project_root / "logs" / "langtrader.log"
+        # 优先读取 bot 专属日志文件
+        bot_log_file = self._project_root / "logs" / f"bot_{bot_id}.log"
         
-        if not log_file.exists():
+        if bot_log_file.exists():
+            try:
+                with open(bot_log_file, 'r', encoding='utf-8') as f:
+                    all_lines = f.readlines()
+                    return "".join(all_lines[-lines:])
+            except Exception:
+                pass
+        
+        # 回退：从全局日志文件读取
+        global_log_file = self._project_root / "logs" / "langtrader.log"
+        
+        if not global_log_file.exists():
             return None
         
         try:
-            with open(log_file, 'r') as f:
+            with open(global_log_file, 'r', encoding='utf-8') as f:
                 all_lines = f.readlines()
                 # Filter lines for this bot (if logged with bot_id)
                 bot_lines = [l for l in all_lines if f"bot_{bot_id}" in l.lower() or f"bot_id={bot_id}" in l]

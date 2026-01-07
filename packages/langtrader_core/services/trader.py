@@ -71,9 +71,11 @@ class Trader:
             raise ValueError("API key and secret key are required")
         
         self.exchange_cfg = exchange_cfg
-        self.exchange_name = exchange_cfg.get('name', '').lower()
+        # 使用 type 字段获取 CCXT 交易所类型（如 hyperliquid），而非用户自定义的 name
+        self.exchange_name = exchange_cfg.get('type', '').lower()
+        self.exchange_display_name = exchange_cfg.get('name', self.exchange_name)
         
-        logger.info(f"Initializing exchange: {self.exchange_name}")
+        logger.info(f"Initializing exchange: {self.exchange_display_name} (type: {self.exchange_name})")
         exchange_class = getattr(ccxtpro, self.exchange_name)
         
         # 构建 options，支持从数据库配置滑点

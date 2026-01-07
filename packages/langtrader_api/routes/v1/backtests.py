@@ -1,7 +1,9 @@
 """
 Backtest API Routes
+
+速率限制：5 请求/分钟（回测是资源密集型操作）
 """
-from fastapi import APIRouter, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, HTTPException, status, BackgroundTasks, Request
 from typing import Dict, Optional
 from datetime import datetime
 from uuid import uuid4
@@ -9,6 +11,7 @@ from uuid import uuid4
 from langtrader_api.dependencies import APIKey, BotRepo, DbSession
 from langtrader_api.schemas.base import APIResponse
 from langtrader_api.schemas.trades import BacktestRequest, BacktestResult
+from langtrader_api.middleware.rate_limiter import limiter
 
 router = APIRouter(prefix="/backtests", tags=["Backtests"])
 
@@ -17,7 +20,9 @@ _backtest_results: Dict[str, BacktestResult] = {}
 
 
 @router.post("", response_model=APIResponse[BacktestResult], status_code=status.HTTP_202_ACCEPTED)
+@limiter.limit("5/minute")
 async def start_backtest(
+    request_obj: Request,  # 需要 Request 对象用于速率限制
     request: BacktestRequest,
     api_key: APIKey,
     bot_repo: BotRepo,

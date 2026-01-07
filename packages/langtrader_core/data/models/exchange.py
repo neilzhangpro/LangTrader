@@ -1,11 +1,13 @@
-
+# packages/langtrader_core/data/models/exchange.py
+"""
+交易所配置模型
+"""
 from sqlmodel import SQLModel, Field
 from typing import Optional
 
+
 class exchange(SQLModel, table=True):
-    """
-    The exchange model
-    """
+    """交易所配置模型"""
     __tablename__ = "exchanges"
 
     id: int = Field(default=None, primary_key=True)
@@ -18,5 +20,4 @@ class exchange(SQLModel, table=True):
     testnet: bool = False
     IoTop: bool = False
     slippage: Optional[float] = None 
-
     

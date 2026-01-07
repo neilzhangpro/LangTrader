@@ -236,6 +236,7 @@ class DebateDecisionNode(NodePlugin):
         self.llm_factory = context.llm_factory if hasattr(context, 'llm_factory') else None
         self.performance_service = context.performance_service if hasattr(context, 'performance_service') else None
         self.database = context.database if hasattr(context, 'database') else None
+        self.bot = context.bot if hasattr(context, 'bot') else None  # 保存 bot 引用用于获取 llm_id
         
         if not self.llm_factory:
             raise ValueError("LLM factory not found in context")
@@ -243,8 +244,8 @@ class DebateDecisionNode(NodePlugin):
         # ========== 统一配置加载 ==========
         # 1. 从 bot.risk_limits 读取风控约束（唯一配置源）
         self.risk_limits = {}
-        if hasattr(context, 'bot') and context.bot:
-            self.risk_limits = context.bot.risk_limits or {}
+        if self.bot:
+            self.risk_limits = self.bot.risk_limits or {}
             logger.debug(f"Loaded risk_limits from bot: {list(self.risk_limits.keys())}")
         
         # 2. 从 system_configs 读取节点配置
@@ -311,9 +312,20 @@ class DebateDecisionNode(NodePlugin):
         return prompts
     
     def _get_llm(self):
-        """获取 LLM 实例"""
+        """
+        获取 LLM 实例
+        
+        优先级：bot.llm_id > default LLM
+        """
         if self._llm is None:
-            self._llm = self.llm_factory.create_default()
+            # 优先使用 bot 配置的 LLM
+            if self.bot and hasattr(self.bot, 'llm_id') and self.bot.llm_id:
+                logger.info(f"Using bot-specific LLM: llm_id={self.bot.llm_id}")
+                self._llm = self.llm_factory.create_from_id(self.bot.llm_id)
+            else:
+                # 否则使用默认 LLM
+                logger.info("Using default LLM")
+                self._llm = self.llm_factory.create_default()
         return self._llm
     
     def _build_market_context(self, state: State) -> str:

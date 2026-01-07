@@ -22,7 +22,7 @@ class Bot(SQLModel, table=True):
     # 核心关联
     exchange_id: int = Field(foreign_key="exchanges.id")
     workflow_id: int = Field(foreign_key="workflows.id")
-    llm_id: int = Field(foreign_key="llm_configs.id") # 使用的LLM配置
+    llm_id: Optional[int] = Field(default=None, foreign_key="llm_configs.id")  # 使用的LLM配置（可选）
     
     # 状态管理
     is_active: bool = Field(default=True)
@@ -37,6 +37,8 @@ class Bot(SQLModel, table=True):
     
     # 运行参数
     cycle_interval_seconds: int = Field(default=180)
+    max_leverage: int = Field(default=3)  # 最大杠杆倍数
+    max_concurrent_symbols: int = Field(default=5)  # 最大同时交易币种数
     
     # 量化信号配置
     quant_signal_weights: Optional[Dict[str, float]] = Field(
@@ -53,7 +55,7 @@ class Bot(SQLModel, table=True):
             # ========== 仓位控制 ==========
             "max_total_exposure_pct": 0.8,        # 最大总敞口（占账户余额百分比）
             "max_single_symbol_pct": 0.3,         # 单币种最大敞口
-            "max_leverage": 10,                   # 最大杠杆倍数
+            # 注意: max_leverage 已移至顶级字段
             
             # ========== 风险控制 ==========
             "max_consecutive_losses": 5,          # 连续亏损次数上限（触发后暂停交易）
@@ -73,6 +75,12 @@ class Bot(SQLModel, table=True):
             "hard_stop_enabled": True,            # 是否启用硬止损
             "pause_on_consecutive_loss": True,    # 连续亏损时是否暂停
             "pause_on_max_drawdown": True,        # 触及最大回撤时是否暂停
+            
+            # ========== 追踪止损配置 ==========
+            "trailing_stop_enabled": False,       # 是否启用追踪止损（默认关闭）
+            "trailing_stop_trigger_pct": 3.0,     # 触发追踪的最小盈利 (3%)
+            "trailing_stop_distance_pct": 1.5,    # 追踪距离 (1.5%)
+            "trailing_stop_lock_profit_pct": 1.0, # 最少锁定利润 (1%)
         },
         sa_column=Column(JSON)
     )

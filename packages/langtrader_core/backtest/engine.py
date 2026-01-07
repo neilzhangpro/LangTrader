@@ -82,7 +82,8 @@ class BacktestEngine:
         logger.info(f"Connecting to {self.bot_config['exchange']['name']}...")
         
         exchange_cfg = self.bot_config['exchange']
-        exchange_name = exchange_cfg['name'].lower()
+        # 使用 'type' 字段获取 CCXT 交易所类型，'name' 是用户定义的显示名称
+        exchange_name = exchange_cfg.get('type', exchange_cfg['name']).lower()
         
         import ccxt.pro as ccxtpro
         exchange_class = getattr(ccxtpro, exchange_name)

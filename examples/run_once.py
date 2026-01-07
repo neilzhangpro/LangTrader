@@ -4,6 +4,7 @@
 基于数据库配置运行交易机器人
 """
 import sys
+import os
 from pathlib import Path
 import asyncio
 
@@ -11,7 +12,7 @@ import asyncio
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages"))
 
-from langtrader_core.data import SessionLocal, init_db
+from langtrader_core.data import SessionLocal
 from langtrader_core.data.models.bot import Bot
 from langtrader_core.utils import get_logger
 from langtrader_core.graph.state import State
@@ -42,8 +43,11 @@ class RunOnce:
         Args:
             bot_id: 要运行的 Bot ID
         """
-        # 初始化数据库
-        init_db()
+        # ⚠️ 不再调用 init_db()
+        # API 服务启动时已经初始化了数据库表结构
+        # 多个 bot 子进程同时调用 init_db() 会导致 DDL 锁冲突
+        # init_db()
+        
         self.session = SessionLocal()
         self.bot_id = bot_id
         self.graph = None
@@ -94,8 +98,17 @@ class RunOnce:
         
         # 4. 获取账户信息
         _account_info = await self.trader.get_account_info()
-        self.initial_balance = _account_info.total.get('USDC', 0)
+        self.initial_balance = _account_info.total.get('USDC', 0) or _account_info.total.get('USDT', 0)
         self.positions = await self.trader.get_positions()
+        
+        # 4.1 将 initial_balance 写入数据库（仅首次启动时）
+        bot_model = self.session.get(Bot, self.bot_id)
+        if bot_model and bot_model.initial_balance is None and self.initial_balance > 0:
+            from decimal import Decimal
+            bot_model.initial_balance = Decimal(str(self.initial_balance))
+            self.session.add(bot_model)
+            self.session.commit()
+            logger.info(f"💾 Saved initial_balance to database: {self.initial_balance}")
         
         # 5. 初始化交易历史仓储和绩效服务
         logger.info("Initializing trade history and performance services...")
@@ -199,6 +212,16 @@ class RunOnce:
             if 'positions' in result_dict:
                 self.state.positions = result_dict['positions']
                 logger.info(f"✓ Updated positions: {len(self.state.positions)}")
+            
+            # 更新辩论决策结果（供状态文件写入和前端展示）
+            if 'debate_decision' in result_dict:
+                self.state.debate_decision = result_dict['debate_decision']
+                logger.info("✓ Updated debate_decision")
+            
+            # 更新批量决策结果
+            if 'batch_decision' in result_dict:
+                self.state.batch_decision = result_dict['batch_decision']
+                logger.info("✓ Updated batch_decision")
         
         logger.info(f"Current state: {len(self.state.symbols)} symbols selected")
         
@@ -231,6 +254,14 @@ class RunOnce:
                     if len(decisions) > 3:
                         last_decision += f"... (+{len(decisions)-3})"
             
+            # 序列化 debate_decision 数据（完整的辩论过程）
+            debate_decision_data = None
+            if self.state.debate_decision:
+                try:
+                    debate_decision_data = self._serialize_debate_decision(self.state.debate_decision)
+                except Exception as e:
+                    logger.warning(f"Failed to serialize debate_decision: {e}")
+            
             write_bot_status(
                 bot_id=self.bot_id,
                 cycle=self.cycle,
@@ -241,9 +272,86 @@ class RunOnce:
                 state=state,
                 last_decision=last_decision,
                 last_error=last_error or self.last_error,
+                debate_decision=debate_decision_data,
             )
         except Exception as e:
             logger.warning(f"Failed to write status file: {e}")
+    
+    def _serialize_debate_decision(self, debate_decision) -> dict:
+        """
+        序列化 debate_decision 为可 JSON 化的字典
+        
+        Args:
+            debate_decision: DebateDecisionResult 对象
+        
+        Returns:
+            可 JSON 序列化的字典
+        """
+        result = {
+            "analyst_outputs": [],
+            "bull_suggestions": [],
+            "bear_suggestions": [],
+            "final_decision": None,
+            "debate_summary": debate_decision.debate_summary or "",
+            "completed_at": debate_decision.completed_at.isoformat() if debate_decision.completed_at else None,
+        }
+        
+        # 序列化分析师输出
+        for output in debate_decision.analyst_outputs or []:
+            result["analyst_outputs"].append({
+                "symbol": output.symbol,
+                "trend": output.trend,
+                "key_levels": output.key_levels,
+                "summary": output.summary,
+            })
+        
+        # 序列化多头建议
+        for suggestion in debate_decision.bull_suggestions or []:
+            result["bull_suggestions"].append({
+                "symbol": suggestion.symbol,
+                "action": suggestion.action,
+                "confidence": suggestion.confidence,
+                "allocation_pct": suggestion.allocation_pct,
+                "stop_loss_pct": getattr(suggestion, 'stop_loss_pct', 2.0),
+                "take_profit_pct": getattr(suggestion, 'take_profit_pct', 6.0),
+                "reasoning": suggestion.reasoning,
+            })
+        
+        # 序列化空头建议
+        for suggestion in debate_decision.bear_suggestions or []:
+            result["bear_suggestions"].append({
+                "symbol": suggestion.symbol,
+                "action": suggestion.action,
+                "confidence": suggestion.confidence,
+                "allocation_pct": suggestion.allocation_pct,
+                "stop_loss_pct": getattr(suggestion, 'stop_loss_pct', 2.0),
+                "take_profit_pct": getattr(suggestion, 'take_profit_pct', 6.0),
+                "reasoning": suggestion.reasoning,
+            })
+        
+        # 序列化最终决策
+        if debate_decision.final_decision:
+            final = debate_decision.final_decision
+            result["final_decision"] = {
+                "decisions": [],
+                "total_allocation_pct": final.total_allocation_pct,
+                "cash_reserve_pct": final.cash_reserve_pct,
+                "strategy_rationale": final.strategy_rationale or "",
+            }
+            for decision in final.decisions or []:
+                result["final_decision"]["decisions"].append({
+                    "symbol": decision.symbol,
+                    "action": decision.action,
+                    "allocation_pct": decision.allocation_pct,
+                    "confidence": decision.confidence,
+                    "leverage": getattr(decision, 'leverage', 3),
+                    "stop_loss": getattr(decision, 'stop_loss', None),
+                    "take_profit": getattr(decision, 'take_profit', None),
+                    "priority": getattr(decision, 'priority', 99),
+                    "reasoning": decision.reasoning or "",
+                })
+        
+        return result
 
     async def cleanup(self):
         """清理资源"""
@@ -274,8 +382,9 @@ class RunOnce:
 
 async def main():
     """主入口"""
-    # 指定要运行的 Bot ID（可以从命令行参数读取）
-    bot_id = 1  # 使用 test_bot_paper
+    # 从环境变量读取 Bot ID（API 启动时设置），默认为 1
+    bot_id = int(os.environ.get("BOT_ID", "1"))
+    logger.info(f"🤖 Starting bot with ID: {bot_id}")
     
     run_once = RunOnce(bot_id=bot_id)
     

@@ -14,6 +14,14 @@ logger = get_logger("quant_signal_filter")
 class QuantSignalFilter(NodePlugin):
     """量化信号预处理节点"""
     
+    # 默认权重配置
+    DEFAULT_WEIGHTS = {
+        "trend": 0.4,
+        "momentum": 0.3,
+        "volume": 0.2,
+        "sentiment": 0.1
+    }
+    
     metadata = NodeMetadata(
         name="quant_signal_filter",
         display_name="Quantitative Signal Filter",
@@ -31,14 +39,10 @@ class QuantSignalFilter(NodePlugin):
         super().__init__(context, config)
         self.calculator = QuantSignalCalculator()
         
-        # 从 bot config 读取配置（通过 context）
-        self.weights = config.get('quant_signal_weights') if config else {
-            "trend": 0.4,
-            "momentum": 0.3,
-            "volume": 0.2,
-            "sentiment": 0.1
-        }
-        self.threshold = config.get('quant_signal_threshold', 50)
+        # 从 bot config 读取配置（通过 context），确保有默认值
+        # 注意：config.get() 可能返回 None，需要用 or 提供 fallback
+        self.weights = (config or {}).get('quant_signal_weights') or self.DEFAULT_WEIGHTS
+        self.threshold = (config or {}).get('quant_signal_threshold') or 50
     
     async def run(self, state: State) -> State:
         """为每个币种计算量化信号"""

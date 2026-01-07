@@ -32,6 +32,10 @@ dependencies = [
     "pydantic>=2.12.5",
     "pydantic-settings>=2.6.0",
     
+    # Security
+    "cryptography>=44.0.0",
+    "slowapi>=0.1.9",
+    
     # Utilities
     "jsonschema>=4.25.1",
     "python-dotenv>=1.2.1",

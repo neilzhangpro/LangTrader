@@ -2,6 +2,7 @@
 Configuration management using Pydantic Settings
 """
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from typing import List, Optional
 from functools import lru_cache
 
@@ -40,15 +41,18 @@ class Settings(BaseSettings):
     # Optional: LangSmith
     LANGSMITH_API_KEY: Optional[str] = None
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
-        # Parse comma-separated lists
-        @classmethod
-        def parse_env_var(cls, field_name: str, raw_val: str):
-            if field_name in ("API_KEYS", "CORS_ORIGINS"):
-                return [x.strip() for x in raw_val.split(",") if x.strip()]
-            return raw_val
+    @field_validator("API_KEYS", "CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_comma_separated(cls, v):
+        """Parse comma-separated string into list"""
+        if isinstance(v, str):
+            return [x.strip() for x in v.split(",") if x.strip()]
+        return v
+    
+    model_config = {
+        "env_file": ".env",
+        "case_sensitive": True,
+    }
 
 
 @lru_cache()

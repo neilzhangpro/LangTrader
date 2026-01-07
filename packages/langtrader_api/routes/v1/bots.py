@@ -2,8 +2,10 @@
 Bot Management API Routes
 """
 from fastapi import APIRouter, HTTPException, status, Query
-from typing import Optional
+from typing import Optional, Dict, Any, List
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
+import asyncio
 
 from langtrader_api.dependencies import (
     APIKey, DbSession, BotRepo, ExchangeRepo, WorkflowRepo
@@ -11,12 +13,96 @@ from langtrader_api.dependencies import (
 from langtrader_api.schemas.base import APIResponse, PaginatedResponse
 from langtrader_api.schemas.bots import (
     BotSummary, BotDetail, BotStatus,
-    BotCreateRequest, BotUpdateRequest, BotStartRequest
+    BotCreateRequest, BotUpdateRequest, BotStartRequest, PositionInfo,
+    DebateResult
 )
 from langtrader_api.services.bot_manager import bot_manager
 from langtrader_core.data.models.bot import Bot
 
 router = APIRouter(prefix="/bots", tags=["Bots"])
+
+# 线程池用于执行同步的 ccxt 调用，避免阻塞事件循环
+_ccxt_executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="ccxt_")
+
+
+def _create_ccxt_instance(ex: Dict[str, Any]):
+    """
+    创建 ccxt 交易所实例（同步方法，在线程池中执行）
+    """
+    import ccxt
+    
+    exchange_class = getattr(ccxt, ex['type'], None)
+    if not exchange_class:
+        raise ValueError(f"Unsupported exchange type: {ex['type']}")
+    
+    config = {
+        'apiKey': ex['apikey'],
+        'secret': ex['secretkey'],
+        'walletAddress': ex['apikey'],  # Hyperliquid 使用 apikey 作为钱包地址
+        'privateKey': ex['secretkey'],   # Hyperliquid 需要
+        'timeout': 15000,  # 15秒超时
+        'enableRateLimit': True,
+    }
+    if ex.get('uid'):
+        config['uid'] = ex['uid']
+    if ex.get('password'):
+        config['password'] = ex['password']
+    if ex.get('testnet'):
+        config['sandbox'] = True
+    
+    return exchange_class(config)
+
+
+def _fetch_positions_sync(ex: Dict[str, Any]) -> List[Dict]:
+    """
+    同步获取持仓（在线程池中执行）
+    
+    返回的持仓数据会包含 markPrice，如果 markPrice 为 0，
+    尝试从 ticker 获取实时价格作为补充。
+    """
+    exchange_instance = _create_ccxt_instance(ex)
+    
+    params = {}
+    if ex['type'] == 'hyperliquid':
+        params['user'] = ex['apikey']
+    
+    positions = exchange_instance.fetch_positions(params=params)
+    
+    # 补充 markPrice：如果某些持仓的 markPrice 为 0，尝试获取 ticker 价格
+    symbols_need_price = []
+    for pos in positions:
+        size = float(pos.get('contracts', 0) or pos.get('contractSize', 0) or 0)
+        mark_price = float(pos.get('markPrice', 0) or 0)
+        if abs(size) > 0 and mark_price <= 0:
+            symbols_need_price.append(pos.get('symbol'))
+    
+    if symbols_need_price:
+        try:
+            # 批量获取 ticker 价格
+            tickers = exchange_instance.fetch_tickers(symbols_need_price)
+            for pos in positions:
+                symbol = pos.get('symbol')
+                if symbol in tickers and float(pos.get('markPrice', 0) or 0) <= 0:
+                    ticker = tickers[symbol]
+                    pos['markPrice'] = float(ticker.get('last') or ticker.get('close') or 0)
+        except Exception:
+            # 获取失败时忽略，使用原始数据
+            pass
+    
+    return positions
+
+
+def _fetch_balance_sync(ex: Dict[str, Any]) -> Dict:
+    """
+    同步获取余额（在线程池中执行）
+    """
+    exchange_instance = _create_ccxt_instance(ex)
+    
+    params = {}
+    if ex['type'] == 'hyperliquid':
+        params['user'] = ex['apikey']
+    
+    return exchange_instance.fetch_balance(params=params)
 
 
 # =============================================================================
@@ -29,7 +115,7 @@ async def list_bots(
     bot_repo: BotRepo,
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
-    is_active: Optional[bool] = Query(None, description="Filter by active status"),
+    is_active: Optional[bool] = Query(True, description="Filter by active status (default: True)"),
     trading_mode: Optional[str] = Query(None, description="Filter by trading mode"),
 ):
     """
@@ -130,13 +216,25 @@ async def create_bot(
         workflow_id=request.workflow_id,
         llm_id=request.llm_id,
         trading_mode=request.trading_mode,
+        # Tracing config
+        enable_tracing=request.enable_tracing,
+        tracing_project=request.tracing_project,
+        tracing_key=request.tracing_key,
+        # Agent search key
+        tavily_search_key=request.tavily_search_key,
+        # Trading params
         max_concurrent_symbols=request.max_concurrent_symbols,
         cycle_interval_seconds=request.cycle_interval_seconds,
         max_leverage=request.max_leverage,
-        max_position_size_percent=request.max_position_size_percent,
         quant_signal_weights=request.quant_signal_weights,
         quant_signal_threshold=request.quant_signal_threshold,
         risk_limits=request.risk_limits,
+        # Dynamic config
+        trading_timeframes=request.trading_timeframes,
+        ohlcv_limits=request.ohlcv_limits,
+        indicator_configs=request.indicator_configs,
+        # Initial balance
+        initial_balance=request.initial_balance,
     )
     
     db.add(bot)
@@ -267,7 +365,9 @@ async def get_bot_status(
         balance=runtime_status.get("balance") if runtime_status else None,
         initial_balance=runtime_status.get("initial_balance") if runtime_status else None,
         last_decision=runtime_status.get("last_decision") if runtime_status else None,
-        state=runtime_status.get("state") if runtime_status else ("running" if is_running else "stopped"),
+        # state 判断优先级：is_running > runtime_status.state
+        # 确保进程停止后状态立即更新为 stopped
+        state="running" if is_running else (runtime_status.get("state", "stopped") if runtime_status and runtime_status.get("state") != "running" else "stopped"),
     )
     
     return APIResponse(data=status_data)
@@ -387,7 +487,7 @@ async def restart_bot(
 # Positions & Balance
 # =============================================================================
 
-@router.get("/{bot_id}/positions", response_model=APIResponse[list])
+@router.get("/{bot_id}/positions", response_model=APIResponse[List[PositionInfo]])
 async def get_bot_positions(
     bot_id: int,
     api_key: APIKey,
@@ -397,10 +497,8 @@ async def get_bot_positions(
     """
     获取 Bot 当前持仓
     
-    从交易所实时获取当前持仓信息
+    从交易所实时获取当前持仓信息（异步执行，不阻塞事件循环）
     """
-    from langtrader_api.schemas.bots import PositionInfo
-    
     bot = bot_repo.get_by_id(bot_id)
     if not bot:
         raise HTTPException(
@@ -420,31 +518,9 @@ async def get_bot_positions(
         )
     
     try:
-        import ccxt
-        
-        # 创建交易所实例
-        exchange_class = getattr(ccxt, ex['type'], None)
-        if not exchange_class:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Unsupported exchange type: {ex['type']}"
-            )
-        
-        config = {
-            'apiKey': ex['apikey'],
-            'secret': ex['secretkey'],
-        }
-        if ex.get('uid'):
-            config['uid'] = ex['uid']
-        if ex.get('password'):
-            config['password'] = ex['password']
-        if ex.get('testnet'):
-            config['sandbox'] = True
-        
-        exchange_instance = exchange_class(config)
-        
-        # 获取持仓
-        positions = exchange_instance.fetch_positions()
+        # 在线程池中执行同步的 ccxt 调用
+        loop = asyncio.get_running_loop()
+        positions = await loop.run_in_executor(_ccxt_executor, _fetch_positions_sync, ex)
         
         # 过滤有效持仓
         result = []
@@ -465,6 +541,11 @@ async def get_bot_positions(
         
         return APIResponse(data=result)
         
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -482,10 +563,8 @@ async def get_bot_balance(
     """
     获取 Bot 关联交易所的账户余额
     
-    返回 USDT/USDC 等稳定币余额及总余额
+    返回 USDT/USDC 等稳定币余额及总余额（异步执行，不阻塞事件循环）
     """
-    from datetime import datetime
-    
     bot = bot_repo.get_by_id(bot_id)
     if not bot:
         raise HTTPException(
@@ -505,31 +584,9 @@ async def get_bot_balance(
         )
     
     try:
-        import ccxt
-        
-        # 创建交易所实例
-        exchange_class = getattr(ccxt, ex['type'], None)
-        if not exchange_class:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Unsupported exchange type: {ex['type']}"
-            )
-        
-        config = {
-            'apiKey': ex['apikey'],
-            'secret': ex['secretkey'],
-        }
-        if ex.get('uid'):
-            config['uid'] = ex['uid']
-        if ex.get('password'):
-            config['password'] = ex['password']
-        if ex.get('testnet'):
-            config['sandbox'] = True
-        
-        exchange_instance = exchange_class(config)
-        
-        # 获取余额
-        balance = exchange_instance.fetch_balance()
+        # 在线程池中执行同步的 ccxt 调用
+        loop = asyncio.get_running_loop()
+        balance = await loop.run_in_executor(_ccxt_executor, _fetch_balance_sync, ex)
         
         # 提取主要币种余额
         total_usd = 0.0
@@ -555,6 +612,11 @@ async def get_bot_balance(
             }
         )
         
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -591,4 +653,63 @@ async def get_bot_logs(
             "logs": logs or "No logs available",
         }
     )
+
+
+# =============================================================================
+# AI Debate
+# =============================================================================
+
+@router.get("/{bot_id}/debate", response_model=APIResponse[Optional[DebateResult]])
+async def get_bot_debate(
+    bot_id: int,
+    api_key: APIKey,
+    bot_repo: BotRepo,
+):
+    """
+    获取 Bot 最近的 AI 辩论过程和决策结果
+    
+    返回完整的辩论过程：
+    - Phase 1: 分析师分析 (analyst_outputs)
+    - Phase 2: 多头/空头交易员建议 (bull_suggestions, bear_suggestions)
+    - Phase 3: 风控经理最终决策 (final_decision)
+    """
+    bot = bot_repo.get_by_id(bot_id)
+    if not bot:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Bot with id {bot_id} not found"
+        )
+    
+    # 从状态文件读取辩论数据
+    runtime_status = bot_manager.read_bot_status(bot_id)
+    
+    if not runtime_status:
+        return APIResponse(
+            data=None,
+            message="No debate data available. Start the bot to see AI decisions."
+        )
+    
+    debate_data = runtime_status.get('debate_decision')
+    if not debate_data:
+        return APIResponse(
+            data=None,
+            message="No debate data available yet. Wait for the next trading cycle."
+        )
+    
+    # 转换为 DebateResult schema
+    try:
+        debate_result = DebateResult(
+            analyst_outputs=debate_data.get('analyst_outputs', []),
+            bull_suggestions=debate_data.get('bull_suggestions', []),
+            bear_suggestions=debate_data.get('bear_suggestions', []),
+            final_decision=debate_data.get('final_decision'),
+            debate_summary=debate_data.get('debate_summary', ''),
+            completed_at=debate_data.get('completed_at'),
+        )
+        return APIResponse(data=debate_result)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to parse debate data: {str(e)}"
+        )
 

@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 213 31% 91%;
+
+    --card: 222 47% 13%;
+    --card-foreground: 213 31% 91%;
+
+    --popover: 222 47% 13%;
+    --popover-foreground: 213 31% 91%;
+
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 47% 18%;
+    --secondary-foreground: 213 31% 91%;
+
+    --muted: 222 47% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 27% 17%;
+    --input: 215 27% 17%;
+    --ring: 210 100% 50%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Gradient backgrounds */
+.gradient-bg {
+  background: linear-gradient(
+    135deg,
+    hsl(222 47% 11%) 0%,
+    hsl(250 45% 15%) 50%,
+    hsl(222 47% 11%) 100%
+  );
+}
+
+/* Number animations */
+.number-transition {
+  transition: color 0.3s ease;
+}
+
+/* Trading colors */
+.text-profit {
+  color: #22c55e;
+}
+
+.text-loss {
+  color: #ef4444;
+}
+
+.bg-profit {
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.bg-loss {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Status indicators */
+.status-running {
+  @apply bg-green-500;
+  animation: pulse 2s infinite;
+}
+
+.status-stopped {
+  @apply bg-gray-500;
+}
+
+.status-error {
+  @apply bg-red-500;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+

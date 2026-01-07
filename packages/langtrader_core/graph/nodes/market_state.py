@@ -77,6 +77,11 @@ class MarketState(NodePlugin):
                 indicator_count = len(data.get('indicators', {}))
                 logger.debug(f"   {symbol}: {indicator_count} indicators")
             
+            # ====== 关键修复：为已持仓的币种补充实时价格 ======
+            # 如果持仓币种不在 coins_pick 选出的列表中，需要单独获取其实时价格
+            # 否则止盈/止损策略无法正确计算 PnL
+            await self._ensure_position_prices(state)
+            
             # 显示当前持仓
             for item in state.positions:
                 logger.info(f"Current hold position: {item}")
@@ -97,3 +102,73 @@ class MarketState(NodePlugin):
             logger.info("Market state node finished")
         
         return state
+    
+    async def _ensure_position_prices(self, state: State):
+        """
+        确保已持仓的币种有实时价格数据
+        
+        问题：如果持仓的币种不在 coins_pick 选出的列表中，
+        它们就不会有 market_data，导致止盈/止损策略无法计算正确的 PnL。
+        
+        解决：单独为这些持仓币种获取实时价格。
+        """
+        if not state.positions:
+            return
+        
+        # 找出需要补充价格的持仓币种
+        missing_symbols = []
+        for pos in state.positions:
+            symbol = pos.symbol
+            # 检查是否已有价格数据
+            data = state.market_data.get(symbol, {})
+            indicators = data.get('indicators', {})
+            current_price = indicators.get('current_price', 0)
+            
+            if current_price <= 0:
+                missing_symbols.append(symbol)
+        
+        if not missing_symbols:
+            return
+        
+        logger.info(f"🔄 Fetching realtime prices for {len(missing_symbols)} position symbols: {missing_symbols}")
+        
+        try:
+            # 批量获取实时价格
+            tickers = await self.market.trader.exchange.fetch_tickers(missing_symbols)
+            
+            for symbol in missing_symbols:
+                if symbol in tickers:
+                    ticker = tickers[symbol]
+                    current_price = float(ticker.get('last') or ticker.get('close') or 0)
+                    
+                    if current_price > 0:
+                        # 确保 market_data 中有这个币种的数据
+                        if symbol not in state.market_data:
+                            state.market_data[symbol] = {'indicators': {}}
+                        if 'indicators' not in state.market_data[symbol]:
+                            state.market_data[symbol]['indicators'] = {}
+                        
+                        state.market_data[symbol]['indicators']['current_price'] = current_price
+                        logger.info(f"   ✅ {symbol}: ${current_price:.6f}")
+                    else:
+                        logger.warning(f"   ⚠️ {symbol}: price is 0")
+                else:
+                    logger.warning(f"   ⚠️ {symbol}: ticker not found")
+                    
+        except Exception as e:
+            logger.error(f"Failed to fetch position prices: {e}")
+            # Fallback: 尝试逐个获取
+            for symbol in missing_symbols:
+                try:
+                    ticker = await self.market.trader.exchange.fetch_ticker(symbol)
+                    current_price = float(ticker.get('last') or ticker.get('close') or 0)
+                    
+                    if current_price > 0:
+                        if symbol not in state.market_data:
+                            state.market_data[symbol] = {'indicators': {}}
+                        if 'indicators' not in state.market_data[symbol]:
+                            state.market_data[symbol]['indicators'] = {}
+                        state.market_data[symbol]['indicators']['current_price'] = current_price
+                        logger.info(f"   ✅ {symbol} (fallback): ${current_price:.6f}")
+                except Exception as e2:
+                    logger.error(f"   ❌ {symbol}: {e2}")

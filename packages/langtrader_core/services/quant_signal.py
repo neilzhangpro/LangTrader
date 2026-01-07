@@ -142,12 +142,24 @@ class QuantSignalCalculator:
         
         return {"score": score, "reasons": reasons}
     
+    # 默认权重配置
+    DEFAULT_WEIGHTS = {
+        "trend": 0.4,
+        "momentum": 0.3,
+        "volume": 0.2,
+        "sentiment": 0.1
+    }
+    
     @staticmethod
     def calculate_composite_score(
         indicators: Dict,
-        weights: Dict[str, float]
+        weights: Dict[str, float] = None
     ) -> Dict[str, Any]:
         """计算综合得分"""
+        
+        # 防护：确保 weights 不为 None
+        if weights is None:
+            weights = QuantSignalCalculator.DEFAULT_WEIGHTS
         
         # 计算各维度得分
         trend = QuantSignalCalculator.calculate_trend_score(indicators)

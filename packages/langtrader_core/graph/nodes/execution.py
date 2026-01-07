@@ -4,8 +4,9 @@ from langtrader_core.graph.state import (
     BatchDecisionResult, PortfolioDecision,
 )
 from langtrader_core.plugins.protocol import NodePlugin, NodeMetadata
+from langtrader_core.services.trailing_stop import TrailingStopManager
 from langtrader_core.utils import get_logger
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, List
 
 logger = get_logger("execution")
 
@@ -84,6 +85,10 @@ class Execution(NodePlugin):
         # 允许 config 覆盖（用于测试或特殊场景）
         if config and 'risk_limits' in config:
             self.risk_limits.update(config['risk_limits'])
+        
+        # ========== 追踪止损管理器 ==========
+        # 从 risk_limits 中读取追踪止损配置
+        self.trailing_stop_manager = TrailingStopManager(self.risk_limits)
         
         logger.info(f"✅ Execution initialized with risk_limits from bot")
     
@@ -301,8 +306,9 @@ class Execution(NodePlugin):
         """
         执行决策节点
         
-        优先使用 batch_decision（经过辩论的决策）
-        否则回退到 runs 中的旧版决策
+        执行顺序：
+        1. 追踪止损检查（优先级最高）
+        2. 批量决策执行
         """
         self.bot_id = state.bot_id
         
@@ -310,8 +316,12 @@ class Execution(NodePlugin):
         logger.info("🚀 Execution 开始执行")
         logger.info("=" * 60)
         
+        # ========== 1. 追踪止损检查（优先于 AI 决策） ==========
+        if self.trailing_stop_manager.enabled and state.positions:
+            await self._check_and_execute_trailing_stops(state)
+        
         # -------------------------
-        # 优先使用批量决策模式
+        # 2. 执行批量决策模式
         # -------------------------
         if state.batch_decision and state.batch_decision.decisions:
             logger.info("📋 使用批量决策模式 (batch_decision)")
@@ -322,6 +332,58 @@ class Execution(NodePlugin):
         # -------------------------
         logger.warning("⚠️ 没有 batch_decision，跳过执行")
         return state
+    
+    async def _check_and_execute_trailing_stops(self, state: State) -> List[ExecutionResult]:
+        """
+        检查并执行追踪止损
+        
+        遍历所有持仓，检查是否触发追踪止损条件，如果触发则执行平仓。
+        
+        Returns:
+            执行结果列表
+        """
+        logger.info("📊 Checking trailing stops...")
+        results = []
+        
+        # 获取需要平仓的持仓列表
+        to_close = self.trailing_stop_manager.check_positions(
+            positions=state.positions,
+            market_data=state.market_data
+        )
+        
+        if not to_close:
+            logger.info("   No trailing stop triggered")
+            return results
+        
+        logger.info(f"🛑 {len(to_close)} trailing stop(s) triggered!")
+        
+        for position, close_action in to_close:
+            symbol = position.symbol
+            
+            # 构建平仓决策
+            close_decision = AIDecision(
+                symbol=symbol,
+                action=close_action,
+                leverage=position.leverage,
+                position_size_usd=0,
+                reasons=["Trailing stop triggered"]
+            )
+            
+            # 执行平仓
+            result = await self._execute_close(close_decision)
+            results.append(result)
+            
+            if result.status == "success":
+                # 清除追踪状态
+                self.trailing_stop_manager.clear_position(symbol)
+                logger.info(f"✅ {symbol}: Trailing stop close executed")
+                
+                # 从 state.positions 中移除
+                state.positions = [p for p in state.positions if p.symbol != symbol]
+            else:
+                logger.error(f"❌ {symbol}: Trailing stop close failed - {result.message}")
+        
+        return results
     
     async def _execute_batch(self, state: State) -> State:
         """
@@ -357,7 +419,20 @@ class Execution(NodePlugin):
         # 依次执行
         for portfolio_decision in sorted_decisions:
             symbol = portfolio_decision.symbol
+            action = portfolio_decision.action
             
+            # ========== 平仓操作：不需要检查余额，直接执行 ==========
+            if action in ("close_long", "close_short"):
+                logger.info(f"🔴 {symbol}: 执行平仓 ({action})")
+                ai_decision = self._portfolio_to_ai_decision(portfolio_decision, 0)
+                result = await self._execute_close_with_validation(ai_decision, state, symbol)
+                if result.status == "success":
+                    logger.info(f"✅ {symbol}: 平仓成功")
+                else:
+                    logger.warning(f"❌ {symbol}: 平仓失败 - {result.message}")
+                continue
+            
+            # ========== 开仓操作：需要检查余额 ==========
             # 计算该决策需要的资金
             position_size_usd = (portfolio_decision.allocation_pct / 100) * free_balance
             
@@ -378,17 +453,15 @@ class Execution(NodePlugin):
             # 转换为 AIDecision 并执行
             ai_decision = self._portfolio_to_ai_decision(portfolio_decision, position_size_usd)
             
-            # 执行
-            if ai_decision.action in ("open_long", "open_short"):
+            # 执行开仓
+            if action in ("open_long", "open_short"):
                 result = await self._execute_open_with_validation(ai_decision, state, symbol)
                 if result.status == "success":
                     used_balance += position_size_usd
-            elif ai_decision.action in ("close_long", "close_short"):
-                result = await self._execute_close_with_validation(ai_decision, state, symbol)
             else:
                 result = ExecutionResult(
                     symbol=symbol,
-                    action=ai_decision.action,
+                    action=action,
                     status="skipped",
                     message="Unknown action"
                 )
@@ -744,6 +817,9 @@ class Execution(NodePlugin):
                 executed_amount=result.filled,
                 fee_paid=result.fee,
             )
+            
+            # 清除追踪止损状态（如果有）
+            self.trailing_stop_manager.clear_position(symbol)
             
             # 更新交易记录并计算 PnL
             if open_trade and result.average:

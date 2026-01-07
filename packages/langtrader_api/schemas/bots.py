@@ -49,13 +49,15 @@ class BotDetail(BaseModel):
     # Tracing
     enable_tracing: bool = True
     tracing_project: str = "langtrader_pro"
+    tracing_key: Optional[str] = None
+    
+    # Agent 搜索 KEY
+    tavily_search_key: Optional[str] = None
     
     # Trading parameters
     max_concurrent_symbols: int = 5
     cycle_interval_seconds: int = 180
-    max_leverage: int = 1
-    max_position_size_percent: Decimal = Decimal("10.00")
-    max_total_positions: int = 5
+    max_leverage: int = 3
     
     # Quantitative signal config
     quant_signal_weights: Optional[Dict[str, float]] = None
@@ -63,6 +65,11 @@ class BotDetail(BaseModel):
     
     # Risk management
     risk_limits: Optional[Dict[str, Any]] = None
+    
+    # Dynamic config (trading timeframes and OHLCV limits)
+    trading_timeframes: Optional[List[str]] = None
+    ohlcv_limits: Optional[Dict[str, int]] = None
+    indicator_configs: Optional[Dict[str, Any]] = None
     
     # Balance
     initial_balance: Optional[Decimal] = None
@@ -119,11 +126,18 @@ class BotCreateRequest(BaseModel):
     # Trading mode
     trading_mode: str = Field(default="paper", pattern="^(paper|live|backtest)$")
     
+    # Tracing config
+    enable_tracing: bool = Field(default=True)
+    tracing_project: str = Field(default="langtrader_pro", max_length=255)
+    tracing_key: Optional[str] = Field(None, max_length=255)
+    
+    # Agent search key
+    tavily_search_key: Optional[str] = Field(None, max_length=255)
+    
     # Optional parameters with defaults
     max_concurrent_symbols: int = Field(default=5, ge=1, le=50)
     cycle_interval_seconds: int = Field(default=180, ge=60, le=3600)
-    max_leverage: int = Field(default=1, ge=1, le=100)
-    max_position_size_percent: Decimal = Field(default=Decimal("10.00"), ge=1, le=100)
+    max_leverage: int = Field(default=3, ge=1, le=100)
     
     # Quantitative config
     quant_signal_weights: Optional[Dict[str, float]] = None
@@ -131,6 +145,14 @@ class BotCreateRequest(BaseModel):
     
     # Risk limits
     risk_limits: Optional[Dict[str, Any]] = None
+    
+    # Dynamic config (trading timeframes and OHLCV limits)
+    trading_timeframes: Optional[List[str]] = None
+    ohlcv_limits: Optional[Dict[str, int]] = None
+    indicator_configs: Optional[Dict[str, Any]] = None
+    
+    # Initial balance
+    initial_balance: Optional[Decimal] = None
 
 
 class BotUpdateRequest(BaseModel):
@@ -151,12 +173,15 @@ class BotUpdateRequest(BaseModel):
     # Tracing
     enable_tracing: Optional[bool] = None
     tracing_project: Optional[str] = None
+    tracing_key: Optional[str] = None
+    
+    # Agent search key
+    tavily_search_key: Optional[str] = None
     
     # Trading parameters
     max_concurrent_symbols: Optional[int] = Field(None, ge=1, le=50)
     cycle_interval_seconds: Optional[int] = Field(None, ge=60, le=3600)
     max_leverage: Optional[int] = Field(None, ge=1, le=100)
-    max_position_size_percent: Optional[Decimal] = Field(None, ge=1, le=100)
     
     # Quantitative config
     quant_signal_weights: Optional[Dict[str, float]] = None
@@ -164,6 +189,14 @@ class BotUpdateRequest(BaseModel):
     
     # Risk limits
     risk_limits: Optional[Dict[str, Any]] = None
+    
+    # Dynamic config (trading timeframes and OHLCV limits)
+    trading_timeframes: Optional[List[str]] = None
+    ohlcv_limits: Optional[Dict[str, int]] = None
+    indicator_configs: Optional[Dict[str, Any]] = None
+    
+    # Initial balance
+    initial_balance: Optional[Decimal] = None
 
 
 class BotStartRequest(BaseModel):
@@ -207,4 +240,72 @@ class BalanceInfo(BaseModel):
     pnl_usd: Optional[float] = None  # 盈亏
     pnl_percent: Optional[float] = None  # 盈亏百分比
     updated_at: datetime
+
+
+# =============================================================================
+# AI Debate Models (辩论决策展示)
+# =============================================================================
+
+class AnalystOutputSchema(BaseModel):
+    """市场分析师输出"""
+    symbol: str
+    trend: str  # bullish/bearish/neutral
+    key_levels: Optional[Dict[str, float]] = None  # {support: 100.5, resistance: 105.0}
+    summary: str
+
+
+class TraderSuggestionSchema(BaseModel):
+    """交易员建议（Bull/Bear）"""
+    symbol: str
+    action: str  # long/short/wait
+    confidence: int = Field(ge=0, le=100)
+    allocation_pct: float = Field(ge=0, le=100)
+    stop_loss_pct: float = 2.0
+    take_profit_pct: float = 6.0
+    reasoning: str
+
+
+class PortfolioDecisionSchema(BaseModel):
+    """最终投资组合决策"""
+    symbol: str
+    action: str  # open_long/open_short/close_long/close_short/wait
+    allocation_pct: float = 0.0
+    confidence: int = 0
+    leverage: int = 3
+    stop_loss: Optional[float] = None  # 止损价格
+    take_profit: Optional[float] = None  # 止盈价格
+    priority: int = 99
+    reasoning: str = ""
+
+
+class BatchDecisionSchema(BaseModel):
+    """批量决策结果"""
+    decisions: List[PortfolioDecisionSchema] = Field(default_factory=list)
+    total_allocation_pct: float = 0.0
+    cash_reserve_pct: float = 100.0
+    strategy_rationale: str = ""
+
+
+class DebateResult(BaseModel):
+    """
+    AI 辩论完整结果
+    
+    展示多空辩论的完整过程：
+    - Phase 1: 分析师分析
+    - Phase 2: 多头/空头交易员建议
+    - Phase 3: 风控经理最终决策
+    """
+    # Phase 1: 分析师输出
+    analyst_outputs: List[AnalystOutputSchema] = Field(default_factory=list)
+    
+    # Phase 2: 多空交易员建议
+    bull_suggestions: List[TraderSuggestionSchema] = Field(default_factory=list)
+    bear_suggestions: List[TraderSuggestionSchema] = Field(default_factory=list)
+    
+    # Phase 3: 最终决策
+    final_decision: Optional[BatchDecisionSchema] = None
+    
+    # 元信息
+    debate_summary: str = ""
+    completed_at: Optional[str] = None
 

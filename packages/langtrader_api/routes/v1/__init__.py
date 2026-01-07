@@ -11,6 +11,7 @@ API v1 Routes
 - workflows: 工作流管理
 - exchanges: 交易所配置
 - llm-configs: LLM 配置
+- system-configs: 系统配置
 - dashboard: Dashboard 聚合数据
 - docs: 文档
 """
@@ -25,6 +26,7 @@ from langtrader_api.routes.v1.backtests import router as backtests_router
 from langtrader_api.routes.v1.workflows import router as workflows_router
 from langtrader_api.routes.v1.exchanges import router as exchanges_router
 from langtrader_api.routes.v1.llm_configs import router as llm_configs_router
+from langtrader_api.routes.v1.system_configs import router as system_configs_router
 from langtrader_api.routes.v1.dashboard import router as dashboard_router
 from langtrader_api.routes.v1.docs import router as docs_router
 
@@ -40,6 +42,7 @@ router.include_router(backtests_router)
 router.include_router(workflows_router)
 router.include_router(exchanges_router)
 router.include_router(llm_configs_router)
+router.include_router(system_configs_router)
 router.include_router(dashboard_router)
 router.include_router(docs_router)
 
