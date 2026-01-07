@@ -26,3 +26,4 @@ logs/
 
 # Bot 状态文件目录（运行时生成）
 status/
+node_modules/
