@@ -33,6 +33,7 @@ import type {
 interface DebateViewerProps {
   debate: DebateResult | null
   isLoading?: boolean
+  roleLlmInfo?: Record<string, { id: number; model_name: string; display_name?: string }>
 }
 
 /**
@@ -304,9 +305,27 @@ function BatchDecisionView({ debate }: { debate: DebateResult }) {
 }
 
 /**
+ * 获取角色对应的模型名称
+ */
+function getRoleModelName(
+  role: string,
+  roleLlmInfo?: Record<string, { id: number; model_name: string; display_name?: string }>
+): string | null {
+  if (!roleLlmInfo) return null
+  const info = roleLlmInfo[role]
+  return info?.model_name || null
+}
+
+/**
  * 辩论模式视图 - 显示完整的多角色辩论过程
  */
-function DebateModeView({ debate }: { debate: DebateResult }) {
+function DebateModeView({ 
+  debate, 
+  roleLlmInfo 
+}: { 
+  debate: DebateResult
+  roleLlmInfo?: Record<string, { id: number; model_name: string; display_name?: string }>
+}) {
   return (
     <div className="space-y-6">
       {/* 时间线头部 */}
@@ -329,6 +348,11 @@ function DebateModeView({ debate }: { debate: DebateResult }) {
           <CardTitle className="flex items-center gap-2 text-base">
             <User className="h-5 w-5 text-blue-500" />
             Phase 1: Market Analyst
+            {getRoleModelName('analyst', roleLlmInfo) && (
+              <span className="text-xs text-muted-foreground font-normal">
+                ({getRoleModelName('analyst', roleLlmInfo)})
+              </span>
+            )}
             <Badge variant="secondary" className="ml-2">
               {debate.analyst_outputs?.length || 0} reports
             </Badge>
@@ -355,6 +379,11 @@ function DebateModeView({ debate }: { debate: DebateResult }) {
             <CardTitle className="flex items-center gap-2 text-base text-green-600 dark:text-green-400">
               <TrendingUp className="h-5 w-5" />
               Bull Trader
+              {getRoleModelName('bull', roleLlmInfo) && (
+                <span className="text-xs text-muted-foreground font-normal">
+                  ({getRoleModelName('bull', roleLlmInfo)})
+                </span>
+              )}
               <Badge variant="secondary" className="ml-2 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                 {debate.bull_suggestions?.length || 0} suggestions
               </Badge>
@@ -379,6 +408,11 @@ function DebateModeView({ debate }: { debate: DebateResult }) {
             <CardTitle className="flex items-center gap-2 text-base text-red-600 dark:text-red-400">
               <TrendingDown className="h-5 w-5" />
               Bear Trader
+              {getRoleModelName('bear', roleLlmInfo) && (
+                <span className="text-xs text-muted-foreground font-normal">
+                  ({getRoleModelName('bear', roleLlmInfo)})
+                </span>
+              )}
               <Badge variant="secondary" className="ml-2 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
                 {debate.bear_suggestions?.length || 0} suggestions
               </Badge>
@@ -404,6 +438,11 @@ function DebateModeView({ debate }: { debate: DebateResult }) {
           <CardTitle className="flex items-center gap-2 text-base text-purple-600 dark:text-purple-400">
             <Shield className="h-5 w-5" />
             Phase 3: Risk Manager Final Decision
+            {getRoleModelName('risk_manager', roleLlmInfo) && (
+              <span className="text-xs text-muted-foreground font-normal">
+                ({getRoleModelName('risk_manager', roleLlmInfo)})
+              </span>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -463,7 +502,7 @@ function DebateModeView({ debate }: { debate: DebateResult }) {
 /**
  * 主组件 - AI 决策查看器
  */
-export function DebateViewer({ debate, isLoading }: DebateViewerProps) {
+export function DebateViewer({ debate, isLoading, roleLlmInfo }: DebateViewerProps) {
   // 加载状态
   if (isLoading) {
     return (
@@ -502,7 +541,7 @@ export function DebateViewer({ debate, isLoading }: DebateViewerProps) {
   // 根据数据判断显示模式
   if (isDebateMode(debate)) {
     // 辩论模式 - 显示完整辩论过程
-    return <DebateModeView debate={debate} />
+    return <DebateModeView debate={debate} roleLlmInfo={roleLlmInfo} />
   } else {
     // 批量决策模式 - 仅显示最终决策
     return <BatchDecisionView debate={debate} />

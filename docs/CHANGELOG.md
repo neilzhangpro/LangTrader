@@ -8,6 +8,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ 新增功能 / New Features
+
+#### 辩论插件多 LLM 支持
+- **角色级 LLM 配置**: `debate_decision` 插件支持为不同角色（analyst、bull、bear、risk_manager）配置专用的 LLM 模型
+- **灵活的模型分配**: 可通过工作流节点配置为每个角色选择不同的 LLM，例如分析师使用 GPT-4o，多头交易员使用 Claude，空头交易员使用 GPT-4o-mini
+- **Bot 详情页可视化**: 在 Bot 详情页的 AI Debate 标签中，每个角色卡片标题会显示其使用的 LLM 模型名称，便于快速了解角色配置
+
+#### 工作流节点配置增强
+- **JSON 配置支持**: 工作流编辑器中的节点配置面板支持直接编辑 JSON 格式的配置，为插件提供更灵活的配置能力
+- **配置持久化**: 节点配置以 JSON 格式存储在数据库中，支持复杂的嵌套配置结构
+
+### 📁 文件变更 / Changed Files
+
+| 文件 | 变更内容 |
+|------|---------|
+| `packages/langtrader_core/graph/nodes/debate_decision.py` | 支持从节点配置读取角色级 LLM ID |
+| `frontend/components/bots/debate-viewer.tsx` | 显示角色使用的 LLM 模型名称 |
+| `frontend/app/bots/[id]/page.tsx` | 添加 workflow 和 LLM 配置查询，计算角色 LLM 映射 |
+| `frontend/components/workflows/workflow-editor.tsx` | 添加 `config` 类型定义 |
+| `frontend/components/workflows/workflow-canvas.tsx` | 添加 `config` 类型定义 |
+| `frontend/components/workflows/node-config-panel.tsx` | 支持 JSON 配置编辑 |
+
 ## [0.3.0] - 2026-01-07
 
 ### 🎉 重大更新 / Major Updates

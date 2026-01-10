@@ -45,13 +45,31 @@ export default function WorkflowEditPage() {
       // 过滤掉 START 和 END 节点
       const workflowNodes = nodes
         .filter(n => n.type === 'workflow')
-        .map((n, index) => ({
-          name: String(n.data?.name || n.id),
-          plugin_name: String(n.data?.pluginName || ''),
-          display_name: String(n.data?.label || ''),
-          enabled: Boolean(n.data?.enabled),
-          execution_order: Number(n.data?.executionOrder) || index + 1,
-        }))
+        .map((n, index) => {
+          const config = n.data?.config
+          // 只包含非空的config对象
+          const nodeData: {
+            name: string
+            plugin_name: string
+            display_name: string
+            enabled: boolean
+            execution_order: number
+            config?: Record<string, unknown>
+          } = {
+            name: String(n.data?.name || n.id),
+            plugin_name: String(n.data?.pluginName || ''),
+            display_name: String(n.data?.label || ''),
+            enabled: Boolean(n.data?.enabled),
+            execution_order: Number(n.data?.executionOrder) || index + 1,
+          }
+          
+          // 只有当config存在且不为空对象时才包含
+          if (config && typeof config === 'object' && Object.keys(config).length > 0) {
+            nodeData.config = config as Record<string, unknown>
+          }
+          
+          return nodeData
+        })
 
       // 转换边
       const workflowEdges = edges.map(e => ({

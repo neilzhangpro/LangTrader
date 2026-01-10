@@ -270,7 +270,14 @@ class DebateDecisionNode(NodePlugin):
         # 覆盖传入的 config
         if config:
             self.node_config.update(config)
-        
+        # 加载角色 LLM ID
+        role_llm_ids = None
+        # 优先从传入的config参数读取
+        if config and 'role_llm_ids' in config:
+            role_llm_ids = config.get('role_llm_ids', {})
+            logger.info(f"Loaded role_llm_ids from config: {role_llm_ids}")
+        self.role_llm_ids = role_llm_ids
+        self._role_llms ={} # 用来缓存角色LLM实例
         self._llm = None
         
         # 加载角色提示词（从文件，fallback 到默认值）
@@ -311,12 +318,13 @@ class DebateDecisionNode(NodePlugin):
         
         return prompts
     
-    def _get_llm(self):
+    def _get_llm(self,role:Optional[str]=None):
         """
         获取 LLM 实例
         
         优先级：bot.llm_id > default LLM
         """
+        # update: 这里是主LLM，不是角色LLM
         if self._llm is None:
             # 优先使用 bot 配置的 LLM
             if self.bot and hasattr(self.bot, 'llm_id') and self.bot.llm_id:
@@ -326,6 +334,14 @@ class DebateDecisionNode(NodePlugin):
                 # 否则使用默认 LLM
                 logger.info("Using default LLM")
                 self._llm = self.llm_factory.create_default()
+        # 配置角色LLM,如果配置中role_llm_ids为空，则不执行，默认使用主LLM
+        # 如果配置项对不上，则不执行，默认使用主LLM
+        if self.role_llm_ids and role:
+            for jiaose, llm_id in self.role_llm_ids.items():
+                if jiaose not in self._role_llms:
+                    self._role_llms[jiaose] = self.llm_factory.create_from_id(llm_id)
+            if role in self._role_llms:
+                return self._role_llms[role]
         return self._llm
     
     def _build_market_context(self, state: State) -> str:
@@ -496,7 +512,7 @@ class DebateDecisionNode(NodePlugin):
         """
         logger.info("📊 Phase 1: Analyst 分析市场...")
         
-        llm = self._get_llm().with_structured_output(AnalystOutput)
+        llm = self._get_llm(role="analyst").with_structured_output(AnalystOutput)
         timeout = self.node_config['timeout_per_phase']
         
         # 创建 fallback（返回中性分析）
@@ -557,7 +573,8 @@ class DebateDecisionNode(NodePlugin):
         """
         logger.info("📊 Phase 2: Bull + Bear 并行分析...")
         
-        llm = self._get_llm()
+        llm_bull = self._get_llm(role="bull")
+        llm_bear = self._get_llm(role="bear")
         timeout = self.node_config.get("timeout_per_phase", 120)
         
         # 构建 Bull 和 Bear 的 Chain
@@ -572,8 +589,8 @@ class DebateDecisionNode(NodePlugin):
         ])
         
         # 使用结构化输出
-        bull_chain = bull_prompt | llm.with_structured_output(TraderSuggestion)
-        bear_chain = bear_prompt | llm.with_structured_output(TraderSuggestion)
+        bull_chain = bull_prompt | llm_bull.with_structured_output(TraderSuggestion)
+        bear_chain = bear_prompt | llm_bear.with_structured_output(TraderSuggestion)
         
         # 创建 fallback 函数（返回 None 表示该角色失败）
         def create_fallback(role: str):
@@ -641,7 +658,7 @@ class DebateDecisionNode(NodePlugin):
         """
         logger.info("📊 Phase 3: RiskManager 审核...")
         
-        llm = self._get_llm()
+        llm = self._get_llm(role="risk_manager")
         timeout = self.node_config['timeout_per_phase']
         
         # 构建审核输入

@@ -142,11 +142,13 @@ LangTrader Agents 是一个**模块化、可扩展**的 AI 量化交易系统。
 #### 🤝 多 Agent 协作
 - **单 Agent 模式**：快速决策，低延迟
 - **多 Agent 辩论模式**：4 角色（分析师/多头/空头/风控）辩论，提高决策质量
+- **角色级 LLM 配置**：支持为每个角色配置不同的 LLM 模型，在 Bot 详情页可视化显示各角色使用的模型
 
 #### 🔧 集中配置管理
 - 数据库驱动配置（PostgreSQL）
 - 60 秒自动热重载
 - 零硬编码，完全可配置
+- **JSON 配置支持**：工作流节点支持 JSON 格式配置，支持复杂的嵌套配置结构
 
 </td>
 <td width="50%">
@@ -235,7 +237,7 @@ LangTrader Agents 是一个**模块化、可扩展**的 AI 量化交易系统。
 | `market_state` | 市场数据 | 多时间框架 K 线 + 指标计算 |
 | `quant_signal_filter` | 量化过滤 | 多维度评分，过滤噪音 |
 | `batch_decision` | 批量决策 | 单 Agent 快速决策 |
-| `debate_decision` | 辩论决策 | 4 Agent 多角色辩论 |
+| `debate_decision` | 辩论决策 | 4 Agent 多角色辩论，支持角色级 LLM 配置 |
 | `execution` | 执行交易 | 风控验证 + 订单执行 |
 
 ### 🎯 挑战与应对方式
@@ -435,11 +437,13 @@ The system uses **LangGraph StateGraph** as the workflow engine, supports a **ho
 #### 🤝 Multi-Agent Collaboration
 - **Single Agent Mode**: Fast decisions, low latency
 - **Multi-Agent Debate Mode**: 4 roles (Analyst/Bull/Bear/RiskManager) debate for better decisions
+- **Role-Level LLM Configuration**: Support configuring different LLM models for each role, with visual display of model names in Bot detail page
 
 #### 🔧 Centralized Configuration
 - Database-driven config (PostgreSQL)
 - 60-second auto hot-reload
 - Zero hardcoding, fully configurable
+- **JSON Config Support**: Workflow nodes support JSON format configuration with complex nested structures
 
 </td>
 <td width="50%">

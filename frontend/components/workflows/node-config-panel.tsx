@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Settings, Trash2, Power, PowerOff } from 'lucide-react'
+import { X, Settings, Trash2, Power, PowerOff, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Sheet,
   SheetContent,
@@ -32,13 +33,30 @@ interface NodeConfigPanelProps {
  */
 export function NodeConfigPanel({ node, onClose, onUpdate, onDelete }: NodeConfigPanelProps) {
   const [displayName, setDisplayName] = useState('')
+  const [configJson, setConfigJson] = useState('{}')
+  const [configError, setConfigError] = useState<string | null>(null)
 
-  // 当节点变化时更新显示名称
+  // 当节点变化时更新显示名称和配置
   useEffect(() => {
     if (node?.data?.label) {
       setDisplayName(String(node.data.label))
     }
-  }, [node?.data?.label])
+    
+    // 加载节点配置
+    const config = node?.data?.config as Record<string, unknown> | undefined
+    if (config && Object.keys(config).length > 0) {
+      try {
+        setConfigJson(JSON.stringify(config, null, 2))
+        setConfigError(null)
+      } catch (e) {
+        setConfigJson('{}')
+        setConfigError('配置格式错误')
+      }
+    } else {
+      setConfigJson('{}')
+      setConfigError(null)
+    }
+  }, [node?.data?.label, node?.data?.config])
 
   if (!node) return null
 
@@ -62,6 +80,28 @@ export function NodeConfigPanel({ node, onClose, onUpdate, onDelete }: NodeConfi
     if (confirm(`确定删除节点 "${getString('label')}" 吗？`)) {
       onDelete(node.id)
       onClose()
+    }
+  }
+
+  // 更新配置参数
+  const handleConfigChange = (value: string) => {
+    setConfigJson(value)
+    setConfigError(null)
+    
+    // 验证JSON格式并更新配置
+    try {
+      const parsed = JSON.parse(value)
+      // 如果是有效对象，直接使用解析后的值
+      if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+        // 如果配置为空对象，设置为undefined，否则使用解析后的配置
+        const configToSave = Object.keys(parsed).length > 0 ? parsed : undefined
+        onUpdate(node.id, { config: configToSave })
+      } else {
+        setConfigError('配置必须是JSON对象')
+      }
+    } catch (e) {
+      // JSON格式错误，但不阻止编辑，只是显示错误提示
+      setConfigError('JSON格式错误，请检查语法')
     }
   }
 
@@ -195,14 +235,31 @@ export function NodeConfigPanel({ node, onClose, onUpdate, onDelete }: NodeConfi
 
           <Separator />
 
-          {/* 配置参数（TODO：根据插件 schema 动态渲染） */}
+          {/* 配置参数 */}
           <div className="space-y-4">
-            <h4 className="text-sm font-medium">配置参数</h4>
-            <div className="p-4 rounded-lg border border-dashed text-center text-sm text-muted-foreground">
-              <Settings className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p>插件配置参数</p>
-              <p className="text-xs mt-1">
-                （后续版本将根据插件 Schema 动态渲染表单）
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-medium">配置参数</h4>
+              {configError && (
+                <div className="flex items-center gap-1 text-xs text-destructive">
+                  <AlertCircle className="h-3 w-3" />
+                  <span>{configError}</span>
+                </div>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="config-json" className="text-xs text-muted-foreground">
+                JSON 格式配置（适用于所有插件）
+              </Label>
+              <Textarea
+                id="config-json"
+                value={configJson}
+                onChange={(e) => handleConfigChange(e.target.value)}
+                placeholder='{"role_llm_ids": {"analyst": 1, "bull": 2}}'
+                className="font-mono text-xs min-h-[200px]"
+                spellCheck={false}
+              />
+              <p className="text-xs text-muted-foreground">
+                示例：debate_decision 节点可配置 <code className="px-1 py-0.5 bg-muted rounded">role_llm_ids</code>
               </p>
             </div>
           </div>

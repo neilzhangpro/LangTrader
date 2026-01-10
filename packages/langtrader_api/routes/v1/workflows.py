@@ -19,6 +19,7 @@ class NodeUpdateRequest(BaseModel):
     display_name: Optional[str] = None
     enabled: bool = True
     execution_order: int
+    config: Optional[dict] = None  # 节点配置（JSON对象）
 
 
 class EdgeUpdateRequest(BaseModel):
@@ -143,6 +144,8 @@ async def get_workflow(
     if workflow.nodes:
         for node in sorted(workflow.nodes, key=lambda n: n.execution_order):
             plugin_meta = plugin_metadata_map.get(node.plugin_name)
+            # 获取节点配置
+            config = workflow_repo.get_node_config_dict(node.id)
             result["nodes"].append({
                 "id": node.id,
                 "name": node.name,
@@ -154,6 +157,7 @@ async def get_workflow(
                 "category": plugin_meta.category if plugin_meta else "general",
                 "requires_llm": plugin_meta.requires_llm if plugin_meta else False,
                 "requires_trader": plugin_meta.requires_trader if plugin_meta else False,
+                "config": config,  # 包含节点配置
             })
     
     # Add edges
@@ -233,12 +237,12 @@ async def update_workflow(
         # 1. 清空现有节点和边
         workflow_repo.clear_nodes_and_edges(workflow_id)
         
-        # 2. 创建新节点
+        # 2. 创建新节点并保存配置
         for node_data in request.nodes:
             new_node = WorkflowNode(
                 workflow_id=workflow_id,
                 name=node_data.name,
-                plugin_name=node_data.plugin_name,
+                plugin_name= node_data.plugin_name,
                 display_name=node_data.display_name,
                 enabled=node_data.enabled,
                 execution_order=node_data.execution_order,
@@ -246,6 +250,12 @@ async def update_workflow(
                 updated_at=datetime.now(),
             )
             db.add(new_node)
+            db.flush()  # 获取节点ID
+            
+            # 保存节点配置（如果提供）
+            if node_data.config:
+                for key, value in node_data.config.items():
+                    workflow_repo.set_node_config(new_node.id, key, value)
         
         # 3. 创建新边
         for edge_data in request.edges:

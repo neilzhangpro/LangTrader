@@ -51,6 +51,7 @@ export interface WorkflowNodeData {
   description?: string
   requires_llm?: boolean
   requires_trader?: boolean
+  config?: Record<string, unknown>
 }
 
 export interface WorkflowEdgeData {
@@ -144,6 +145,7 @@ export function WorkflowEditor({
           requiresLlm: node.requires_llm,
           requiresTrader: node.requires_trader,
           executionOrder: node.execution_order,
+          config: node.config || {},  // 包含节点配置
         },
         sourcePosition: Position.Right,
         targetPosition: Position.Left,

@@ -38,6 +38,7 @@ export interface WorkflowNodeData {
   description?: string
   requires_llm?: boolean
   requires_trader?: boolean
+  config?: Record<string, unknown>
 }
 
 export interface WorkflowEdgeData {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { 
@@ -47,6 +48,8 @@ import { formatCurrency, formatPercent, formatUptime } from '@/lib/utils'
 import * as botsApi from '@/lib/api/bots'
 import * as performanceApi from '@/lib/api/performance'
 import * as tradesApi from '@/lib/api/trades'
+import * as workflowsApi from '@/lib/api/workflows'
+import * as llmConfigsApi from '@/lib/api/llm-configs'
 
 /**
  * Bot 详情页面
@@ -109,6 +112,55 @@ export default function BotDetailPage() {
     queryFn: () => botsApi.getBotDebate(botId),
     refetchInterval: 15000, // 每15秒刷新一次
   })
+
+  // 获取 Workflow 详情（用于读取debate_decision节点配置）
+  const { data: workflow } = useQuery({
+    queryKey: ['workflow', bot?.workflow_id],
+    queryFn: () => workflowsApi.getWorkflow(bot!.workflow_id),
+    enabled: !!bot?.workflow_id, // 只有当bot存在且有workflow_id时才查询
+  })
+
+  // 获取 LLM 配置列表（用于建立ID到模型名的映射）
+  const { data: llmConfigs } = useQuery({
+    queryKey: ['llm-configs'],
+    queryFn: () => llmConfigsApi.listLLMConfigs(),
+  })
+
+  // 计算角色LLM信息映射（从workflow配置中读取debate_decision节点的role_llm_ids）
+  const roleLlmInfo = useMemo(() => {
+    if (!workflow?.nodes || !llmConfigs) {
+      return {}
+    }
+
+    // 找到debate_decision节点
+    const debateNode = workflow.nodes.find(node => node.plugin_name === 'debate_decision')
+    if (!debateNode || !debateNode.config) {
+      return {}
+    }
+
+    const roleLlmIds = debateNode.config.role_llm_ids as Record<string, number> | undefined
+    if (!roleLlmIds || typeof roleLlmIds !== 'object') {
+      return {}
+    }
+
+    // 建立LLM ID到配置的映射
+    const llmMap = new Map(llmConfigs.map(llm => [llm.id, llm]))
+
+    // 生成角色到LLM信息的映射
+    const result: Record<string, { id: number; model_name: string; display_name?: string }> = {}
+    for (const [role, llmId] of Object.entries(roleLlmIds)) {
+      const llm = llmMap.get(llmId)
+      if (llm) {
+        result[role] = {
+          id: llm.id,
+          model_name: llm.model_name,
+          display_name: llm.display_name,
+        }
+      }
+    }
+
+    return result
+  }, [workflow, llmConfigs])
 
   // 启动/停止操作 - 使用 refetchQueries 立即刷新状态
   const startMutation = useMutation({
@@ -330,7 +382,11 @@ export default function BotDetailPage() {
 
         {/* AI Debate Tab */}
         <TabsContent value="debate" className="space-y-4">
-          <DebateViewer debate={debate ?? null} isLoading={isLoadingDebate} />
+          <DebateViewer 
+            debate={debate ?? null} 
+            isLoading={isLoadingDebate}
+            roleLlmInfo={roleLlmInfo}
+          />
         </TabsContent>
 
         {/* Performance Tab */}

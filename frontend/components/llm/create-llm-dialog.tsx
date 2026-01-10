@@ -16,32 +16,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { toast } from '@/components/ui/use-toast'
 import * as llmConfigsApi from '@/lib/api/llm-configs'
 import type { LLMConfigCreateRequest } from '@/types/api'
-
-// LLM 提供商
-const LLM_PROVIDERS = [
-  { value: 'openai', label: 'OpenAI', requiresApiKey: true },
-  { value: 'anthropic', label: 'Anthropic', requiresApiKey: true },
-  { value: 'azure', label: 'Azure OpenAI', requiresApiKey: true },
-  { value: 'ollama', label: 'Ollama (Local)', requiresApiKey: false },
-]
-
-// 常用模型
-const COMMON_MODELS: Record<string, string[]> = {
-  openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'],
-  anthropic: ['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-haiku-20240307'],
-  azure: ['gpt-4o', 'gpt-4', 'gpt-35-turbo'],
-  ollama: ['llama3', 'mistral', 'codellama', 'qwen2'],
-}
 
 interface CreateLLMDialogProps {
   children?: React.ReactNode
@@ -57,8 +34,8 @@ export function CreateLLMDialog({ children }: CreateLLMDialogProps) {
   // 表单状态
   const [formData, setFormData] = useState<LLMConfigCreateRequest>({
     name: '',
-    provider: 'openai',
-    model_name: 'gpt-4o-mini',
+    provider: '',
+    model_name: '',
     api_key: '',
     base_url: '',
     temperature: 0.7,
@@ -66,8 +43,8 @@ export function CreateLLMDialog({ children }: CreateLLMDialogProps) {
     is_enabled: true,
   })
 
-  // 获取当前提供商配置
-  const currentProvider = LLM_PROVIDERS.find(p => p.value === formData.provider)
+  // 判断是否需要API Key（根据provider判断）
+  const requiresApiKey = formData.provider && formData.provider !== 'ollama'
 
   // 创建 mutation
   const createMutation = useMutation({
@@ -94,8 +71,8 @@ export function CreateLLMDialog({ children }: CreateLLMDialogProps) {
   const resetForm = () => {
     setFormData({
       name: '',
-      provider: 'openai',
-      model_name: 'gpt-4o-mini',
+      provider: '',
+      model_name: '',
       api_key: '',
       base_url: '',
       temperature: 0.7,
@@ -104,30 +81,27 @@ export function CreateLLMDialog({ children }: CreateLLMDialogProps) {
     })
   }
 
-  // 切换提供商时更新默认模型
+  // Provider 变化时更新 base_url 提示
   const handleProviderChange = (provider: string) => {
-    const models = COMMON_MODELS[provider] || []
-    setFormData({
-      ...formData,
-      provider,
-      model_name: models[0] || '',
-      // Ollama 默认使用 localhost
-      base_url: provider === 'ollama' ? 'http://localhost:11434' : '',
-    })
+    const newFormData = { ...formData, provider }
+    if (provider === 'ollama' && !newFormData.base_url) {
+      newFormData.base_url = 'http://localhost:11434'
+    }
+    setFormData(newFormData)
   }
 
   // 提交表单
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.name || !formData.model_name) {
+    if (!formData.name || !formData.provider || !formData.model_name) {
       toast({
         title: 'Validation Error',
-        description: 'Please fill in all required fields',
+        description: 'Please fill in all required fields (Name, Provider, Model Name)',
         variant: 'destructive',
       })
       return
     }
-    if (currentProvider?.requiresApiKey && !formData.api_key) {
+    if (requiresApiKey && !formData.api_key) {
       toast({
         title: 'Validation Error',
         description: 'API Key is required for this provider',
@@ -172,48 +146,33 @@ export function CreateLLMDialog({ children }: CreateLLMDialogProps) {
             {/* 提供商 */}
             <div className="grid gap-2">
               <Label htmlFor="provider">Provider *</Label>
-              <Select
+              <Input
+                id="provider"
+                placeholder="e.g., openai, anthropic, azure, ollama"
                 value={formData.provider}
-                onValueChange={handleProviderChange}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select provider" />
-                </SelectTrigger>
-                <SelectContent>
-                  {LLM_PROVIDERS.map((p) => (
-                    <SelectItem key={p.value} value={p.value}>
-                      {p.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                onChange={(e) => handleProviderChange(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                常用值: openai, anthropic, azure, ollama
+              </p>
             </div>
 
             {/* 模型名称 */}
             <div className="grid gap-2">
               <Label htmlFor="model_name">Model Name *</Label>
-              <Select
+              <Input
+                id="model_name"
+                placeholder="e.g., gpt-4o, claude-3-5-sonnet-20241022, llama3"
                 value={formData.model_name}
-                onValueChange={(value) => setFormData({ ...formData, model_name: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select model" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(COMMON_MODELS[formData.provider] || []).map((model) => (
-                    <SelectItem key={model} value={model}>
-                      {model}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                onChange={(e) => setFormData({ ...formData, model_name: e.target.value })}
+              />
               <p className="text-xs text-muted-foreground">
-                Or type a custom model name directly
+                输入模型名称，如: gpt-4o, claude-3-5-sonnet-20241022, llama3 等
               </p>
             </div>
 
             {/* API Key (非 Ollama) */}
-            {currentProvider?.requiresApiKey && (
+            {requiresApiKey && (
               <div className="grid gap-2">
                 <Label htmlFor="api_key">API Key *</Label>
                 <Input
@@ -229,12 +188,12 @@ export function CreateLLMDialog({ children }: CreateLLMDialogProps) {
             {/* Base URL */}
             <div className="grid gap-2">
               <Label htmlFor="base_url">Base URL (Optional)</Label>
-              <Input
-                id="base_url"
-                placeholder={formData.provider === 'ollama' ? 'http://localhost:11434' : 'https://api.openai.com/v1'}
-                value={formData.base_url}
-                onChange={(e) => setFormData({ ...formData, base_url: e.target.value })}
-              />
+                <Input
+                  id="base_url"
+                  placeholder={formData.provider === 'ollama' ? 'http://localhost:11434' : formData.provider === 'openai' ? 'https://api.openai.com/v1' : 'https://api.anthropic.com/v1'}
+                  value={formData.base_url}
+                  onChange={(e) => setFormData({ ...formData, base_url: e.target.value })}
+                />
               <p className="text-xs text-muted-foreground">
                 Leave empty to use the default API endpoint
               </p>

@@ -118,7 +118,7 @@ export default function LLMConfigsPage() {
             <Card key={config.id} className={config.is_default ? 'border-primary' : ''}>
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <div>
+                  <div className="flex-1">
                     <CardTitle className="flex items-center gap-2">
                       <Brain className="h-5 w-5" />
                       {config.display_name || config.name}
@@ -129,6 +129,9 @@ export default function LLMConfigsPage() {
                     <CardDescription className="mt-1">
                       {config.model_name}
                     </CardDescription>
+                    <div className="mt-1 text-xs text-muted-foreground font-mono">
+                      ID: {config.id}
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${getProviderColor(config.provider)}`}>
