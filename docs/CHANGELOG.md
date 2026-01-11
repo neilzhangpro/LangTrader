@@ -10,25 +10,76 @@ All notable changes to this project will be documented in this file.
 
 ### ✨ 新增功能 / New Features
 
+#### 多轮辩论机制
+- **多轮辩论**: Bull 和 Bear 交易员现在支持多轮辩论，每轮可以看到对方的观点并进行反驳
+- **辩论轮数配置**: 通过 `system_configs` 表中的 `debate.max_rounds` 配置辩论轮数（默认 2 轮）
+- **辩论记录保存**: 每轮辩论的观点和结论都会保存到 `DebateRound` 中，便于追溯
+
+#### 交易历史注入
+- **历史交易上下文**: LLM 决策时会注入最近的交易历史（默认 10 条）
+- **胜率统计**: 自动计算并展示历史胜率、平均盈亏
+- **连续亏损警告**: 检测连续亏损并在上下文中警告 AI
+
+#### Risk Limits JSON 编辑器
+- **Bot 编辑对话框**: 新增 Risk Limits JSON 编辑器，支持直接编辑风控配置
+- **实时验证**: 输入时即时验证 JSON 格式，显示错误提示
+- **提交拦截**: JSON 格式错误时阻止保存
+
+#### 辩论配置动态化
+- **动态角色加载**: 辩论角色（analyst、bull、bear、risk_manager）从 `system_configs` 动态加载
+- **辩论开关**: 支持通过 `debate.enabled` 配置启用/禁用辩论机制
+
 #### 辩论插件多 LLM 支持
-- **角色级 LLM 配置**: `debate_decision` 插件支持为不同角色（analyst、bull、bear、risk_manager）配置专用的 LLM 模型
-- **灵活的模型分配**: 可通过工作流节点配置为每个角色选择不同的 LLM，例如分析师使用 GPT-4o，多头交易员使用 Claude，空头交易员使用 GPT-4o-mini
-- **Bot 详情页可视化**: 在 Bot 详情页的 AI Debate 标签中，每个角色卡片标题会显示其使用的 LLM 模型名称，便于快速了解角色配置
+- **角色级 LLM 配置**: `debate_decision` 插件支持为不同角色配置专用的 LLM 模型
+- **灵活的模型分配**: 可通过工作流节点配置为每个角色选择不同的 LLM
+- **Bot 详情页可视化**: 在 Bot 详情页的 AI Debate 标签中，显示每个角色使用的 LLM 模型名称
 
 #### 工作流节点配置增强
-- **JSON 配置支持**: 工作流编辑器中的节点配置面板支持直接编辑 JSON 格式的配置，为插件提供更灵活的配置能力
-- **配置持久化**: 节点配置以 JSON 格式存储在数据库中，支持复杂的嵌套配置结构
+- **JSON 配置支持**: 工作流编辑器中的节点配置面板支持直接编辑 JSON 格式的配置
+- **配置持久化**: 节点配置以 JSON 格式存储在数据库中
+
+### 🔧 配置优化 / Configuration Improvements
+
+#### Risk Limits 默认值优化
+| 参数 | 旧值 | 新值 | 说明 |
+|------|------|------|------|
+| `max_funding_rate_pct` | 0.001 | **0.05** | 资金费率上限从 0.001% 改为 0.05%，避免过于保守 |
+| `max_position_size_usd` | 10000 | **5000** | 最大开仓金额降低 |
+| `max_leverage` | 10 | **5** | 最大杠杆从 10x 降为 5x |
+
+#### 辩论配置清理
+- **删除废弃配置**: `debate.consensus_threshold`、`debate.timeout_per_round`
+- **新增配置**: `debate.timeout_per_phase`（每阶段超时）、`debate.trade_history_limit`（历史条数）
+- **角色配置更新**: `debate.roles` 更新为 4 个标准角色（analyst、bull、bear、risk_manager）
+
+### 🐛 Bug 修复 / Bug Fixes
+
+#### 持仓 Side 显示错误
+- **问题**: 空头持仓在 Overview 页面始终显示为 "LONG"
+- **原因**: 只根据 `contracts` 正负判断方向，但部分交易所 contracts 始终为正
+- **修复**: 优先使用 CCXT 标准化的 `side` 字段，回退到 contracts 符号判断
+
+#### 数据库字段缺失
+- **修复**: `workflows.is_active` 字段未定义导致创建工作流失败
+- **修复**: `workflow_nodes.display_name` 和 `description` 字段缺失
 
 ### 📁 文件变更 / Changed Files
 
 | 文件 | 变更内容 |
 |------|---------|
-| `packages/langtrader_core/graph/nodes/debate_decision.py` | 支持从节点配置读取角色级 LLM ID |
+| `packages/langtrader_core/graph/nodes/debate_decision.py` | 多轮辩论、交易历史注入、动态角色加载 |
+| `packages/langtrader_core/graph/state.py` | 新增 `DebateRound` 模型、优化 `PerformanceMetrics` |
+| `packages/langtrader_core/data/models/bot.py` | Risk Limits 默认值优化 |
+| `packages/langtrader_core/graph/nodes/execution.py` | Risk Limits 默认值同步 |
+| `packages/langtrader_core/graph/nodes/batch_decision.py` | Risk Limits 默认值同步 |
+| `packages/langtrader_api/routes/v1/bots.py` | 修复持仓 Side 显示 |
+| `packages/langtrader_api/dependencies.py` | 辩论配置清理、角色初始化 |
+| `frontend/components/bots/edit-bot-dialog.tsx` | Risk Limits JSON 编辑器 |
 | `frontend/components/bots/debate-viewer.tsx` | 显示角色使用的 LLM 模型名称 |
-| `frontend/app/bots/[id]/page.tsx` | 添加 workflow 和 LLM 配置查询，计算角色 LLM 映射 |
-| `frontend/components/workflows/workflow-editor.tsx` | 添加 `config` 类型定义 |
-| `frontend/components/workflows/workflow-canvas.tsx` | 添加 `config` 类型定义 |
-| `frontend/components/workflows/node-config-panel.tsx` | 支持 JSON 配置编辑 |
+| `frontend/app/bots/[id]/page.tsx` | workflow/LLM 配置查询 |
+| `langtrader_pro_init.sql` | 添加缺失的数据库字段 |
+| `scripts/migrations/011_update_debate_config.sql` | 辩论配置迁移 |
+| `scripts/migrations/012_update_risk_limits_defaults.sql` | Risk Limits 迁移 |
 
 ## [0.3.0] - 2026-01-07
 

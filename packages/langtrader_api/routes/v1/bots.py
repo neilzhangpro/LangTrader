@@ -527,9 +527,17 @@ async def get_bot_positions(
         for pos in positions:
             size = float(pos.get('contracts', 0) or pos.get('contractSize', 0) or 0)
             if abs(size) > 0:
+                # 优先使用 CCXT 标准化的 side 字段，回退到 contracts 符号判断
+                raw_side = pos.get('side', '').lower()
+                if raw_side in ('long', 'short'):
+                    side = raw_side
+                else:
+                    # 如果没有 side 字段，根据 contracts 正负判断
+                    side = 'long' if size > 0 else 'short'
+                
                 result.append(PositionInfo(
                     symbol=pos.get('symbol', 'Unknown'),
-                    side='long' if size > 0 else 'short',
+                    side=side,
                     size=abs(size),
                     entry_price=float(pos.get('entryPrice', 0) or 0),
                     mark_price=float(pos.get('markPrice', 0) or 0),

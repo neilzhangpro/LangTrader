@@ -215,8 +215,8 @@ def _init_default_system_configs(db):
         # ============ 辩论配置 ============
         {"config_key": "debate.enabled", "config_value": "true", "value_type": "boolean", "category": "debate", "description": "是否启用辩论机制"},
         {"config_key": "debate.max_rounds", "config_value": "2", "value_type": "integer", "category": "debate", "description": "最大辩论轮数"},
-        {"config_key": "debate.consensus_threshold", "config_value": "2", "value_type": "integer", "category": "debate", "description": "达成共识所需的 approve 票数"},
-        {"config_key": "debate.timeout_per_round", "config_value": "360", "value_type": "integer", "category": "debate", "description": "每轮辩论超时（秒）"},
+        {"config_key": "debate.timeout_per_phase", "config_value": "120", "value_type": "integer", "category": "debate", "description": "每阶段超时（秒）"},
+        {"config_key": "debate.trade_history_limit", "config_value": "10", "value_type": "integer", "category": "debate", "description": "注入的交易历史条数"},
         
         # ============ 批量决策配置 ============
         {"config_key": "batch_decision.max_total_allocation_pct", "config_value": "80.0", "value_type": "float", "category": "batch_decision", "description": "最大总仓位百分比"},
@@ -224,11 +224,12 @@ def _init_default_system_configs(db):
         {"config_key": "batch_decision.min_cash_reserve_pct", "config_value": "20.0", "value_type": "float", "category": "batch_decision", "description": "最小现金储备百分比"},
         {"config_key": "batch_decision.timeout_seconds", "config_value": "360", "value_type": "integer", "category": "batch_decision", "description": "LLM 调用超时（秒）"},
         
-        # ============ 辩论角色配置 ============
+        # ============ 辩论角色配置（4 角色：分析师、多头、空头、风控） ============
         {"config_key": "debate.roles", "config_value": '''[
-    {"id": "risk_manager", "name": "风险经理", "name_en": "Risk Manager", "focus": "检查总仓位是否过高（应 <= 80%）；验证单币种仓位是否合理（应 <= 40%）；评估止损设置是否合理；识别高度相关的仓位（避免集中风险）；检查风险回报比（应 >= 2:1）", "style": "保守、谨慎、注重资本保护", "priority": 1},
-    {"id": "portfolio_manager", "name": "组合经理", "name_en": "Portfolio Manager", "focus": "优化仓位分配比例；确保多样化，避免过度集中；评估币种之间的相关性；平衡风险与收益；考虑整体投资组合的夏普比率", "style": "平衡、全局视角、追求最优配比", "priority": 2},
-    {"id": "contrarian", "name": "魔鬼代言人", "name_en": "Devil's Advocate", "focus": "挑战所有假设；找出决策中的漏洞；质疑过高的信心度；提出最坏情况场景；反驳过于乐观的判断", "style": "批判、追问、不轻易认同", "priority": 3}
+    {"id": "analyst", "name": "市场分析师", "name_en": "Market Analyst", "focus": "技术分析、趋势判断、关键支撑阻力位识别", "style": "客观、数据驱动、全面分析", "priority": 1},
+    {"id": "bull", "name": "多头交易员", "name_en": "Bull Trader", "focus": "寻找做多机会、识别上涨信号、评估做多胜率", "style": "积极、寻找机会、乐观但有依据", "priority": 2},
+    {"id": "bear", "name": "空头交易员", "name_en": "Bear Trader", "focus": "寻找做空机会、识别下跌信号、评估做空胜率", "style": "谨慎、识别风险、寻找下行机会", "priority": 2},
+    {"id": "risk_manager", "name": "风险经理", "name_en": "Risk Manager", "focus": "评估交易风险、验证仓位合理性、确保止损止盈设置正确", "style": "平衡、风险意识、促成合理交易", "priority": 3}
 ]''', "value_type": "json", "category": "debate", "description": "辩论角色列表（JSON 数组）"},
     ]
     

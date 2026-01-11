@@ -50,26 +50,32 @@ class Bot(SQLModel, table=True):
     # ==================== 风控硬约束配置 ====================
     # 所有风控参数集中在 risk_limits 字段，便于统一管理
     # 执行节点会在下单前检查这些约束
+    # 注意：百分比参数统一使用整数格式，如 80 表示 80%
     risk_limits: Optional[Dict[str, Any]] = Field(
         default={
-            # ========== 仓位控制 ==========
-            "max_total_exposure_pct": 0.8,        # 最大总敞口（占账户余额百分比）
-            "max_single_symbol_pct": 0.3,         # 单币种最大敞口
-            # 注意: max_leverage 已移至顶级字段
+            # ========== 仓位控制（百分比格式，80 = 80%）==========
+            "max_total_allocation_pct": 80,       # AI决策：总仓位上限
+            "max_single_allocation_pct": 30,      # AI决策：单币种上限
+            "max_total_exposure_pct": 0.8,        # 执行层：最大总敞口（小数格式）
+            "max_single_symbol_pct": 0.3,         # 执行层：单币种最大敞口（小数格式）
+            
+            # ========== 杠杆控制 ==========
+            "max_leverage": 5,                    # 最大杠杆倍数
+            "default_leverage": 3,                # 推荐杠杆倍数
             
             # ========== 风险控制 ==========
             "max_consecutive_losses": 5,          # 连续亏损次数上限（触发后暂停交易）
-            "max_daily_loss_pct": 0.05,           # 单日最大亏损（占账户百分比）
-            "max_drawdown_pct": 0.15,             # 最大回撤（触发后暂停交易）
+            "max_daily_loss_pct": 5,              # 单日最大亏损（5%）
+            "max_drawdown_pct": 15,               # 最大回撤（15%，触发后暂停交易）
             
             # ========== 资金费率控制 ==========
-            "max_funding_rate_pct": 0.001,        # 最大资金费率（0.1%），超过时不开仓
+            "max_funding_rate_pct": 0.05,         # 资金费率上限（0.05%），超过时不开仓
             "funding_rate_check_enabled": True,   # 是否启用资金费率检查
             
             # ========== 订单约束 ==========
             "min_position_size_usd": 10.0,        # 最小开仓金额（USD）
-            "max_position_size_usd": 10000.0,     # 最大开仓金额（USD）
-            "min_risk_reward_ratio": 2.0,         # 最小风险回报比
+            "max_position_size_usd": 5000.0,      # 最大开仓金额（USD）
+            "min_risk_reward_ratio": 2.0,         # 最小风险回报比（盈亏比）
             
             # ========== 开关控制 ==========
             "hard_stop_enabled": True,            # 是否启用硬止损

@@ -65,15 +65,16 @@ class BatchDecision(NodePlugin):
     }
     
     # 风控默认配置（仅作为 fallback，优先从 bot.risk_limits 读取）
+    # 注意：百分比使用整数格式（80 = 80%），资金费率使用小数格式（0.05 = 0.05%）
     DEFAULT_RISK_LIMITS = {
         "max_total_allocation_pct": 80.0,
         "max_single_allocation_pct": 30.0,
         "min_position_size_usd": 10.0,
-        "max_position_size_usd": 10000.0,
+        "max_position_size_usd": 5000.0,
         "min_risk_reward_ratio": 2.0,
-        "max_leverage": 10,
+        "max_leverage": 5,
         "default_leverage": 3,
-        "max_funding_rate_pct": 0.1,
+        "max_funding_rate_pct": 0.05,  # 0.05%，正常市场资金费率范围
     }
     
     def __init__(self, context=None, config=None):

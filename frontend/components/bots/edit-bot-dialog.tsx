@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Edit, Loader2 } from 'lucide-react'
+import { Edit, Loader2, AlertCircle } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -55,6 +55,10 @@ export function EditBotDialog({ bot, children }: EditBotDialogProps) {
   const [cycleInterval, setCycleInterval] = useState((bot.cycle_interval_seconds ?? 180).toString())
   const [maxSymbols, setMaxSymbols] = useState((bot.max_concurrent_symbols ?? 5).toString())
   const [quantThreshold, setQuantThreshold] = useState((bot.quant_signal_threshold ?? 50).toString())
+  
+  // Risk Limits JSON 编辑状态
+  const [riskLimitsJson, setRiskLimitsJson] = useState('')
+  const [riskLimitsError, setRiskLimitsError] = useState<string | null>(null)
 
   // 重置表单到当前 Bot 值
   useEffect(() => {
@@ -70,6 +74,20 @@ export function EditBotDialog({ bot, children }: EditBotDialogProps) {
       setCycleInterval((bot.cycle_interval_seconds ?? 180).toString())
       setMaxSymbols((bot.max_concurrent_symbols ?? 5).toString())
       setQuantThreshold((bot.quant_signal_threshold ?? 50).toString())
+      
+      // 初始化 risk_limits JSON
+      if (bot.risk_limits && Object.keys(bot.risk_limits).length > 0) {
+        try {
+          setRiskLimitsJson(JSON.stringify(bot.risk_limits, null, 2))
+          setRiskLimitsError(null)
+        } catch {
+          setRiskLimitsJson('{}')
+          setRiskLimitsError('Risk Limits 格式错误')
+        }
+      } else {
+        setRiskLimitsJson('{}')
+        setRiskLimitsError(null)
+      }
     }
   }, [open, bot])
 
@@ -113,9 +131,48 @@ export function EditBotDialog({ bot, children }: EditBotDialogProps) {
     },
   })
 
+  // 处理 Risk Limits JSON 变更
+  const handleRiskLimitsChange = (value: string) => {
+    setRiskLimitsJson(value)
+    setRiskLimitsError(null)
+
+    // 验证 JSON 格式
+    try {
+      const parsed = JSON.parse(value)
+      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+        setRiskLimitsError('Risk Limits 必须是 JSON 对象')
+      }
+    } catch {
+      setRiskLimitsError('JSON 格式错误，请检查语法')
+    }
+  }
+
+  // 解析 Risk Limits JSON
+  const parseRiskLimits = (): Record<string, unknown> | undefined => {
+    try {
+      const parsed = JSON.parse(riskLimitsJson)
+      if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+        return Object.keys(parsed).length > 0 ? parsed : undefined
+      }
+      return undefined
+    } catch {
+      return undefined
+    }
+  }
+
   // 提交表单
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    // 如果有 JSON 错误，阻止提交
+    if (riskLimitsError) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please fix the Risk Limits JSON format before saving.',
+        variant: 'destructive',
+      })
+      return
+    }
 
     const updateData: BotUpdateRequest = {
       display_name: displayName || undefined,
@@ -129,6 +186,7 @@ export function EditBotDialog({ bot, children }: EditBotDialogProps) {
       cycle_interval_seconds: parseInt(cycleInterval),
       max_concurrent_symbols: parseInt(maxSymbols),
       quant_signal_threshold: parseInt(quantThreshold),
+      risk_limits: parseRiskLimits(),
     }
 
     updateMutation.mutate(updateData)
@@ -299,6 +357,30 @@ export function EditBotDialog({ bot, children }: EditBotDialogProps) {
                   max={100}
                 />
               </div>
+            </div>
+
+            {/* Risk Limits JSON 编辑 */}
+            <div className="grid gap-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="riskLimits">Risk Limits (JSON)</Label>
+                {riskLimitsError && (
+                  <div className="flex items-center gap-1 text-xs text-destructive">
+                    <AlertCircle className="h-3 w-3" />
+                    <span>{riskLimitsError}</span>
+                  </div>
+                )}
+              </div>
+              <Textarea
+                id="riskLimits"
+                value={riskLimitsJson}
+                onChange={(e) => handleRiskLimitsChange(e.target.value)}
+                placeholder='{"max_position_pct": 30, "max_funding_rate": 0.01, "min_risk_reward_ratio": 2}'
+                className="font-mono text-xs min-h-[120px]"
+                spellCheck={false}
+              />
+              <p className="text-xs text-muted-foreground">
+                配置风控限制参数，如最大仓位比例、资金费率上限等
+              </p>
             </div>
           </div>
 

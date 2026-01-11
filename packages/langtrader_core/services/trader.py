@@ -267,8 +267,30 @@ class Trader:
                     else:
                         logger.debug(f"✅ Fee verified: ${actual_fee:.4f}")
             
-            logger.info(f"✅ Order created: {symbol} {side} {amount} @ {price or 'market'}")
-            return self._parse_order_result(order)
+            # 解析订单结果
+            order_result = self._parse_order_result(order)
+            
+            # 详细日志：订单状态
+            order_status = order.get('status', 'unknown')
+            filled = order_result.filled or 0
+            remaining = order_result.remaining or 0
+            order_id = order_result.order_id
+            
+            logger.info(
+                f"✅ Order created: {symbol} {side} {amount} @ {price or 'market'} | "
+                f"ID: {order_id} | Status: {order_status} | "
+                f"Filled: {filled} | Remaining: {remaining}"
+            )
+            
+            # 警告：如果订单状态不是 'closed' 或 'filled'，说明可能还没完全成交
+            if order_status not in ['closed', 'filled']:
+                logger.warning(
+                    f"⚠️ {symbol}: Order status is '{order_status}', not 'closed'. "
+                    f"This might indicate the order is still pending. "
+                    f"Filled: {filled}, Remaining: {remaining}"
+                )
+            
+            return order_result
         
         # ==================== CCXT 异常处理 ====================
         # 按照 CCXT 文档的异常层次结构处理

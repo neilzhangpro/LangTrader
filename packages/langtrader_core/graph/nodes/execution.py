@@ -50,18 +50,18 @@ class Execution(NodePlugin):
     )
     
     # 风控默认配置（仅作为 fallback，优先从 bot.risk_limits 读取）
-    # 注意：所有百分比使用 % 格式（如 80 表示 80%），与 debate/batch_decision 一致
+    # 注意：百分比使用整数格式（80 = 80%），资金费率使用小数格式（0.05 = 0.05%）
     DEFAULT_RISK_LIMITS = {
         "max_total_allocation_pct": 80.0,      # 总仓位上限 80%
         "max_single_allocation_pct": 30.0,     # 单币种上限 30%
-        "max_leverage": 10,
+        "max_leverage": 5,
         "max_consecutive_losses": 5,
         "max_daily_loss_pct": 5.0,             # 单日最大亏损 5%
         "max_drawdown_pct": 15.0,              # 最大回撤 15%
-        "max_funding_rate_pct": 0.1,           # 资金费率上限 0.1%
+        "max_funding_rate_pct": 0.05,          # 资金费率上限 0.05%（正常市场范围）
         "funding_rate_check_enabled": True,
         "min_position_size_usd": 10.0,
-        "max_position_size_usd": 10000.0,
+        "max_position_size_usd": 5000.0,
         "min_risk_reward_ratio": 2.0,
         "hard_stop_enabled": True,
         "pause_on_consecutive_loss": True,
@@ -480,7 +480,7 @@ class Execution(NodePlugin):
             position_size_usd=position_size_usd,
             stop_loss_price=pd.stop_loss,
             take_profit_price=pd.take_profit,
-            confidence=float(pd.confidence),
+            confidence=pd.confidence,  # PortfolioDecision.confidence 已是 int
             risk_approved=pd.risk_approved,
             reasons=[pd.reasoning] if pd.reasoning else []
         )
@@ -738,11 +738,31 @@ class Execution(NodePlugin):
         
         # 构建执行结果
         if result.main and result.main.success:
+            # 详细日志：订单执行情况
+            order_status = result.main.status or 'unknown'
+            filled = result.main.filled or 0
+            remaining = result.main.remaining or 0
+            average_price = result.main.average
+            
+            logger.info(
+                f"📊 {symbol}: Order execution details | "
+                f"Status: {order_status} | "
+                f"Filled: {filled} | Remaining: {remaining} | "
+                f"Avg Price: {average_price}"
+            )
+            
+            # 检查订单是否真正成交（对于市价单，应该是 closed 或 filled）
+            if order_status not in ['closed', 'filled'] and filled == 0:
+                logger.warning(
+                    f"⚠️ {symbol}: Order status is '{order_status}' with no fills. "
+                    f"Order might still be pending execution."
+                )
+            
             exec_result = ExecutionResult(
                 symbol=symbol,
                 action=decision.action,
-                status="success",
-                message="Position opened",
+                status="success" if filled > 0 else "pending",
+                message=f"Position opened (Status: {order_status}, Filled: {filled})",
                 order_id=result.main.order_id,
                 executed_price=result.main.average,
                 executed_amount=result.main.filled,
@@ -751,10 +771,11 @@ class Execution(NodePlugin):
             )
             
             # 记录交易到数据库（使用实际成交的币数量）
-            if self.trade_history_repo and self.bot_id:
+            # 只有在有实际成交时才记录
+            if filled > 0 and self.trade_history_repo and self.bot_id:
                 try:
-                    # 使用实际成交数量，如果没有则使用计算的币数量
-                    actual_amount = result.main.filled or amount_in_coins
+                    # 使用实际成交数量
+                    actual_amount = result.main.filled
                     
                     self.trade_history_repo.create(
                         bot_id=self.bot_id,
@@ -767,9 +788,14 @@ class Execution(NodePlugin):
                         cycle_id=cycle_id,
                         order_id=result.main.order_id,
                     )
-                    logger.info(f"📝 Trade recorded: {symbol} {position_side} amount={actual_amount:.6f}")
+                    logger.info(f"📝 Trade recorded: {symbol} {position_side} amount={actual_amount:.6f} @ {result.main.average}")
                 except Exception as e:
                     logger.error(f"❌ Failed to record trade: {e}")
+            elif filled == 0:
+                logger.warning(
+                    f"⚠️ {symbol}: Not recording trade to database - order has no fills yet. "
+                    f"Status: {order_status}"
+                )
             
             return exec_result
         else:

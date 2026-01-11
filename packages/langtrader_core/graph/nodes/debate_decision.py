@@ -18,7 +18,7 @@
 from typing import Dict, List, Any, Optional, Tuple
 from pathlib import Path
 from pydantic import BaseModel, Field
-from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableParallel, RunnableLambda
 
@@ -29,7 +29,9 @@ from langtrader_core.graph.state import (
     PortfolioDecision,
     PerformanceMetrics,
     AnalystOutput,
+    AnalystOutputList,
     TraderSuggestion,
+    DebateRound,
     RiskReview,
     DebateDecisionResult,
 )
@@ -46,7 +48,14 @@ logger = get_logger("debate_decision")
 # -------------------------
 
 DEFAULT_DEBATE_PROMPTS = {
-    "analyst": """你是**市场分析师**，专注于技术分析和趋势判断。
+    "analyst": """你是**市场分析师**，专注于深入分析市场数据和技术指标。
+
+## 🎯 核心职责
+你的唯一职责是**提供客观、全面的市场分析**，为后续的交易决策提供数据支撑。
+- 专注于技术分析和趋势判断
+- 识别关键支撑位和阻力位
+- 评估市场情绪和技术信号强度
+- **不进行交易建议**，只提供分析结论
 
 ## ⚠️ 重要约束
 - **Symbol 格式必须保持原样**：如输入 `BTC/USDC:USDC`，输出也必须是 `BTC/USDC:USDC`，不能简化为 `BTC/USDC`
@@ -58,40 +67,58 @@ DEFAULT_DEBATE_PROMPTS = {
 - 资金费率
 
 ## 你的任务
-1. 分析每个币种的技术面
-2. 判断趋势方向（bullish/bearish/neutral）
-3. 识别关键支撑/阻力位
+1. **深度技术分析**：全面分析每个币种的技术指标和形态
+2. **趋势判断**：准确判断趋势方向（bullish/bearish/neutral）及其强度
+3. **关键位识别**：识别重要的支撑位和阻力位
+4. **综合分析**：将多个指标综合起来，给出全面的市场观点
 
 ## 输出格式
-为每个币种输出 JSON 格式的分析结果。""",
+为每个币种输出 JSON 格式的分析结果，包含趋势判断、关键位和详细分析摘要。""",
 
-    "bull": """你是**多头交易员**，专注于寻找做多机会。
+    "bull": """你是**多头交易员**，专注于从候选币种和分析数据中，寻找**最大胜率的做多机会**。
+
+## 🎯 核心职责
+你的唯一目标是**识别并推荐具有最高胜率的做多交易机会**。
+- 深度分析候选币种，筛选最具潜力的做多标的
+- 结合市场分析师的技术分析，寻找被低估的上涨机会
+- 严格评估每个机会的胜率和风险回报比
+- 只推荐高确定性的做多机会，放弃低质量信号
 
 ## ⚠️ 重要约束
 - **Symbol 格式必须保持原样**：如输入 `SOL/USDC:USDC`，输出也必须是 `SOL/USDC:USDC`
 - 单币种最大仓位 30%
 - 风险回报比至少 2:1
-- 只推荐信心度 > 60 的交易
+- **推荐信心度 > 50 的交易机会**（不要过于保守，有一定把握就可以推荐）
 
 ## 止损止盈规则（做多）
 - 止损价格 < 当前价格 < 止盈价格
 - 示例：当前价格 $1.50 → 止损 $1.40, 止盈 $1.70
 
 ## 你的任务
-基于分析师的技术分析：
-1. 识别上涨信号和做多理由
-2. 给出做多建议，包括具体的止损和止盈**价格**（不是百分比）
+基于候选币种列表和分析师的技术分析：
+1. **筛选最佳做多标的**：从所有候选币种中，识别具有最高胜率的做多机会
+2. **深度评估胜率**：综合考虑技术面、量化信号、市场情绪等因素，评估每个机会的胜率
+3. **寻找最强信号**：优先选择技术面强、量化得分高、趋势明确的币种
+4. **给出精准建议**：为高胜率机会提供具体的止损和止盈**价格**（不是百分比）和仓位建议
 
 ## 输出格式
-为每个看好的币种输出 JSON 建议。""",
+为候选币种输出 JSON 建议。如果有交易机会（信心度 > 50），积极推荐；如果确实没有机会，action 设为 wait。""",
 
-    "bear": """你是**空头交易员**，专注于识别风险和做空机会。
+    "bear": """你是**空头交易员**，专注于从候选币种和分析数据中，寻找**最大胜率的做空机会**。
+
+## 🎯 核心职责
+你的唯一目标是**识别并推荐具有最高胜率的做空交易机会**。
+- 深度分析候选币种，筛选最具潜力的做空标的
+- 结合市场分析师的技术分析，寻找被高估的下行风险
+- 严格评估每个机会的胜率和风险回报比
+- 只推荐高确定性的做空机会，放弃低质量信号
 
 ## ⚠️ 重要约束
 - **Symbol 格式必须保持原样**：如输入 `ETH/USDC:USDC`，输出也必须是 `ETH/USDC:USDC`
 - 单币种最大仓位 30%  
 - 风险回报比至少 2:1
-- 关注资金费率极端情况
+- **推荐信心度 > 50 的交易机会**（不要过于保守，有一定把握就可以推荐）
+- 关注资金费率极端情况（高资金费率可能预示下跌）
 
 ## 止损止盈规则（做空）
 - 止盈价格 < 当前价格 < 止损价格
@@ -99,26 +126,66 @@ DEFAULT_DEBATE_PROMPTS = {
 - **注意**：做空的止损止盈方向与做多相反！
 
 ## 你的任务
-质疑多头观点，找出：
-1. 被忽视的下行风险
-2. 技术面的弱点
-3. 可能的做空机会，包括具体的止损和止盈**价格**（不是百分比）
+基于候选币种列表和分析师的技术分析：
+1. **筛选最佳做空标的**：从所有候选币种中，识别具有最高胜率的做空机会
+2. **识别下行信号**：寻找技术面转弱、量化信号负面、趋势反转的币种
+3. **深度评估胜率**：综合考虑技术面弱点、资金费率、市场情绪等因素，评估做空机会的胜率
+4. **质疑多头观点**：找出被忽视的下行风险和潜在的技术面弱点
+5. **给出精准建议**：为高胜率做空机会提供具体的止损和止盈**价格**（不是百分比）和仓位建议
 
 ## 输出格式
-为每个看空或有风险的币种输出 JSON 建议。""",
+为候选币种输出 JSON 建议。如果有交易机会（信心度 > 50），积极推荐；如果确实没有机会，action 设为 wait。""",
 
-    "risk_manager": """你是**风控经理**，负责最终审核和仓位协调。
+    "risk_manager": """你是**风险经理**，专注于**评估交易风险并做出平衡决策**。
 
-## 🎯 核心目标：提高夏普率
-**夏普率（风险调整后收益）是衡量策略好坏的关键指标**。你的每个决策都应考虑：
-- 这笔交易能否提高整体夏普率？
-- 风险回报比是否 >= 2:1？
-- 是否应该减少交易频率，只做高质量交易？
+## 🎯 核心职责
+你的主要职责是**在风险可控的前提下促成交易**：
+- 评估每笔交易的风险是否在可接受范围内
+- 确保整体投资组合的风险敞口符合要求
+- 识别并量化潜在风险因素
+- **平衡原则**：在风险可控时积极采纳 Bull/Bear 的建议，只有风险明显过高时才拒绝
 
-**根据当前夏普率调整策略**：
-- 夏普率 < 0：减少交易，只做信心度 > 80 的交易，考虑直接 wait
-- 夏普率 0~0.5：保持谨慎，优选高确定性机会
-- 夏普率 > 0.5：策略有效，可适度扩大仓位
+## 🔍 风险识别重点
+在评估多空双方建议时，重点关注以下风险：
+
+### 1. 仓位风险
+- 总仓位是否超限（考虑已有持仓）
+- 单币种仓位是否集中度过高
+- 是否违反了仓位分散原则
+
+### 2. 价格风险
+- 止损止盈价格设置是否合理
+- 风险回报比是否达到要求（至少 2:1）
+- 当前价格与止损止盈的相对位置是否正确
+
+### 3. 市场风险
+- 资金费率是否异常（过高可能预示反转）
+- 技术面是否存在反转信号
+- 市场情绪是否过度乐观/悲观
+
+### 4. 执行风险
+- 是否满足最小开仓金额要求
+- 杠杆倍数是否合理
+- 是否有足够的可用余额
+
+### 5. 历史风险
+- 上轮执行是否存在问题（必须规避重复错误）
+- 当前绩效是否表明策略需要调整
+- 连续亏损是否需要暂停交易
+
+## 🎯 核心目标：平衡收益与风险
+你的目标是在**风险可控的前提下积极寻找交易机会**，而不是过度保守导致错失良机。
+
+**决策原则**：
+- 风险回报比 >= 2:1 的交易值得尝试
+- 信心度 > 55 且技术面支持的交易可以执行
+- 新策略阶段需要交易数据来验证，**不要过度保守**
+
+**根据历史表现调整仓位**（参考绩效建议）：
+- 新 bot（无历史交易）：正常交易，小仓位（10-15%）试探
+- 夏普率 < 0：降低仓位至 15%，但不要停止交易
+- 夏普率 0~0.5：正常仓位，信心度 > 55 即可
+- 夏普率 > 0.5：可以增加仓位
 
 ## 🚨 上轮执行反馈处理
 如果市场数据中包含"上轮执行问题"，你**必须**：
@@ -140,7 +207,7 @@ DEFAULT_DEBATE_PROMPTS = {
 - `open_short`: 开空仓  
 - `close_long`: 平多仓（需要有对应持仓）
 - `close_short`: 平空仓（需要有对应持仓）
-- `wait`: 不操作，观望
+- `wait`: 不操作，观望（当风险过高时优先选择）
 
 注意：不支持 `reduce`（部分减仓）、`hold` 等操作。
 
@@ -161,12 +228,14 @@ DEFAULT_DEBATE_PROMPTS = {
 - Short: stop_loss > take_profit ✓ （与做多相反！）
 
 ## 你的任务
-基于多空双方的建议：
-1. **检查敞口**：总仓位不超过上限（考虑已有持仓）
-2. **检查单币种**：单币种不超过上限
-3. **检查止损止盈**：价格方向正确性
-4. **参考上轮反馈**：避免重复失败
-5. **协调冲突意见**：输出最终决策
+基于多空双方的建议和市场数据：
+1. **评估交易机会**：优先考虑 Bull/Bear 中信心度更高的建议
+2. **检查仓位风险**：确保总仓位和单币种仓位符合限制
+3. **检查价格风险**：验证止损止盈设置的合理性和正确性
+4. **检查执行风险**：确保满足最小金额、杠杆等要求
+5. **处理历史风险**：参考上轮执行反馈，避免重复错误
+6. **积极决策**：如果 Bull 或 Bear 给出了信心度 > 55 且风险可控的建议，**应该采纳**而非 wait
+7. **输出最终决策**：在多空建议中择优选择，只有在双方都没有好机会时才 wait
 
 ## 输出格式
 输出最终的投资组合决策，包括：
@@ -175,7 +244,7 @@ DEFAULT_DEBATE_PROMPTS = {
 - allocation_pct: 仓位百分比（确保不超限！）
 - stop_loss: 止损价格（具体价格，不是百分比）
 - take_profit: 止盈价格（具体价格，不是百分比）
-- reasoning: 决策理由（包含对上轮问题的回应）""",
+- reasoning: 决策理由（重点说明风险识别和评估过程，包含对上轮问题的回应）""",
 }
 
 
@@ -213,18 +282,21 @@ class DebateDecisionNode(NodePlugin):
     # 节点运行时默认配置（非风控配置）
     DEFAULT_NODE_CONFIG = {
         "timeout_per_phase": 120,
+        "debate_max_rounds": 2,  # 辩论轮数（从 system_configs 的 debate.max_rounds 读取）
+        "trade_history_limit": 10,  # 注入的交易历史条数
     }
     
     # 风控默认配置（仅作为 fallback，优先从 bot.risk_limits 读取）
+    # 注意：百分比使用整数格式（80 = 80%），资金费率使用小数格式（0.05 = 0.05%）
     DEFAULT_RISK_LIMITS = {
         "max_total_allocation_pct": 80.0,
         "max_single_allocation_pct": 30.0,
         "min_position_size_usd": 10.0,
-        "max_position_size_usd": 10000.0,
+        "max_position_size_usd": 5000.0,
         "min_risk_reward_ratio": 2.0,
-        "max_leverage": 10,
+        "max_leverage": 5,
         "default_leverage": 3,
-        "max_funding_rate_pct": 0.1,
+        "max_funding_rate_pct": 0.05,  # 0.05%，正常市场资金费率范围
     }
     
     def __init__(self, context=None, config=None):
@@ -237,6 +309,7 @@ class DebateDecisionNode(NodePlugin):
         self.performance_service = context.performance_service if hasattr(context, 'performance_service') else None
         self.database = context.database if hasattr(context, 'database') else None
         self.bot = context.bot if hasattr(context, 'bot') else None  # 保存 bot 引用用于获取 llm_id
+        self.trade_history_repo = context.trade_history_repo if hasattr(context, 'trade_history_repo') else None
         
         if not self.llm_factory:
             raise ValueError("LLM factory not found in context")
@@ -264,7 +337,10 @@ class DebateDecisionNode(NodePlugin):
             "max_funding_rate_pct": self.risk_limits.get('max_funding_rate_pct', self.DEFAULT_RISK_LIMITS['max_funding_rate_pct']),
             
             # 节点配置（从 system_configs 读取）
-            "timeout_per_phase": db_config.get('debate_decision.timeout_per_phase', self.DEFAULT_NODE_CONFIG['timeout_per_phase']),
+            "debate_enabled": db_config.get('debate.enabled', True),  # 是否启用辩论机制
+            "timeout_per_phase": db_config.get('debate.timeout_per_phase', self.DEFAULT_NODE_CONFIG['timeout_per_phase']),
+            "debate_max_rounds": db_config.get('debate.max_rounds', self.DEFAULT_NODE_CONFIG['debate_max_rounds']),
+            "trade_history_limit": db_config.get('debate.trade_history_limit', self.DEFAULT_NODE_CONFIG['trade_history_limit']),
         }
         
         # 覆盖传入的 config
@@ -280,11 +356,50 @@ class DebateDecisionNode(NodePlugin):
         self._role_llms ={} # 用来缓存角色LLM实例
         self._llm = None
         
+        # 加载角色配置（从 system_configs）
+        self.debate_roles = self._load_debate_roles(db_config)
+        
         # 加载角色提示词（从文件，fallback 到默认值）
         self.debate_prompts = self._load_debate_prompts()
         
         logger.info(f"✅ DebateDecisionNode initialized with risk_limits from bot")
         logger.info(f"   max_total={self.node_config['max_total_allocation_pct']}%, max_single={self.node_config['max_single_allocation_pct']}%")
+        logger.info(f"   辩论角色: {[r['id'] for r in self.debate_roles]}")
+    
+    def _load_debate_roles(self, db_config: Dict) -> List[Dict]:
+        """
+        从 system_configs 加载辩论角色配置
+        
+        Args:
+            db_config: 从数据库读取的配置字典
+            
+        Returns:
+            角色配置列表，每个元素包含 id, name, name_en, focus, style, priority
+        """
+        import json
+        
+        # 默认角色配置
+        default_roles = [
+            {"id": "analyst", "name": "市场分析师", "name_en": "Market Analyst", "priority": 1},
+            {"id": "bull", "name": "多头交易员", "name_en": "Bull Trader", "priority": 2},
+            {"id": "bear", "name": "空头交易员", "name_en": "Bear Trader", "priority": 2},
+            {"id": "risk_manager", "name": "风险经理", "name_en": "Risk Manager", "priority": 3},
+        ]
+        
+        # 尝试从配置加载
+        roles_config = db_config.get('debate.roles')
+        if roles_config:
+            try:
+                if isinstance(roles_config, str):
+                    roles = json.loads(roles_config)
+                else:
+                    roles = roles_config
+                logger.debug(f"📋 从配置加载 {len(roles)} 个辩论角色")
+                return roles
+            except (json.JSONDecodeError, TypeError) as e:
+                logger.warning(f"⚠️ 解析 debate.roles 配置失败: {e}，使用默认角色")
+        
+        return default_roles
     
     def _load_debate_prompts(self) -> Dict[str, str]:
         """
@@ -344,12 +459,82 @@ class DebateDecisionNode(NodePlugin):
                 return self._role_llms[role]
         return self._llm
     
+    def _build_trade_history_context(self, bot_id: int) -> str:
+        """
+        构建交易历史上下文
+        
+        包含最近 N 笔已平仓交易的详情，供 AI 学习：
+        - 成功交易的共同特征
+        - 失败交易的警示信号
+        
+        Args:
+            bot_id: 机器人 ID
+            
+        Returns:
+            格式化的交易历史上下文字符串
+        """
+        if not self.trade_history_repo:
+            return ""
+        
+        limit = self.node_config.get('trade_history_limit', 10)
+        
+        try:
+            trades = self.trade_history_repo.get_recent_trades(bot_id, limit)
+        except Exception as e:
+            logger.warning(f"⚠️ 获取交易历史失败: {e}")
+            return ""
+        
+        if not trades:
+            return ""
+        
+        # 分类统计
+        wins = [t for t in trades if t.pnl_percent and float(t.pnl_percent) > 0]
+        losses = [t for t in trades if t.pnl_percent and float(t.pnl_percent) <= 0]
+        
+        context = "## 📊 近期交易记录（供决策参考）\n\n"
+        
+        # 统计摘要
+        win_rate = len(wins) / len(trades) * 100 if trades else 0
+        avg_win = sum(float(t.pnl_percent) for t in wins) / len(wins) if wins else 0
+        avg_loss = sum(float(t.pnl_percent) for t in losses) / len(losses) if losses else 0
+        
+        context += f"**统计**: 最近 {len(trades)} 笔 | 胜率 {win_rate:.0f}% | "
+        context += f"平均盈利 {avg_win:.1f}% | 平均亏损 {avg_loss:.1f}%\n\n"
+        
+        # 显示最近 5 笔交易详情
+        context += "### 最近交易详情\n"
+        for trade in trades[:5]:
+            pnl = float(trade.pnl_percent or 0)
+            result = "盈利" if pnl > 0 else "亏损"
+            emoji = "✅" if pnl > 0 else "❌"
+            
+            entry = float(trade.entry_price) if trade.entry_price else 0
+            exit_p = float(trade.exit_price) if trade.exit_price else 0
+            
+            context += f"- {emoji} **{trade.symbol}**: {trade.action}, "
+            context += f"入场 ${entry:.4f}, 出场 ${exit_p:.4f}, "
+            context += f"**{result} {pnl:+.2f}%**\n"
+        
+        # 如果有连续亏损，特别提醒
+        consecutive_losses = 0
+        for trade in trades:
+            if trade.pnl_percent and float(trade.pnl_percent) <= 0:
+                consecutive_losses += 1
+            else:
+                break
+        
+        if consecutive_losses >= 3:
+            context += f"\n⚠️ **警告**: 连续 {consecutive_losses} 笔亏损，建议降低仓位或暂停交易！\n"
+        
+        return context + "\n"
+    
     def _build_market_context(self, state: State) -> str:
         """
         构建市场数据上下文
         
         包含：
         - 绩效反馈（让 AI 根据历史表现调整策略）
+        - 交易历史（让 AI 从具体案例中学习）
         - 风控约束（让 AI 提前知道这些限制）
         - 账户状态
         - 当前持仓
@@ -361,6 +546,11 @@ class DebateDecisionNode(NodePlugin):
         if state.performance and state.performance.total_trades > 0:
             context += state.performance.to_prompt_text()
             context += "\n"
+        
+        # ========== 交易历史（供 AI 学习具体案例） ==========
+        trade_history_context = self._build_trade_history_context(state.bot_id)
+        if trade_history_context:
+            context += trade_history_context
         
         # ========== 上轮执行问题（如果有） ==========
         if state.alerts:
@@ -504,25 +694,35 @@ class DebateDecisionNode(NodePlugin):
         
         return context
     
-    async def _run_analyst(self, market_context: str) -> List[AnalystOutput]:
+    async def _run_analyst(self, market_context: str, symbols: List[str]) -> List[AnalystOutput]:
         """
         Phase 1: 市场分析师分析
         
-        使用 with_fallbacks 机制处理异常
+        使用 AnalystOutputList 包装类型一次性输出所有币种分析。
+        使用 with_fallbacks 机制处理异常。
+        
+        Args:
+            market_context: 市场数据上下文
+            symbols: 候选币种列表（用于 fallback）
         """
         logger.info("📊 Phase 1: Analyst 分析市场...")
         
-        llm = self._get_llm(role="analyst").with_structured_output(AnalystOutput)
+        # 使用 AnalystOutputList 包装类型，支持多币种输出
+        llm = self._get_llm(role="analyst").with_structured_output(AnalystOutputList)
         timeout = self.node_config['timeout_per_phase']
         
-        # 创建 fallback（返回中性分析）
+        # 创建 fallback（为每个真实 symbol 返回中性分析）
         async def analyst_fallback(messages):
             logger.warning("⚠️ Analyst 使用 fallback - 返回中性分析")
-            return AnalystOutput(
-                symbol="FALLBACK",     # 必填字段
-                trend="neutral",
-                key_levels=None,       # 类型应为 Optional[Dict]，不是 List
-                summary="分析失败，默认中性判断"
+            return AnalystOutputList(
+                outputs=[
+                    AnalystOutput(
+                        symbol=sym,
+                        trend="neutral",
+                        key_levels=None,
+                        summary="分析失败，默认中性判断"
+                    ) for sym in symbols
+                ]
             )
         
         # 带 fallback 的 chain
@@ -541,66 +741,108 @@ class DebateDecisionNode(NodePlugin):
                 safe_llm.ainvoke(messages),
                 timeout=timeout
             )
-            logger.info(f"✅ Analyst 完成: {result.trend}")
-            return [result] if isinstance(result, AnalystOutput) else result
+            # 解包 AnalystOutputList -> List[AnalystOutput]
+            outputs = result.outputs if isinstance(result, AnalystOutputList) else [result]
+            logger.info(f"✅ Analyst 完成: {len(outputs)} 个币种分析")
+            return outputs
         except asyncio.TimeoutError:
             logger.error(f"❌ Analyst 超时 ({timeout}s) - 使用默认中性分析")
-            return [AnalystOutput(
-                symbol="TIMEOUT",      # 必填字段
-                trend="neutral", 
-                key_levels=None,       # 类型应为 Optional[Dict]，不是 List
-                summary="分析超时，默认中性"
-            )]
+            return [
+                AnalystOutput(
+                    symbol=sym,
+                    trend="neutral",
+                    key_levels=None,
+                    summary="分析超时，默认中性"
+                ) for sym in symbols
+            ]
         except Exception as e:
             logger.error(f"❌ Analyst 失败: {e}")
             # 返回 fallback 结果而非空列表，避免后续处理失败
-            return [AnalystOutput(
-                symbol="ERROR",
-                trend="neutral",
-                key_levels=None,
-                summary=f"分析出错: {str(e)[:50]}"
-            )]
+            return [
+                AnalystOutput(
+                    symbol=sym,
+                    trend="neutral",
+                    key_levels=None,
+                    summary=f"分析出错: {str(e)[:50]}"
+                ) for sym in symbols
+            ]
     
-    async def _run_phase2_parallel(
-        self, 
-        market_context: str, 
-        analyst_summary: str
-    ) -> Tuple[List[TraderSuggestion], List[TraderSuggestion]]:
+    async def _run_single_debate_round(
+        self,
+        symbol: str,
+        bull_human_msg: str,
+        bear_human_msg: str,
+        is_final_round: bool,
+        timeout: int,
+    ) -> Tuple[Any, Any]:
         """
-        Phase 2: Bull 和 Bear 并行分析
+        执行单轮辩论
         
-        使用 RunnableParallel + with_fallbacks 实现并行调用
+        - 中间轮：输出自由文本观点（用于下轮反驳）
+        - 最终轮：输出结构化 TraderSuggestion
+        
+        Args:
+            symbol: 币种符号
+            bull_human_msg: Bull 的输入消息
+            bear_human_msg: Bear 的输入消息
+            is_final_round: 是否为最终轮
+            timeout: 超时时间（秒）
+            
+        Returns:
+            (bull_result, bear_result) 元组
         """
-        logger.info("📊 Phase 2: Bull + Bear 并行分析...")
-        
         llm_bull = self._get_llm(role="bull")
         llm_bear = self._get_llm(role="bear")
-        timeout = self.node_config.get("timeout_per_phase", 120)
         
-        # 构建 Bull 和 Bear 的 Chain
-        bull_prompt = ChatPromptTemplate.from_messages([
-            ("system", self.debate_prompts["bull"]),
-            ("human", "分析师总结:\n{analyst}\n\n市场数据:\n{context}\n\n请给出做多建议。"),
-        ])
+        if is_final_round:
+            # 最终轮：结构化输出 TraderSuggestion
+            bull_chain = ChatPromptTemplate.from_messages([
+                ("system", self.debate_prompts["bull"]),
+                ("human", "{input}"),
+            ]) | llm_bull.with_structured_output(TraderSuggestion)
+            
+            bear_chain = ChatPromptTemplate.from_messages([
+                ("system", self.debate_prompts["bear"]),
+                ("human", "{input}"),
+            ]) | llm_bear.with_structured_output(TraderSuggestion)
+            
+            # Fallback for final round
+            def create_fallback(role: str):
+                async def fallback_fn(input_data):
+                    logger.warning(f"⚠️ {role} fallback for {symbol}")
+                    return TraderSuggestion(
+                        symbol=symbol,
+                        action="wait",
+                        confidence=0,
+                        allocation_pct=0,
+                        stop_loss_pct=2.0,
+                        take_profit_pct=6.0,
+                        reasoning=f"{role} 分析失败，默认观望"
+                    )
+                return RunnableLambda(fallback_fn)
+        else:
+            # 中间轮：自由文本输出，简洁阐述观点
+            bull_system = self.debate_prompts["bull"] + "\n\n请用 2-3 句话简洁阐述你对该币种的核心观点和理由。"
+            bear_system = self.debate_prompts["bear"] + "\n\n请用 2-3 句话简洁阐述你对该币种的核心观点和理由。"
+            
+            bull_chain = ChatPromptTemplate.from_messages([
+                ("system", bull_system),
+                ("human", "{input}"),
+            ]) | llm_bull
+            
+            bear_chain = ChatPromptTemplate.from_messages([
+                ("system", bear_system),
+                ("human", "{input}"),
+            ]) | llm_bear
+            
+            # Fallback for intermediate round
+            def create_fallback(role: str):
+                async def fallback_fn(input_data):
+                    logger.warning(f"⚠️ {role} 中间轮 fallback for {symbol}")
+                    return f"{role} 无法分析，暂无观点。"
+                return RunnableLambda(fallback_fn)
         
-        bear_prompt = ChatPromptTemplate.from_messages([
-            ("system", self.debate_prompts["bear"]),
-            ("human", "分析师总结:\n{analyst}\n\n市场数据:\n{context}\n\n请给出风险分析和做空建议。"),
-        ])
-        
-        # 使用结构化输出
-        bull_chain = bull_prompt | llm_bull.with_structured_output(TraderSuggestion)
-        bear_chain = bear_prompt | llm_bear.with_structured_output(TraderSuggestion)
-        
-        # 创建 fallback 函数（返回 None 表示该角色失败）
-        def create_fallback(role: str):
-            """创建返回 None 的 fallback，便于下游处理"""
-            async def fallback_fn(input_data):
-                logger.warning(f"⚠️ {role} 使用 fallback - 返回空建议")
-                return None
-            return RunnableLambda(fallback_fn)
-        
-        # 添加 fallback 保护
+        # 添加 fallback
         bull_chain_safe = bull_chain.with_fallbacks(
             [create_fallback("Bull")],
             exceptions_to_handle=(Exception,)
@@ -610,39 +852,163 @@ class DebateDecisionNode(NodePlugin):
             exceptions_to_handle=(Exception,)
         )
         
-        # 使用 RunnableParallel 并行执行
-        parallel_chain = RunnableParallel(bull=bull_chain_safe, bear=bear_chain_safe)
-        
-        # 准备输入
-        input_data = {"analyst": analyst_summary, "context": market_context}
-        
+        # 并行执行 Bull 和 Bear（注意：需要分别传入不同的输入）
         try:
-            # 使用 asyncio.wait_for 处理整体超时
-            result = await asyncio.wait_for(
-                parallel_chain.ainvoke(input_data),
-                timeout=timeout
+            bull_task = asyncio.create_task(
+                asyncio.wait_for(
+                    bull_chain_safe.ainvoke({"input": bull_human_msg}),
+                    timeout=timeout
+                )
+            )
+            bear_task = asyncio.create_task(
+                asyncio.wait_for(
+                    bear_chain_safe.ainvoke({"input": bear_human_msg}),
+                    timeout=timeout
+                )
             )
             
-            bull_result = result.get("bull")
-            bear_result = result.get("bear")
+            bull_result, bear_result = await asyncio.gather(bull_task, bear_task, return_exceptions=True)
             
-            # 统计结果
-            bull_ok = bull_result is not None
-            bear_ok = bear_result is not None
+            # 处理异常结果
+            if isinstance(bull_result, Exception):
+                logger.error(f"❌ {symbol}: Bull 异常: {bull_result}")
+                bull_result = None
+            if isinstance(bear_result, Exception):
+                logger.error(f"❌ {symbol}: Bear 异常: {bear_result}")
+                bear_result = None
             
-            logger.info(f"✅ Phase 2 完成: Bull={'OK' if bull_ok else 'FAIL'}, Bear={'OK' if bear_ok else 'FAIL'}")
+            return (bull_result, bear_result)
             
-            # 返回列表以保持下游兼容
-            bull_list = [bull_result] if bull_result else []
-            bear_list = [bear_result] if bear_result else []
-            return (bull_list, bear_list)
-            
-        except asyncio.TimeoutError:
-            logger.error(f"❌ Phase 2 整体超时 ({timeout}s)")
-            return ([], [])
         except Exception as e:
-            logger.error(f"❌ Phase 2 失败: {e}")
-            return ([], [])
+            logger.error(f"❌ {symbol}: 辩论轮次失败: {e}")
+            return (None, None)
+    
+    async def _run_multi_round_debate_for_symbol(
+        self,
+        symbol: str,
+        market_context: str,
+        analyst_summary: str,
+    ) -> Tuple[Optional[TraderSuggestion], Optional[TraderSuggestion], List[DebateRound]]:
+        """
+        为单个币种执行多轮辩论
+        
+        LangChain 最佳实践：
+        - 使用 ChatPromptTemplate 构建动态 prompt
+        - 每轮将对方观点作为 HumanMessage 追加
+        - 最终轮输出结构化建议
+        
+        Args:
+            symbol: 币种符号
+            market_context: 市场数据上下文
+            analyst_summary: 分析师总结
+            
+        Returns:
+            (bull_suggestion, bear_suggestion, debate_rounds) 元组
+        """
+        max_rounds = self.node_config.get("debate_max_rounds", 2)
+        timeout = self.node_config.get("timeout_per_phase", 120)
+        
+        round_records: List[DebateRound] = []
+        bull_opinion = ""
+        bear_opinion = ""
+        bull_result = None
+        bear_result = None
+        
+        for round_num in range(1, max_rounds + 1):
+            is_final_round = (round_num == max_rounds)
+            
+            # 构建本轮 prompt（包含对方上轮观点）
+            if round_num == 1:
+                # 第一轮：基础分析
+                bull_human = f"目标币种: {symbol}\n\n分析师总结:\n{analyst_summary}\n\n市场数据:\n{market_context}\n\n请给出做多建议。"
+                bear_human = f"目标币种: {symbol}\n\n分析师总结:\n{analyst_summary}\n\n市场数据:\n{market_context}\n\n请给出做空建议。"
+            else:
+                # 后续轮次：加入对方观点进行反驳
+                bull_human = f"目标币种: {symbol}\n\n空头交易员的观点:\n{bear_opinion}\n\n请反驳以上观点，坚持你的做多立场，或修正你的判断。如果这是最终轮，请给出最终建议。"
+                bear_human = f"目标币种: {symbol}\n\n多头交易员的观点:\n{bull_opinion}\n\n请反驳以上观点，坚持你的做空立场，或修正你的判断。如果这是最终轮，请给出最终建议。"
+            
+            # 执行单轮辩论
+            round_bull, round_bear = await self._run_single_debate_round(
+                symbol, bull_human, bear_human, is_final_round, timeout
+            )
+            
+            # 提取观点文本（用于下轮反驳）
+            if is_final_round:
+                # 最终轮是结构化输出
+                bull_result = round_bull
+                bear_result = round_bear
+                bull_opinion = round_bull.reasoning if round_bull else "无观点"
+                bear_opinion = round_bear.reasoning if round_bear else "无观点"
+                bull_action = round_bull.action if round_bull else None
+                bear_action = round_bear.action if round_bear else None
+            else:
+                # 中间轮是文本输出
+                if hasattr(round_bull, 'content'):
+                    bull_opinion = round_bull.content
+                else:
+                    bull_opinion = str(round_bull) if round_bull else "无观点"
+                
+                if hasattr(round_bear, 'content'):
+                    bear_opinion = round_bear.content
+                else:
+                    bear_opinion = str(round_bear) if round_bear else "无观点"
+                
+                bull_action = None
+                bear_action = None
+            
+            # 记录本轮辩论
+            round_records.append(DebateRound(
+                round_number=round_num,
+                symbol=symbol,
+                bull_opinion=bull_opinion[:500],  # 截断存储
+                bear_opinion=bear_opinion[:500],
+                bull_action=bull_action,
+                bear_action=bear_action,
+            ))
+            
+            logger.info(f"   Round {round_num}/{max_rounds} for {symbol}: Bull={bull_action or 'opinion'}, Bear={bear_action or 'opinion'}")
+        
+        return (bull_result, bear_result, round_records)
+    
+    async def _run_phase2_parallel(
+        self, 
+        market_context: str, 
+        analyst_summary: str,
+        symbols: List[str],
+    ) -> Tuple[List[TraderSuggestion], List[TraderSuggestion], List[DebateRound]]:
+        """
+        Phase 2: 多轮辩论
+        
+        为每个币种执行多轮辩论，Bull 和 Bear 互相质疑和反驳。
+        
+        Args:
+            market_context: 市场数据上下文
+            analyst_summary: 分析师总结
+            symbols: 候选币种列表
+            
+        Returns:
+            (bull_suggestions, bear_suggestions, all_debate_rounds) 元组
+        """
+        max_rounds = self.node_config.get("debate_max_rounds", 2)
+        logger.info(f"📊 Phase 2: {max_rounds} 轮辩论，{len(symbols)} 个币种...")
+        
+        bull_suggestions: List[TraderSuggestion] = []
+        bear_suggestions: List[TraderSuggestion] = []
+        all_debate_rounds: List[DebateRound] = []
+        
+        # 为每个币种执行多轮辩论
+        for symbol in symbols:
+            bull_result, bear_result, rounds = await self._run_multi_round_debate_for_symbol(
+                symbol, market_context, analyst_summary
+            )
+            if bull_result:
+                bull_suggestions.append(bull_result)
+            if bear_result:
+                bear_suggestions.append(bear_result)
+            all_debate_rounds.extend(rounds)
+        
+        logger.info(f"✅ Phase 2 完成: Bull={len(bull_suggestions)} 个, Bear={len(bear_suggestions)} 个, 辩论轮次={len(all_debate_rounds)}")
+        return (bull_suggestions, bear_suggestions, all_debate_rounds)
     
     async def _run_risk_manager(
         self,
@@ -746,18 +1112,79 @@ class DebateDecisionNode(NodePlugin):
             strategy_rationale="辩论流程异常，全部观望"
         )
     
-    def _normalize_allocations(self, result: BatchDecisionResult) -> BatchDecisionResult:
-        """规范化仓位分配"""
+    def _get_forced_close_decisions(self, state: State) -> List[PortfolioDecision]:
+        """
+        检查需要强制平仓的持仓
+        
+        当持仓亏损超过 3% 时，生成强制平仓决策。
+        这些决策将直接注入到最终结果中，不受 AI 决策影响。
+        
+        Returns:
+            强制平仓决策列表
+        """
+        forced_decisions: List[PortfolioDecision] = []
+        
+        for pos in state.positions:
+            # 获取当前价格
+            market_data = state.market_data.get(pos.symbol, {})
+            indicators = market_data.get('indicators', {})
+            current_price = indicators.get('current_price', pos.price)
+            
+            # 计算未实现盈亏百分比
+            if pos.side == 'buy':
+                # 多头：(现价 - 入场价) / 入场价
+                pnl_pct = ((current_price - pos.price) / pos.price * 100) if pos.price > 0 else 0
+            else:
+                # 空头：(入场价 - 现价) / 入场价
+                pnl_pct = ((pos.price - current_price) / pos.price * 100) if pos.price > 0 else 0
+            
+            # 亏损超过 3% 强制平仓
+            if pnl_pct <= -3:
+                close_action = "close_long" if pos.side == 'buy' else "close_short"
+                forced_decisions.append(PortfolioDecision(
+                    symbol=pos.symbol,
+                    action=close_action,
+                    allocation_pct=0,
+                    confidence=100,
+                    reasoning=f"强制止损: 未实现亏损 {pnl_pct:.2f}% 超过 3% 阈值",
+                    priority=0,  # 最高优先级
+                ))
+                logger.warning(f"🛑 强制平仓: {pos.symbol} 亏损 {pnl_pct:.2f}%")
+        
+        return forced_decisions
+    
+    def _normalize_allocations(self, result: BatchDecisionResult, valid_symbols: List[str]) -> BatchDecisionResult:
+        """
+        规范化仓位分配
+        
+        包括：
+        1. Symbol 存在性校验（移除不在候选列表中的决策）
+        2. 单币种仓位限制
+        3. 总仓位限制
+        
+        Args:
+            result: 待规范化的决策结果
+            valid_symbols: 有效的候选币种列表
+        """
         max_total = self.node_config['max_total_allocation_pct']
         max_single = self.node_config['max_single_allocation_pct']
         
-        # 检查单币种限制
+        # ========== Step 1: Symbol 存在性校验 ==========
+        valid_decisions = []
+        for d in result.decisions:
+            if d.symbol in valid_symbols:
+                valid_decisions.append(d)
+            else:
+                logger.error(f"❌ 无效 Symbol 已移除: {d.symbol} (不在候选列表 {valid_symbols} 中)")
+        result.decisions = valid_decisions
+        
+        # ========== Step 2: 单币种仓位限制 ==========
         for d in result.decisions:
             if d.allocation_pct > max_single:
                 logger.warning(f"⚠️ {d.symbol}: {d.allocation_pct}% > max {max_single}%")
                 d.allocation_pct = max_single
         
-        # 检查总仓位限制
+        # ========== Step 3: 总仓位限制 ==========
         total = sum(d.allocation_pct for d in result.decisions if d.action not in ("wait", "hold"))
         
         if total > max_total:
@@ -786,8 +1213,15 @@ class DebateDecisionNode(NodePlugin):
         """
         logger.info("=" * 60)
         logger.info("🎭 DebateDecision 开始")
-        logger.info(f"   候选币种: {state.symbols}")  # 修复：使用 symbols 而非 runs
+        logger.info(f"   候选币种: {state.symbols}")
         logger.info("=" * 60)
+        
+        # 检查是否启用辩论机制
+        if not self.node_config.get("debate_enabled", True):
+            logger.info("⏭️ 辩论机制已禁用 (debate.enabled=false)，跳过")
+            # 返回空的批量决策
+            state.batch_decision = self._create_default_decisions(state)
+            return state
         
         # 加载绩效
         if self.performance_service:
@@ -808,16 +1242,16 @@ class DebateDecisionNode(NodePlugin):
         # 构建市场上下文
         market_context = self._build_market_context(state)
         
-        # Phase 1: Analyst
-        analyst_outputs = await self._run_analyst(market_context)
+        # Phase 1: Analyst（传入 symbols 用于 fallback）
+        analyst_outputs = await self._run_analyst(market_context, state.symbols)
         analyst_summary = "\n".join([
             f"{a.symbol}: {a.trend}, {a.summary}" 
             for a in analyst_outputs
         ]) if analyst_outputs else "分析师未提供分析"
         
-        # Phase 2: Bull + Bear 并行
-        bull_suggestions, bear_suggestions = await self._run_phase2_parallel(
-            market_context, analyst_summary
+        # Phase 2: 多轮辩论（Bull + Bear 互相质疑）
+        bull_suggestions, bear_suggestions, debate_rounds = await self._run_phase2_parallel(
+            market_context, analyst_summary, state.symbols
         )
         
         # Phase 3: RiskManager
@@ -825,18 +1259,39 @@ class DebateDecisionNode(NodePlugin):
             state, market_context, bull_suggestions, bear_suggestions
         )
         
-        # 规范化仓位
-        batch_result = self._normalize_allocations(batch_result)
+        # ========== 注入强制平仓决策 ==========
+        # 检查持仓亏损超过 3% 的，强制生成平仓决策
+        forced_decisions = self._get_forced_close_decisions(state)
+        if forced_decisions:
+            logger.info(f"🛑 注入 {len(forced_decisions)} 个强制平仓决策")
+            # 移除与强制平仓冲突的 AI 决策
+            forced_symbols = {d.symbol for d in forced_decisions}
+            batch_result.decisions = [
+                d for d in batch_result.decisions 
+                if d.symbol not in forced_symbols
+            ]
+            # 将强制平仓决策插入到最前面（最高优先级）
+            batch_result.decisions = forced_decisions + batch_result.decisions
+        
+        # 规范化仓位（包含 symbol 校验）
+        batch_result = self._normalize_allocations(batch_result, state.symbols)
         
         # -------------------------
         # 保存辩论过程到 state.debate_decision
         # -------------------------
-        debate_summary = f"Analyst: {len(analyst_outputs)} reports, Bull: {len(bull_suggestions)} suggestions, Bear: {len(bear_suggestions)} suggestions"
+        max_rounds = self.node_config.get("debate_max_rounds", 2)
+        debate_summary = (
+            f"Analyst: {len(analyst_outputs)} reports, "
+            f"Debate: {max_rounds} rounds, "
+            f"Bull: {len(bull_suggestions)} suggestions, "
+            f"Bear: {len(bear_suggestions)} suggestions"
+        )
         
         state.debate_decision = DebateDecisionResult(
             analyst_outputs=analyst_outputs,
             bull_suggestions=bull_suggestions,
             bear_suggestions=bear_suggestions,
+            debate_rounds=debate_rounds,  # 新增：保存多轮辩论记录
             final_decision=batch_result,
             debate_summary=debate_summary,
             completed_at=datetime.now(),

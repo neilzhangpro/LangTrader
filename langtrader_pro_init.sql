@@ -668,6 +668,8 @@ CREATE TABLE public.workflow_nodes (
     workflow_id integer NOT NULL,
     name character varying(255) NOT NULL,
     plugin_name character varying(255) NOT NULL,
+    display_name character varying(255),
+    description text,
     enabled boolean DEFAULT true,
     execution_order integer DEFAULT 0,
     condition text,
@@ -712,6 +714,7 @@ CREATE TABLE public.workflows (
     description text,
     category character varying(50) DEFAULT 'trading'::character varying,
     tags text[],
+    is_active boolean DEFAULT true,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone DEFAULT now(),
     created_by character varying(255)

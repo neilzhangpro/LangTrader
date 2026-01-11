@@ -12,7 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field
 OrderType = Literal["market", "limit", "stop", "stop_limit", "take_profit", "trailing_stop"]
 OrderSide = Literal["buy", "sell"]
 PositionSide = Literal["long", "short", "both"]
-OrderStatus = Literal["open", "closed", "canceled", "expired", "rejected", "pending"]
+# 注：OrderStatus 已删除，未被任何代码使用
 
 
 # -------------------------
@@ -119,7 +119,14 @@ class PerformanceMetrics(BaseModel):
     def to_prompt_text(self) -> str:
         """转换为 prompt 文本"""
         if self.total_trades == 0:
-            return "No historical trades yet.\n"
+            # 新 bot：鼓励探索，不要过度保守
+            text = "Historical Performance:\n"
+            text += "-------------------\n"
+            text += "  🆕 新策略启动阶段（无历史交易）\n"
+            text += "  建议: 积极探索，寻找高信心度机会\n"
+            text += "  注意: 首次交易建议小仓位（10-15%）试探市场\n"
+            text += "-------------------\n"
+            return text
         
         text = "Historical Performance:\n"
         text += "-------------------\n"
@@ -130,16 +137,22 @@ class PerformanceMetrics(BaseModel):
         text += f"  Total Return: ${self.total_return_usd:.2f}\n"
         text += f"  Max Drawdown: {self.max_drawdown*100:.2f}%\n"
         
-        # 根据夏普比率给出策略建议
+        # 根据夏普比率给出策略建议（更平衡的建议）
         if self.sharpe_ratio < -0.5:
-            text += "\n  WARNING: Sharpe < -0.5 (持续亏损)\n"
-            text += "  建议: 停止交易，只观望，至少6个周期不开仓\n"
+            text += "\n  ⚠️ WARNING: Sharpe < -0.5 (持续亏损)\n"
+            text += "  建议: 降低仓位至 10%，只做信心度 > 75 的交易\n"
         elif self.sharpe_ratio < 0:
-            text += "\n  CAUTION: Sharpe < 0 (轻微亏损)\n"
-            text += "  建议: 只做信心度>80的交易，减少频率\n"
-        elif self.sharpe_ratio > 0.7:
-            text += "\n  EXCELLENT: Sharpe > 0.7 (优异表现)\n"
-            text += "  建议: 可适度扩大仓位\n"
+            text += "\n  📉 CAUTION: Sharpe < 0 (轻微亏损)\n"
+            text += "  建议: 降低仓位至 15%，优选信心度 > 65 的交易\n"
+        elif self.sharpe_ratio < 0.3:
+            text += "\n  📊 NEUTRAL: Sharpe 0~0.3 (策略探索中)\n"
+            text += "  建议: 正常交易，信心度 > 55 即可尝试\n"
+        elif self.sharpe_ratio < 0.7:
+            text += "\n  📈 GOOD: Sharpe 0.3~0.7 (策略有效)\n"
+            text += "  建议: 可以正常配置仓位，保持当前策略\n"
+        else:
+            text += "\n  🚀 EXCELLENT: Sharpe > 0.7 (优异表现)\n"
+            text += "  建议: 策略有效，可适度扩大仓位\n"
         
         text += "-------------------\n"
         return text
@@ -169,7 +182,7 @@ class AIDecision(BaseModel):
     stop_loss_price: Optional[float] = None
     take_profit_price: Optional[float] = None
 
-    confidence: float = 0.0
+    confidence: int = 0  # 统一使用 int (0-100)
     risk_usd: float = 0.0
 
     risk_approved: bool = False
@@ -252,6 +265,18 @@ class AnalystOutput(BaseModel):
     summary: str = Field(description="技术分析总结")
 
 
+class AnalystOutputList(BaseModel):
+    """
+    市场分析师输出列表（用于一次性返回多币种分析）
+    
+    LLM with_structured_output 默认只返回单个对象，
+    使用此包装类型可让 Analyst 一次性输出所有币种的分析结果。
+    """
+    model_config = ConfigDict(extra="forbid")
+    
+    outputs: List[AnalystOutput] = Field(description="所有币种的分析结果")
+
+
 class TraderSuggestion(BaseModel):
     """交易员建议（Bull/Bear）"""
     model_config = ConfigDict(extra="forbid")
@@ -263,6 +288,23 @@ class TraderSuggestion(BaseModel):
     stop_loss_pct: float = Field(ge=0, le=10, default=2.0, description="止损比例 0-10%")
     take_profit_pct: float = Field(ge=0, le=50, default=6.0, description="止盈比例 0-50%")
     reasoning: str = Field(description="决策理由")
+
+
+class DebateRound(BaseModel):
+    """
+    单轮辩论记录
+    
+    记录多轮辩论中每一轮的 Bull 和 Bear 观点，
+    用于追溯辩论过程和分析决策质量。
+    """
+    model_config = ConfigDict(extra="forbid")
+    
+    round_number: int = Field(description="轮次编号（从 1 开始）")
+    symbol: str = Field(description="辩论的币种")
+    bull_opinion: str = Field(description="多头交易员观点")
+    bear_opinion: str = Field(description="空头交易员观点")
+    bull_action: Optional[Literal["long", "short", "wait"]] = Field(default=None, description="多头建议动作")
+    bear_action: Optional[Literal["long", "short", "wait"]] = Field(default=None, description="空头建议动作")
 
 
 class RiskReview(BaseModel):
@@ -308,9 +350,15 @@ class DebateDecisionResult(BaseModel):
     # Phase 1: 分析师输出
     analyst_outputs: List[AnalystOutput] = Field(default_factory=list)
     
-    # Phase 2: 多空交易员建议
+    # Phase 2: 多空交易员建议（最终轮结果）
     bull_suggestions: List[TraderSuggestion] = Field(default_factory=list)
     bear_suggestions: List[TraderSuggestion] = Field(default_factory=list)
+    
+    # Phase 2: 多轮辩论记录（每个币种的辩论历史）
+    debate_rounds: Optional[List[DebateRound]] = Field(
+        default=None,
+        description="多轮辩论的完整记录，按轮次和币种排列"
+    )
     
     # Phase 3: 风控审核（可选，目前直接输出最终决策）
     risk_review: Optional[RiskReview] = None
