@@ -760,7 +760,17 @@ class Trader:
             for pos in active_positions:
                 try:
                     contracts = float(pos.get('contracts', 0))
-                    side = 'buy' if contracts > 0 else 'sell'
+                    
+                    # 优先使用 CCXT 返回的 side 字段（如 Hyperliquid 等交易所）
+                    # 回退到 contracts 符号判断（如某些交易所用负数表示空头）
+                    raw_side = pos.get('side', '').lower()
+                    if raw_side == 'long':
+                        side = 'buy'
+                    elif raw_side == 'short':
+                        side = 'sell'
+                    else:
+                        # 回退：contracts > 0 为多头，< 0 为空头
+                        side = 'buy' if contracts > 0 else 'sell'
                     
                     timestamp = pos.get('timestamp', 0)
                     dt = datetime.fromtimestamp(timestamp / 1000) if timestamp else datetime.now()
