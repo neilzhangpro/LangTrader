@@ -48,12 +48,15 @@ export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
         </thead>
         <tbody>
           {positions.map((position, index) => {
-            // 计算 PnL 百分比（增加 mark_price 有效性检查）
+            // 计算 ROE（Return on Equity）= 价格变动百分比 × 杠杆
+            // 这与交易所显示的盈亏百分比一致
             const effectiveMarkPrice = position.mark_price > 0 ? position.mark_price : position.entry_price
-            const pnlPercent = position.entry_price > 0 && effectiveMarkPrice > 0
+            const priceChangePct = position.entry_price > 0 && effectiveMarkPrice > 0
               ? ((effectiveMarkPrice - position.entry_price) / position.entry_price * 100)
                 * (position.side === 'long' ? 1 : -1)
               : 0
+            // ROE = 价格变动 × 杠杆
+            const pnlPercent = priceChangePct * position.leverage
 
             return (
               <tr 

@@ -275,11 +275,14 @@ class BatchDecision(NodePlugin):
                 indicators = market_data.get('indicators', {})
                 current_price = indicators.get('current_price', pos.price)
                 
-                # 计算未实现盈亏
+                # 计算 ROE（Return on Equity）= 价格变动 × 杠杆
+                # 这与交易所显示的盈亏百分比一致
                 if pos.side == 'buy':
-                    pnl_pct = ((current_price - pos.price) / pos.price * 100) if pos.price > 0 else 0
+                    price_change_pct = ((current_price - pos.price) / pos.price * 100) if pos.price > 0 else 0
                 else:
-                    pnl_pct = ((pos.price - current_price) / pos.price * 100) if pos.price > 0 else 0
+                    price_change_pct = ((pos.price - current_price) / pos.price * 100) if pos.price > 0 else 0
+                # ROE = 价格变动 × 杠杆
+                pnl_pct = price_change_pct * pos.leverage
                 
                 # 盈亏状态标识和操作建议
                 # 新逻辑：趋势持续时不急于平仓，让利润奔跑

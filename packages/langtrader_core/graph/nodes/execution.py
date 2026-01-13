@@ -410,16 +410,50 @@ class Execution(NodePlugin):
         for d in sorted_decisions:
             logger.info(f"   P{d.priority}: {d.symbol} {d.action} alloc={d.allocation_pct:.1f}%")
         
-        # 跟踪已使用的余额
-        used_balance = 0.0
+        # ========== 获取初始可用余额 ==========
         free_balance = 0.0
         if state.account:
             free_balance = state.account.free.get('USDT', 0) or state.account.free.get('USDC', 0)
         
-        # 依次执行
+        # ========== 预检查：计算总保证金需求并按比例调整 ==========
+        # 筛选开仓决策
+        open_decisions = [d for d in sorted_decisions if d.action in ("open_long", "open_short")]
+        
+        if open_decisions and free_balance > 0:
+            # 计算总保证金需求
+            # 保证金 = 名义价值 / 杠杆 = (allocation_pct / 100) * free_balance / leverage
+            total_margin_needed = 0.0
+            for d in open_decisions:
+                leverage = d.leverage if d.leverage > 0 else 1
+                nominal_value = (d.allocation_pct / 100) * free_balance
+                margin_needed = nominal_value / leverage
+                total_margin_needed += margin_needed
+                logger.debug(f"   {d.symbol}: 名义 ${nominal_value:.2f}, 杠杆 {leverage}x, 保证金 ${margin_needed:.2f}")
+            
+            # 最大可用保证金（预留 20% 安全边际，防止资金费率/滑点等）
+            max_available_margin = free_balance * 0.8
+            
+            logger.info(f"📊 保证金预检查: 需求 ${total_margin_needed:.2f}, 可用 ${max_available_margin:.2f}")
+            
+            # 如果总保证金需求超过可用余额，按比例缩减
+            if total_margin_needed > max_available_margin:
+                scale_factor = max_available_margin / total_margin_needed
+                logger.warning(f"⚠️ 保证金需求超限，按 {scale_factor:.2f} 比例缩减仓位")
+                
+                for d in open_decisions:
+                    original_alloc = d.allocation_pct
+                    d.allocation_pct = original_alloc * scale_factor
+                    logger.info(f"   {d.symbol}: {original_alloc:.1f}% → {d.allocation_pct:.1f}%")
+        
+        # 跟踪已使用的保证金
+        used_margin = 0.0
+        success_count = 0
+        
+        # ========== 依次执行决策 ==========
         for portfolio_decision in sorted_decisions:
             symbol = portfolio_decision.symbol
             action = portfolio_decision.action
+            leverage = portfolio_decision.leverage if portfolio_decision.leverage > 0 else 1
             
             # ========== 平仓操作：不需要检查余额，直接执行 ==========
             if action in ("close_long", "close_short"):
@@ -428,36 +462,69 @@ class Execution(NodePlugin):
                 result = await self._execute_close_with_validation(ai_decision, state, symbol)
                 if result.status == "success":
                     logger.info(f"✅ {symbol}: 平仓成功")
+                    # 平仓后刷新余额
+                    if self.trader:
+                        try:
+                            account_info = await self.trader.get_account_info()
+                            free_balance = account_info.free.get('USDT', 0) or account_info.free.get('USDC', 0)
+                            logger.info(f"   💰 刷新余额: ${free_balance:.2f}")
+                        except Exception as e:
+                            logger.warning(f"   ⚠️ 刷新余额失败: {e}")
                 else:
                     logger.warning(f"❌ {symbol}: 平仓失败 - {result.message}")
                 continue
             
             # ========== 开仓操作：需要检查余额 ==========
-            # 计算该决策需要的资金
-            position_size_usd = (portfolio_decision.allocation_pct / 100) * free_balance
+            # 计算名义价值和保证金
+            nominal_value = (portfolio_decision.allocation_pct / 100) * free_balance
+            margin_needed = nominal_value / leverage
             
-            # 检查剩余余额
-            remaining = free_balance - used_balance
-            if position_size_usd > remaining:
-                logger.warning(f"⚠️ {symbol}: 余额不足 (need ${position_size_usd:.2f}, remaining ${remaining:.2f})")
-                # 可以选择跳过或调整仓位
-                if remaining < position_size_usd * 0.5:
-                    logger.warning(f"⏭️ {symbol}: 跳过（剩余余额太少）")
-                    self._record_skip(state, symbol, portfolio_decision, "Insufficient balance")
+            # 检查剩余可用保证金
+            remaining_margin = free_balance - used_margin
+            
+            if margin_needed > remaining_margin:
+                logger.warning(
+                    f"⚠️ {symbol}: 保证金不足 (需要 ${margin_needed:.2f}, 剩余 ${remaining_margin:.2f})"
+                )
+                # 如果剩余保证金太少，跳过
+                if remaining_margin < margin_needed * 0.5 or remaining_margin < 10:
+                    logger.warning(f"⏭️ {symbol}: 跳过（剩余保证金不足）")
+                    self._record_skip(state, symbol, portfolio_decision, "Insufficient margin")
                     continue
                 else:
-                    # 使用剩余余额
-                    position_size_usd = remaining * 0.9  # 留10%安全边际
-                    logger.info(f"   调整仓位至 ${position_size_usd:.2f}")
+                    # 使用剩余保证金（留 10% 安全边际）
+                    margin_needed = remaining_margin * 0.9
+                    nominal_value = margin_needed * leverage
+                    logger.info(f"   调整: 保证金 ${margin_needed:.2f}, 名义价值 ${nominal_value:.2f}")
             
-            # 转换为 AIDecision 并执行
-            ai_decision = self._portfolio_to_ai_decision(portfolio_decision, position_size_usd)
+            # 转换为 AIDecision 并执行（使用名义价值）
+            ai_decision = self._portfolio_to_ai_decision(portfolio_decision, nominal_value)
             
             # 执行开仓
             if action in ("open_long", "open_short"):
                 result = await self._execute_open_with_validation(ai_decision, state, symbol)
+                
                 if result.status == "success":
-                    used_balance += position_size_usd
+                    success_count += 1
+                    used_margin += margin_needed
+                    
+                    # 🔧 关键修复：每笔订单成功后从交易所刷新真实余额
+                    if self.trader:
+                        try:
+                            account_info = await self.trader.get_account_info()
+                            new_free_balance = account_info.free.get('USDT', 0) or account_info.free.get('USDC', 0)
+                            
+                            # 更新 used_margin 为实际消耗
+                            actual_used = free_balance - new_free_balance
+                            if actual_used > 0:
+                                used_margin = actual_used
+                            
+                            free_balance = new_free_balance
+                            logger.info(f"   💰 刷新余额: ${free_balance:.2f} (实际已用 ${used_margin:.2f})")
+                        except Exception as e:
+                            logger.warning(f"   ⚠️ 刷新余额失败: {e}")
+                else:
+                    logger.warning(f"❌ {symbol}: 开仓失败 - {result.message}")
             else:
                 result = ExecutionResult(
                     symbol=symbol,
@@ -465,9 +532,8 @@ class Execution(NodePlugin):
                     status="skipped",
                     message="Unknown action"
                 )
-            
         
-        logger.info(f"💰 已使用余额: ${used_balance:.2f} / ${free_balance:.2f}")
+        logger.info(f"💰 执行完成: {success_count}/{len(open_decisions)} 个开仓, 已用保证金 ${used_margin:.2f}")
         
         return state
     
@@ -743,6 +809,7 @@ class Execution(NodePlugin):
             filled = result.main.filled or 0
             remaining = result.main.remaining or 0
             average_price = result.main.average
+            order_id = result.main.order_id
             
             logger.info(
                 f"📊 {symbol}: Order execution details | "
@@ -750,6 +817,36 @@ class Execution(NodePlugin):
                 f"Filled: {filled} | Remaining: {remaining} | "
                 f"Avg Price: {average_price}"
             )
+            
+            # ========== 使用交易所成交确认（方案C） ==========
+            # 如果订单创建成功但 filled==0，轮询等待成交确认
+            if filled == 0 and order_id:
+                logger.info(f"⏳ {symbol}: Waiting for order fill confirmation...")
+                confirmed_result = await self.trader.wait_for_order_fill(
+                    order_id=order_id,
+                    symbol=symbol,
+                    max_wait_seconds=5.0,
+                    poll_interval=0.5
+                )
+                
+                if confirmed_result:
+                    # 更新成交信息
+                    order_status = confirmed_result.status or order_status
+                    filled = confirmed_result.filled or 0
+                    remaining = confirmed_result.remaining or 0
+                    average_price = confirmed_result.average or average_price
+                    
+                    logger.info(
+                        f"📊 {symbol}: Confirmed order status | "
+                        f"Status: {order_status} | Filled: {filled} | "
+                        f"Avg Price: {average_price}"
+                    )
+                    
+                    # 更新 result.main 的值
+                    result.main.status = order_status
+                    result.main.filled = filled
+                    result.main.remaining = remaining
+                    result.main.average = average_price
             
             # 检查订单是否真正成交（对于市价单，应该是 closed 或 filled）
             if order_status not in ['closed', 'filled'] and filled == 0:
@@ -763,9 +860,9 @@ class Execution(NodePlugin):
                 action=decision.action,
                 status="success" if filled > 0 else "pending",
                 message=f"Position opened (Status: {order_status}, Filled: {filled})",
-                order_id=result.main.order_id,
-                executed_price=result.main.average,
-                executed_amount=result.main.filled,
+                order_id=order_id,
+                executed_price=average_price,
+                executed_amount=filled,
                 fee_paid=result.main.fee,
                 orders=result,
             )
@@ -774,26 +871,23 @@ class Execution(NodePlugin):
             # 只有在有实际成交时才记录
             if filled > 0 and self.trade_history_repo and self.bot_id:
                 try:
-                    # 使用实际成交数量
-                    actual_amount = result.main.filled
-                    
                     self.trade_history_repo.create(
                         bot_id=self.bot_id,
                         symbol=symbol,
                         side=position_side,
                         action=decision.action,
-                        amount=actual_amount,
-                        entry_price=result.main.average,
+                        amount=filled,
+                        entry_price=average_price,
                         leverage=decision.leverage,
                         cycle_id=cycle_id,
-                        order_id=result.main.order_id,
+                        order_id=order_id,
                     )
-                    logger.info(f"📝 Trade recorded: {symbol} {position_side} amount={actual_amount:.6f} @ {result.main.average}")
+                    logger.info(f"📝 Trade recorded: {symbol} {position_side} amount={filled:.6f} @ {average_price}")
                 except Exception as e:
                     logger.error(f"❌ Failed to record trade: {e}")
             elif filled == 0:
                 logger.warning(
-                    f"⚠️ {symbol}: Not recording trade to database - order has no fills yet. "
+                    f"⚠️ {symbol}: Not recording trade to database - order has no fills. "
                     f"Status: {order_status}"
                 )
             
@@ -833,25 +927,57 @@ class Execution(NodePlugin):
         result = await self.trader.close_position(symbol)
         
         if result.success:
+            # ========== 使用交易所成交确认（方案C） ==========
+            order_id = result.order_id
+            filled = result.filled or 0
+            average_price = result.average
+            order_status = result.status or 'unknown'
+            fee = result.fee
+            
+            # 如果 filled==0，轮询等待成交确认
+            if filled == 0 and order_id:
+                logger.info(f"⏳ {symbol}: Waiting for close order fill confirmation...")
+                confirmed_result = await self.trader.wait_for_order_fill(
+                    order_id=order_id,
+                    symbol=symbol,
+                    max_wait_seconds=5.0,
+                    poll_interval=0.5
+                )
+                
+                if confirmed_result:
+                    order_status = confirmed_result.status or order_status
+                    filled = confirmed_result.filled or 0
+                    average_price = confirmed_result.average or average_price
+                    # 手续费可能在确认后更新
+                    if confirmed_result.raw and confirmed_result.raw.get('fee'):
+                        fee = confirmed_result.raw['fee'].get('cost', fee)
+                    
+                    logger.info(
+                        f"📊 {symbol}: Confirmed close order | "
+                        f"Status: {order_status} | Filled: {filled} | "
+                        f"Avg Price: {average_price}"
+                    )
+            
             exec_result = ExecutionResult(
                 symbol=symbol,
                 action=decision.action,
-                status="success",
-                message="Position closed",
-                order_id=result.order_id,
-                executed_price=result.average,
-                executed_amount=result.filled,
-                fee_paid=result.fee,
+                status="success" if filled > 0 else "pending",
+                message=f"Position closed (Status: {order_status}, Filled: {filled})",
+                order_id=order_id,
+                executed_price=average_price,
+                executed_amount=filled,
+                fee_paid=fee,
             )
             
             # 清除追踪止损状态（如果有）
             self.trailing_stop_manager.clear_position(symbol)
             
             # 更新交易记录并计算 PnL
-            if open_trade and result.average:
+            # 只有确认成交后才更新
+            if open_trade and average_price and filled > 0:
                 try:
                     entry_price = float(open_trade.entry_price) if open_trade.entry_price else 0
-                    exit_price = result.average
+                    exit_price = average_price
                     amount = float(open_trade.amount) if open_trade.amount else 0
                     
                     # 🔧 修复：正确计算盈亏
@@ -868,8 +994,8 @@ class Execution(NodePlugin):
                         pnl_usd = value_entry - cost_exit
                     
                     # 扣除手续费
-                    if result.fee:
-                        pnl_usd -= result.fee
+                    if fee:
+                        pnl_usd -= fee
                     
                     # 计算百分比（相对于成本）
                     cost_basis = entry_price * amount if entry_price and amount else 0
@@ -881,11 +1007,15 @@ class Execution(NodePlugin):
                         exit_price=exit_price,
                         pnl_usd=pnl_usd,
                         pnl_percent=pnl_percent,
-                        fee_paid=result.fee,
+                        fee_paid=fee,
                     )
                     logger.info(f"📝 Trade closed: {symbol} PnL: ${pnl_usd:.2f} ({pnl_percent:+.2f}%)")
                 except Exception as e:
                     logger.error(f"❌ Failed to update trade: {e}")
+            elif not open_trade:
+                logger.warning(f"⚠️ {symbol}: No open trade record found, cannot calculate PnL")
+            elif filled == 0:
+                logger.warning(f"⚠️ {symbol}: Close order has no fills, not updating trade record")
             
             return exec_result
         else:

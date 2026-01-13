@@ -603,6 +603,162 @@ class Trader:
         except Exception as e:
             logger.error(f"❌ Fetch open orders failed: {e}")
             return []
+
+    async def fetch_my_trades(
+        self, 
+        symbol: str, 
+        since: Optional[int] = None, 
+        limit: int = 10
+    ) -> List[Dict[str, Any]]:
+        """
+        获取我的成交记录
+        
+        Args:
+            symbol: 交易对
+            since: 起始时间戳（毫秒）
+            limit: 返回数量限制
+            
+        Returns:
+            成交记录列表，每条记录包含：
+            - id: 成交ID
+            - order: 订单ID
+            - symbol: 交易对
+            - side: buy/sell
+            - price: 成交价格
+            - amount: 成交数量
+            - cost: 成交金额
+            - fee: 手续费 {cost, currency}
+            - timestamp: 时间戳
+        """
+        try:
+            trades = await self.exchange.fetch_my_trades(symbol, since, limit)
+            logger.debug(f"📋 Fetched {len(trades)} trades for {symbol}")
+            return trades
+        except Exception as e:
+            logger.error(f"❌ Fetch my trades failed: {e}")
+            return []
+
+    async def wait_for_order_fill(
+        self, 
+        order_id: str, 
+        symbol: str, 
+        max_wait_seconds: float = 5.0,
+        poll_interval: float = 0.5
+    ) -> Optional[OrderResult]:
+        """
+        等待订单成交（轮询订单状态）
+        
+        对于市价单，通常会很快成交，但某些交易所返回的初始状态可能是 'open'。
+        此方法会轮询订单状态直到成交或超时。
+        
+        策略：
+        1. 首先使用 fetch_order 检查订单状态
+        2. 如果 fetch_order 返回 filled=0，使用 fetch_my_trades 作为备选
+        
+        Args:
+            order_id: 订单ID
+            symbol: 交易对
+            max_wait_seconds: 最大等待时间（秒）
+            poll_interval: 轮询间隔（秒）
+            
+        Returns:
+            最终的订单结果，如果超时返回最后一次查询结果
+        """
+        import asyncio
+        import time
+        
+        start_time = time.time()
+        elapsed = 0.0
+        last_result = None
+        
+        while elapsed < max_wait_seconds:
+            try:
+                result = await self.fetch_order(order_id, symbol)
+                
+                if result is None:
+                    logger.warning(f"⚠️ Order {order_id} not found via fetch_order")
+                    # 尝试使用 fetch_my_trades 作为备选
+                    break
+                
+                last_result = result
+                
+                # 检查订单状态
+                status = result.status
+                filled = result.filled or 0
+                
+                logger.debug(
+                    f"📊 Order {order_id}: status={status}, filled={filled}, "
+                    f"elapsed={elapsed:.1f}s"
+                )
+                
+                # 如果订单已成交或已取消，返回结果
+                if status in ['closed', 'filled', 'canceled', 'cancelled', 'expired', 'rejected']:
+                    if filled > 0:
+                        logger.info(f"✅ Order {order_id} filled: {filled} @ {result.average}")
+                    else:
+                        logger.warning(f"⚠️ Order {order_id} ended with status={status}, no fills")
+                    return result
+                
+                # 如果有部分成交，也可以返回
+                if filled > 0:
+                    logger.info(f"✅ Order {order_id} partially filled: {filled}")
+                    return result
+                    
+            except Exception as e:
+                logger.warning(f"⚠️ Error polling order {order_id}: {e}")
+            
+            await asyncio.sleep(poll_interval)
+            elapsed = time.time() - start_time
+        
+        # ========== 备选方案：使用 fetch_my_trades 获取成交记录 ==========
+        # 参考 CCXT 文档: https://docs.ccxt.com/README?id=my-trades
+        # 某些交易所（如 Hyperliquid）可能需要通过 fetch_my_trades 获取成交信息
+        if last_result and (last_result.filled or 0) == 0:
+            logger.info(f"🔄 Trying fetch_my_trades as fallback for order {order_id}...")
+            try:
+                # 获取最近的成交记录
+                # since 参数使用订单创建前 1 分钟，确保能获取到该订单的成交
+                since = int((time.time() - 60) * 1000)  # 1 分钟前的时间戳（毫秒）
+                trades = await self.fetch_my_trades(symbol, since=since, limit=20)
+                
+                # 查找与该订单匹配的成交记录
+                order_trades = [t for t in trades if t.get('order') == order_id]
+                
+                if order_trades:
+                    # 计算总成交量和加权平均价格
+                    total_filled = sum(float(t.get('amount', 0)) for t in order_trades)
+                    total_cost = sum(float(t.get('cost', 0)) for t in order_trades)
+                    avg_price = total_cost / total_filled if total_filled > 0 else 0
+                    
+                    # 计算总手续费
+                    total_fee = sum(
+                        float(t.get('fee', {}).get('cost', 0)) 
+                        for t in order_trades 
+                        if t.get('fee')
+                    )
+                    
+                    logger.info(
+                        f"✅ Found {len(order_trades)} trades for order {order_id} via fetch_my_trades: "
+                        f"filled={total_filled}, avg_price={avg_price:.6f}, fee={total_fee:.6f}"
+                    )
+                    
+                    # 更新 last_result 的值
+                    if last_result:
+                        last_result.filled = total_filled
+                        last_result.average = avg_price
+                        last_result.fee = total_fee
+                        last_result.status = 'closed'
+                else:
+                    logger.warning(f"⚠️ No trades found for order {order_id} in fetch_my_trades")
+                    
+            except Exception as e:
+                logger.warning(f"⚠️ fetch_my_trades fallback failed: {e}")
+        
+        logger.warning(
+            f"⏱️ Timeout waiting for order {order_id} after {max_wait_seconds}s. "
+            f"Last status: {last_result.status if last_result else 'unknown'}"
+        )
+        return last_result
     
     # ==================== 一键开仓（带止损止盈） ====================
     

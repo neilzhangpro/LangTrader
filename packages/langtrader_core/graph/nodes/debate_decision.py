@@ -607,13 +607,16 @@ class DebateDecisionNode(NodePlugin):
                 indicators = market_data.get('indicators', {})
                 current_price = indicators.get('current_price', pos.price)
                 
-                # 计算未实现盈亏
+                # 计算 ROE（Return on Equity）= 价格变动 × 杠杆
+                # 这与交易所显示的盈亏百分比一致
                 if pos.side == 'buy':
                     # 多头：(现价 - 入场价) / 入场价
-                    pnl_pct = ((current_price - pos.price) / pos.price * 100) if pos.price > 0 else 0
+                    price_change_pct = ((current_price - pos.price) / pos.price * 100) if pos.price > 0 else 0
                 else:
                     # 空头：(入场价 - 现价) / 入场价
-                    pnl_pct = ((pos.price - current_price) / pos.price * 100) if pos.price > 0 else 0
+                    price_change_pct = ((pos.price - current_price) / pos.price * 100) if pos.price > 0 else 0
+                # ROE = 价格变动 × 杠杆
+                pnl_pct = price_change_pct * pos.leverage
                 
                 # 盈亏状态标识和操作建议
                 # 新逻辑：趋势持续时不急于平仓，让利润奔跑
@@ -1130,15 +1133,18 @@ class DebateDecisionNode(NodePlugin):
             indicators = market_data.get('indicators', {})
             current_price = indicators.get('current_price', pos.price)
             
-            # 计算未实现盈亏百分比
+            # 计算 ROE（Return on Equity）= 价格变动 × 杠杆
+            # 这与交易所显示的盈亏百分比一致
             if pos.side == 'buy':
                 # 多头：(现价 - 入场价) / 入场价
-                pnl_pct = ((current_price - pos.price) / pos.price * 100) if pos.price > 0 else 0
+                price_change_pct = ((current_price - pos.price) / pos.price * 100) if pos.price > 0 else 0
             else:
                 # 空头：(入场价 - 现价) / 入场价
-                pnl_pct = ((pos.price - current_price) / pos.price * 100) if pos.price > 0 else 0
+                price_change_pct = ((pos.price - current_price) / pos.price * 100) if pos.price > 0 else 0
+            # ROE = 价格变动 × 杠杆
+            pnl_pct = price_change_pct * pos.leverage
             
-            # 亏损超过 3% 强制平仓
+            # 亏损超过 3% 强制平仓（基于 ROE）
             if pnl_pct <= -3:
                 close_action = "close_long" if pos.side == 'buy' else "close_short"
                 forced_decisions.append(PortfolioDecision(
@@ -1274,7 +1280,16 @@ class DebateDecisionNode(NodePlugin):
             batch_result.decisions = forced_decisions + batch_result.decisions
         
         # 规范化仓位（包含 symbol 校验）
-        batch_result = self._normalize_allocations(batch_result, state.symbols)
+        # 构建有效 symbol 列表：候选币种 + 持仓币种
+        # 修复 BUG：持仓币种可能被量化过滤掉，但平仓决策仍需保留
+        valid_symbols = list(state.symbols)
+        if state.positions:
+            for pos in state.positions:
+                if pos.symbol not in valid_symbols:
+                    valid_symbols.append(pos.symbol)
+                    logger.info(f"📌 添加持仓币种到有效列表: {pos.symbol}")
+        
+        batch_result = self._normalize_allocations(batch_result, valid_symbols)
         
         # -------------------------
         # 保存辩论过程到 state.debate_decision
