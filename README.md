@@ -892,6 +892,6 @@ If you find this project helpful, please give us a Star!
 
 ---
 
-**MIT License** | Copyright © 2024-2026
+**MIT License** | Copyright © 2026
 
 </div>
