@@ -1,14 +1,13 @@
 # ============================================================================
 # LangTrader Docker Compose Configuration
 #
-# 安全说明：
-# - 所有敏感信息从环境变量读取，不硬编码
+# 极简配置：
+# - 只需配置数据库连接！
 # - 使用前请创建 .env 文件并配置以下变量：
 #   - POSTGRES_USER
 #   - POSTGRES_PASSWORD
-#   - POSTGRES_DB
-#   - API_KEYS (JSON 格式，如 '["your-secure-key"]')
-#   - SECRET_KEY
+#   - POSTGRES_DB (可选，默认 langtrader_pro)
+# - 其他所有配置（交易所、LLM、LangSmith 等）通过前端界面配置
 # ============================================================================
 
 services:
@@ -49,16 +48,12 @@ services:
       # Database - 从环境变量构建连接字符串
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-langtrader_pro}
       
-      # Security - 必须配置
-      API_KEYS: ${API_KEYS:?API_KEYS is required}
-      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+      # Security - 使用默认值，生产环境可通过 .env 覆盖
+      API_KEYS: ${API_KEYS:-["dev-key-123"]}
       
       # Application
       DEBUG: ${DEBUG:-false}
       ENVIRONMENT: ${ENVIRONMENT:-production}
-      
-      # Optional: LangSmith
-      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
     volumes:
       # Mount logs directory
       - ./logs:/app/logs

@@ -319,16 +319,32 @@ LangTrader Agents 是一个**模块化、可扩展**的 AI 量化交易系统。
 
 ### 🚀 快速开始
 
+#### 前置准备（可选）
+
+**获取 LangSmith API Key（推荐）**
+
+[LangSmith](https://smith.langchain.com/) 是 LangChain 官方的追踪平台，可以可视化 AI 决策过程和 LangGraph 数据流。
+
+- 访问 https://smith.langchain.com/
+- 注册/登录账号
+- 进入 **Settings → API Keys**
+- 点击 **Create API Key** 生成密钥
+- 保存好 API Key，稍后在前端 **Bot 配置页面** 填入
+
 #### 方式一：Docker 部署（推荐）
 
 ```bash
 # 1. 克隆项目
 git clone https://github.com/neilzhangpro/LangTrader.git
-cd langtrader-agents
+cd LangTrader_Agents
 
-# 2. 配置环境变量
-cp .env.example .env
-# 编辑 .env 填入数据库密码和 API 密钥
+# 2. 创建环境变量文件（仅需数据库配置）
+cat > .env << 'EOF'
+# 数据库配置（必填）
+POSTGRES_USER=langtrader
+POSTGRES_PASSWORD=your_secure_password
+POSTGRES_DB=langtrader_pro
+EOF
 
 # 3. 一键启动
 docker compose up -d --build
@@ -343,27 +359,31 @@ docker compose up -d --build
 ```bash
 # 1. 克隆项目
 git clone https://github.com/neilzhangpro/LangTrader.git
-cd langtrader-agents
+cd LangTrader_Agents
 
-# 2. 安装 Python 依赖
+# 2. 安装 Python 依赖（需要 uv）
 uv sync
 
 # 3. 安装前端依赖
 cd frontend && npm install && cd ..
 
-# 4. 配置环境变量
-cp .env.example .env
-# 编辑 .env 填入数据库和 API 密钥
+# 4. 创建环境变量文件（仅需数据库连接）
+cat > .env << 'EOF'
+DATABASE_URL=postgresql://username:password@localhost:5432/langtrader_pro
+EOF
 
 # 5. 初始化数据库
-psql -d langtrader -f langtrader_pro_init.sql
+createdb langtrader_pro  # 如果数据库不存在
+psql -d langtrader_pro -f langtrader_pro_init.sql
 
-# 6. 启动后端
-uv run uvicorn langtrader_api.main:app --reload
+# 6. 启动后端（在项目根目录）
+PYTHONPATH=packages uv run uvicorn langtrader_api.main:app --reload
 
-# 7. 启动前端
+# 7. 启动前端（新终端）
 cd frontend && npm run dev
 ```
+
+> 💡 **极简配置**：`.env` 只需配置数据库连接！交易所 API Key、LLM API Key、LangSmith Key 等所有配置都通过前端界面配置并存储在数据库中。
 
 ### 📂 项目结构
 
@@ -389,6 +409,93 @@ langtrader-agents/
 ├── docker-compose.yml       # Docker 编排
 └── pyproject.toml           # Python 项目配置
 ```
+
+### ⚙️ 系统配置参数
+
+#### Bot 配置参数
+
+在创建 Bot 时，可以配置以下参数：
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `trading_timeframes` | `["3m", "4h"]` | 交易时间框架列表，用于获取不同周期的 K 线数据 |
+| `ohlcv_limits` | `{"3m": 100, "4h": 100}` | 各时间框架获取的 K 线数量 |
+| `quant_signal_threshold` | `50` | 量化信号最低得分阈值（0-100），低于此值的信号将被过滤 |
+| `quant_signal_weights` | 见下表 | 量化信号各维度权重配置 |
+| `risk_limits` | 见下表 | 风险管理阈值配置 |
+
+**量化信号权重 (quant_signal_weights)**：
+
+| 维度 | 默认权重 | 说明 |
+|------|----------|------|
+| `trend` | 0.4 | 趋势指标权重（EMA、MACD 趋势等） |
+| `momentum` | 0.3 | 动量指标权重（RSI、Stochastic 等） |
+| `volume` | 0.2 | 量能指标权重（成交量变化等） |
+| `sentiment` | 0.1 | 情绪指标权重（资金费率等） |
+
+**风险限制 (risk_limits)**：
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `max_total_allocation_pct` | 80 | 最大总仓位百分比 |
+| `max_single_allocation_pct` | 30 | 单币种最大仓位百分比 |
+| `min_position_size_usd` | 10 | 最小开仓金额（USD） |
+| `max_position_size_usd` | 5000 | 最大开仓金额（USD） |
+| `min_risk_reward_ratio` | 2.0 | 最小风险回报比 |
+| `max_leverage` | 5 | 最大杠杆倍数 |
+| `default_leverage` | 3 | 默认杠杆倍数 |
+| `max_funding_rate_pct` | 0.05 | 资金费率上限（%），超过则不开仓 |
+| `max_consecutive_losses` | 5 | 连续亏损熔断阈值 |
+
+### 🎮 工作流玩法
+
+本系统支持两种 AI 决策模式，通过 Workflow 中选择不同的决策节点实现：
+
+#### 模式 1：单 Agent 决策 (batch_decision)
+
+使用单个 AI 进行快速决策，适合对延迟敏感的场景。
+
+**自定义方法**：修改 `packages/langtrader_core/prompts/batch_decision.txt` 即可调整 AI 决策风格
+
+```
+prompts/
+├── batch_decision.txt   # 单 Agent 决策提示词（主要修改这个）
+└── default.txt          # 默认提示词模板
+```
+
+**提示词调优建议**：
+- 调整仓位分配策略：修改 "仓位分配指南" 部分
+- 调整止损止盈策略：修改 "持仓管理策略" 部分
+- 调整风险偏好：修改信心度与仓位的对应关系
+
+#### 模式 2：多 Agents 辩论 (debate_decision)
+
+使用 4 个不同角色的 AI 进行辩论决策，提高决策质量：
+
+| 角色 | 职责 | 提示词文件 |
+|------|------|-----------|
+| Analyst（分析师） | 技术分析，趋势判断 | `debate_analyst.txt` |
+| Bull（多头交易员） | 寻找做多机会 | `debate_bull.txt` |
+| Bear（空头交易员） | 寻找做空机会，识别风险 | `debate_bear.txt` |
+| RiskManager（风控经理） | 仓位审核，最终决策 | `debate_risk_manager.txt` |
+
+**自定义方法**：
+1. **修改角色提示词**：编辑 `packages/langtrader_core/prompts/debate_*.txt` 文件
+2. **修改辩论参数**：编辑 `packages/langtrader_core/graph/nodes/debate_decision.py`
+   - `debate_max_rounds`：辩论轮数（默认 2 轮）
+   - `timeout_per_phase`：每阶段超时时间
+   - `DEFAULT_RISK_LIMITS`：风控默认值
+
+```python
+# debate_decision.py 中的关键配置
+DEFAULT_NODE_CONFIG = {
+    "timeout_per_phase": 120,      # 每阶段超时（秒）
+    "debate_max_rounds": 2,        # 辩论轮数
+    "trade_history_limit": 10,     # 注入的交易历史条数
+}
+```
+
+**角色级 LLM 配置**：支持为每个角色配置不同的 LLM 模型，实现"众人拾柴"效果。
 
 ### 🤝 贡献指南
 
@@ -559,16 +666,32 @@ During the development of this system, we encountered various challenges. Here a
 
 ### 🚀 Quick Start
 
+#### Prerequisites (Optional)
+
+**Get LangSmith API Key (Recommended)**
+
+[LangSmith](https://smith.langchain.com/) is LangChain's official tracing platform for visualizing AI decision processes and LangGraph data flows.
+
+- Visit https://smith.langchain.com/
+- Sign up / Log in
+- Go to **Settings → API Keys**
+- Click **Create API Key**
+- Save the API Key, configure it later in the frontend **Bot Configuration Page**
+
 #### Option 1: Docker Deployment (Recommended)
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/neilzhangpro/LangTrader.git
-cd langtrader-agents
+cd LangTrader_Agents
 
-# 2. Configure environment
-cp .env.example .env
-# Edit .env with your database password and API keys
+# 2. Create environment file (only database config needed)
+cat > .env << 'EOF'
+# Database (Required)
+POSTGRES_USER=langtrader
+POSTGRES_PASSWORD=your_secure_password
+POSTGRES_DB=langtrader_pro
+EOF
 
 # 3. Start all services
 docker compose up -d --build
@@ -583,27 +706,31 @@ docker compose up -d --build
 ```bash
 # 1. Clone the repository
 git clone https://github.com/neilzhangpro/LangTrader.git
-cd langtrader-agents
+cd LangTrader_Agents
 
-# 2. Install Python dependencies
+# 2. Install Python dependencies (requires uv)
 uv sync
 
 # 3. Install frontend dependencies
 cd frontend && npm install && cd ..
 
-# 4. Configure environment
-cp .env.example .env
-# Edit .env with your database and API keys
+# 4. Create environment file (only database connection needed)
+cat > .env << 'EOF'
+DATABASE_URL=postgresql://username:password@localhost:5432/langtrader_pro
+EOF
 
 # 5. Initialize database
-psql -d langtrader -f langtrader_pro_init.sql
+createdb langtrader_pro  # If database doesn't exist
+psql -d langtrader_pro -f langtrader_pro_init.sql
 
-# 6. Start backend
-uv run uvicorn langtrader_api.main:app --reload
+# 6. Start backend (from project root)
+PYTHONPATH=packages uv run uvicorn langtrader_api.main:app --reload
 
-# 7. Start frontend
+# 7. Start frontend (new terminal)
 cd frontend && npm run dev
 ```
+
+> 💡 **Minimal Config**: `.env` only needs database connection! Exchange API Keys, LLM API Keys, LangSmith Keys, and all other configs are configured via the frontend UI and stored in the database.
 
 ### 📂 Project Structure
 
@@ -629,6 +756,93 @@ langtrader-agents/
 ├── docker-compose.yml       # Docker orchestration
 └── pyproject.toml           # Python project config
 ```
+
+### ⚙️ System Configuration
+
+#### Bot Configuration Parameters
+
+When creating a Bot, you can configure the following parameters:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `trading_timeframes` | `["3m", "4h"]` | Trading timeframe list for fetching K-line data |
+| `ohlcv_limits` | `{"3m": 100, "4h": 100}` | K-line count per timeframe |
+| `quant_signal_threshold` | `50` | Minimum quant signal score (0-100), signals below this are filtered |
+| `quant_signal_weights` | See below | Weight configuration for quant signal dimensions |
+| `risk_limits` | See below | Risk management threshold configuration |
+
+**Quant Signal Weights (quant_signal_weights)**:
+
+| Dimension | Default Weight | Description |
+|-----------|----------------|-------------|
+| `trend` | 0.4 | Trend indicator weight (EMA, MACD trend, etc.) |
+| `momentum` | 0.3 | Momentum indicator weight (RSI, Stochastic, etc.) |
+| `volume` | 0.2 | Volume indicator weight |
+| `sentiment` | 0.1 | Sentiment indicator weight (funding rate, etc.) |
+
+**Risk Limits (risk_limits)**:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `max_total_allocation_pct` | 80 | Maximum total position percentage |
+| `max_single_allocation_pct` | 30 | Maximum single coin position percentage |
+| `min_position_size_usd` | 10 | Minimum position size (USD) |
+| `max_position_size_usd` | 5000 | Maximum position size (USD) |
+| `min_risk_reward_ratio` | 2.0 | Minimum risk-reward ratio |
+| `max_leverage` | 5 | Maximum leverage |
+| `default_leverage` | 3 | Default leverage |
+| `max_funding_rate_pct` | 0.05 | Funding rate limit (%), won't open if exceeded |
+| `max_consecutive_losses` | 5 | Consecutive loss circuit breaker threshold |
+
+### 🎮 Workflow Modes
+
+The system supports two AI decision modes, selected by choosing different decision nodes in the Workflow:
+
+#### Mode 1: Single Agent Decision (batch_decision)
+
+Uses a single AI for fast decision-making, suitable for latency-sensitive scenarios.
+
+**Customization**: Edit `packages/langtrader_core/prompts/batch_decision.txt` to adjust AI decision style
+
+```
+prompts/
+├── batch_decision.txt   # Single Agent prompt (main file to modify)
+└── default.txt          # Default prompt template
+```
+
+**Prompt Tuning Tips**:
+- Adjust position allocation: Modify the "Position Allocation Guide" section
+- Adjust stop-loss/take-profit: Modify the "Position Management Strategy" section
+- Adjust risk preference: Modify confidence-to-position mapping
+
+#### Mode 2: Multi-Agent Debate (debate_decision)
+
+Uses 4 different AI roles for debate-based decision-making, improving decision quality:
+
+| Role | Responsibility | Prompt File |
+|------|---------------|-------------|
+| Analyst | Technical analysis, trend judgment | `debate_analyst.txt` |
+| Bull | Find long opportunities | `debate_bull.txt` |
+| Bear | Find short opportunities, identify risks | `debate_bear.txt` |
+| RiskManager | Position review, final decision | `debate_risk_manager.txt` |
+
+**Customization**:
+1. **Modify role prompts**: Edit `packages/langtrader_core/prompts/debate_*.txt` files
+2. **Modify debate parameters**: Edit `packages/langtrader_core/graph/nodes/debate_decision.py`
+   - `debate_max_rounds`: Number of debate rounds (default 2)
+   - `timeout_per_phase`: Timeout per phase
+   - `DEFAULT_RISK_LIMITS`: Default risk limits
+
+```python
+# Key configuration in debate_decision.py
+DEFAULT_NODE_CONFIG = {
+    "timeout_per_phase": 120,      # Phase timeout (seconds)
+    "debate_max_rounds": 2,        # Debate rounds
+    "trade_history_limit": 10,     # Trade history entries to inject
+}
+```
+
+**Role-Level LLM Configuration**: Supports configuring different LLM models for each role, enabling a "collective wisdom" approach.
 
 ### 🤝 Contributing
 

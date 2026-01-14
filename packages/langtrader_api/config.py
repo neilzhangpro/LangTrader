@@ -20,7 +20,6 @@ class Settings(BaseSettings):
     
     # Security
     API_KEYS: List[str] = ["dev-key-123"]
-    SECRET_KEY: str = "change-me-in-production"
     
     # CORS
     CORS_ORIGINS: List[str] = [
