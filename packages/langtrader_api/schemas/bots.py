@@ -61,7 +61,7 @@ class BotDetail(BaseModel):
     
     # Quantitative signal config
     quant_signal_weights: Optional[Dict[str, float]] = None
-    quant_signal_threshold: int = 50
+    quant_signal_threshold: int = 45
     
     # Risk management
     risk_limits: Optional[Dict[str, Any]] = None
@@ -141,7 +141,7 @@ class BotCreateRequest(BaseModel):
     
     # Quantitative config
     quant_signal_weights: Optional[Dict[str, float]] = None
-    quant_signal_threshold: int = Field(default=50, ge=0, le=100)
+    quant_signal_threshold: int = Field(default=45, ge=0, le=100)
     
     # Risk limits
     risk_limits: Optional[Dict[str, Any]] = None

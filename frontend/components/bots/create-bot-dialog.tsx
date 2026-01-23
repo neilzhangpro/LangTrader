@@ -149,7 +149,7 @@ export function CreateBotDialog({ children }: CreateBotDialogProps) {
     max_leverage: 3,
     max_concurrent_symbols: 5,
     cycle_interval_seconds: 180,
-    quant_signal_threshold: 60,  // 百分制 0-100
+    quant_signal_threshold: 45,  // 百分制 0-100
     // Dynamic config (使用默认值)
     quant_signal_weights: DEFAULT_QUANT_SIGNAL_WEIGHTS,
     trading_timeframes: DEFAULT_TRADING_TIMEFRAMES,
@@ -215,7 +215,7 @@ export function CreateBotDialog({ children }: CreateBotDialogProps) {
       max_leverage: 3,
       max_concurrent_symbols: 5,
       cycle_interval_seconds: 180,
-      quant_signal_threshold: 60,  // 百分制 0-100
+      quant_signal_threshold: 45,  // 百分制 0-100
       // Dynamic config (使用默认值)
       quant_signal_weights: DEFAULT_QUANT_SIGNAL_WEIGHTS,
       trading_timeframes: DEFAULT_TRADING_TIMEFRAMES,

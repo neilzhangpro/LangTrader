@@ -27,6 +27,100 @@ engine = create_engine(
 )
 
 
+def _init_system_configs():
+    """
+    初始化 system_configs 表和默认配置
+    
+    在数据库初始化时自动创建配置表并插入默认值。
+    使用 ON CONFLICT DO NOTHING 确保幂等性。
+    """
+    # 创建 system_configs 表
+    create_table_sql = """
+    CREATE TABLE IF NOT EXISTS system_configs (
+        id SERIAL PRIMARY KEY,
+        config_key VARCHAR(100) UNIQUE NOT NULL,
+        config_value TEXT NOT NULL,
+        value_type VARCHAR(50) DEFAULT 'string',
+        category VARCHAR(50),
+        description TEXT,
+        is_editable BOOLEAN DEFAULT true,
+        updated_at TIMESTAMP DEFAULT NOW(),
+        updated_by VARCHAR(100)
+    );
+    CREATE INDEX IF NOT EXISTS idx_system_configs_category ON system_configs(category);
+    CREATE INDEX IF NOT EXISTS idx_system_configs_key ON system_configs(config_key);
+    """
+    
+    # 默认配置列表：(config_key, config_value, value_type, category, description, is_editable)
+    default_configs = [
+        # ========== 缓存配置 ==========
+        ('cache.ttl.tickers', '10', 'integer', 'cache', '行情数据缓存时间(秒)', True),
+        ('cache.ttl.ohlcv_3m', '300', 'integer', 'cache', '3分钟K线缓存时间(秒)', True),
+        ('cache.ttl.ohlcv_4h', '3600', 'integer', 'cache', '4小时K线缓存时间(秒)', True),
+        ('cache.ttl.ohlcv', '600', 'integer', 'cache', '默认K线缓存时间(秒)', True),
+        ('cache.ttl.orderbook', '60', 'integer', 'cache', '订单簿缓存时间(秒)', True),
+        ('cache.ttl.trades', '60', 'integer', 'cache', '成交记录缓存时间(秒)', True),
+        ('cache.ttl.markets', '3600', 'integer', 'cache', '市场信息缓存时间(秒)', True),
+        ('cache.ttl.open_interests', '600', 'integer', 'cache', '持仓量缓存时间(秒)', True),
+        ('cache.ttl.coin_selection', '600', 'integer', 'cache', '选币缓存时间(秒)', True),
+        ('cache.ttl.backtest_ohlcv', '604800', 'integer', 'cache', '回测数据缓存时间(秒)', False),
+        
+        # ========== 交易配置 ==========
+        ('trading.min_cycle_interval', '60', 'integer', 'trading', '最小交易周期(秒)', True),
+        ('trading.max_concurrent_requests', '10', 'integer', 'trading', 'API最大并发数', True),
+        ('trading.default_timeframes', '["3m", "4h"]', 'json', 'trading', '默认时间框架', True),
+        ('trading.default_ohlcv_limit', '100', 'integer', 'trading', '默认K线数据量', True),
+        
+        # ========== API 限制配置 ==========
+        ('api.rate_limit.binance', '1200', 'integer', 'api', 'Binance API限制(/分钟)', False),
+        ('api.rate_limit.bybit', '120', 'integer', 'api', 'Bybit API限制(/分钟)', False),
+        ('api.rate_limit.hyperliquid', '600', 'integer', 'api', 'Hyperliquid API限制(/分钟)', False),
+        ('api.default_rate_limit', '60', 'integer', 'api', '未知交易所默认限制(/分钟)', False),
+        
+        # ========== 系统配置 ==========
+        ('system.config_cache_ttl', '60', 'integer', 'system', '配置缓存时间(秒)', True),
+        ('system.enable_hot_reload', 'true', 'boolean', 'system', '是否启用配置热重载', True),
+        
+        # ========== 辩论配置 ==========
+        ('debate.enabled', 'true', 'boolean', 'debate', '是否启用辩论模式', True),
+        ('debate.rounds', '3', 'integer', 'debate', '辩论回合数', True),
+        ('debate.timeout_per_phase', '120', 'integer', 'debate', '每阶段超时(秒)', True),
+        
+        # ========== 市场状态识别配置 ==========
+        ('market_regime.adx_trending_threshold', '25', 'integer', 'market_regime', 'ADX 趋势阈值，超过此值视为趋势市', True),
+        ('market_regime.bb_width_ranging_threshold', '0.03', 'float', 'market_regime', 'BB 宽度震荡阈值（小数），低于此值视为窄幅震荡', True),
+        ('market_regime.bb_width_volatile_threshold', '0.08', 'float', 'market_regime', 'BB 宽度高波动阈值（小数），超过此值视为高波动', True),
+        ('market_regime.continue_if_has_positions', 'true', 'boolean', 'market_regime', '有持仓时是否继续进入决策以管理持仓', True),
+        ('market_regime.primary_timeframe', '4h', 'string', 'market_regime', '市场状态判断主要参考的时间框架', True),
+    ]
+    
+    with engine.connect() as conn:
+        try:
+            # 创建表
+            conn.execute(text(create_table_sql))
+            conn.commit()
+            
+            # 插入默认配置
+            insert_sql = """
+            INSERT INTO system_configs (config_key, config_value, value_type, category, description, is_editable)
+            VALUES (:key, :value, :type, :category, :description, :editable)
+            ON CONFLICT (config_key) DO NOTHING
+            """
+            for config in default_configs:
+                conn.execute(text(insert_sql), {
+                    'key': config[0],
+                    'value': config[1],
+                    'type': config[2],
+                    'category': config[3],
+                    'description': config[4],
+                    'editable': config[5],
+                })
+            conn.commit()
+            print(f"✅ System configs initialized ({len(default_configs)} configs)")
+        except Exception as e:
+            print(f"⚠️ System configs initialization warning: {e}")
+
+
 def _migrate_schema():
     """
     自动添加/修复数据库 schema（向后兼容）
@@ -86,11 +180,12 @@ def init_db():
     流程：
     1. 创建所有表（新表会完整创建，已存在的表不变）
     2. 运行迁移脚本（为已存在的表添加缺失的列）
-    3. 初始化 LangGraph checkpointer（仅在表不存在时，使用 advisory lock 防止并发冲突）
+    3. 初始化 system_configs 表和默认配置
+    4. 初始化 LangGraph checkpointer（仅在表不存在时，使用 advisory lock 防止并发冲突）
     
     注意：多个 bot 可以并发调用此函数，使用 PostgreSQL advisory lock 避免 DDL 操作的并发冲突。
     """
-    # 🚀 快速路径：如果核心表已存在，跳过所有 DDL 操作
+    # 🚀 快速路径：如果核心表已存在，跳过 DDL 操作（但仍初始化配置）
     # 这避免了多进程同时调用时的锁竞争
     try:
         with engine.connect() as conn:
@@ -106,6 +201,8 @@ def init_db():
             
             if bots_exists and checkpoints_exists:
                 print(f"✅ Database already initialized, skipping DDL operations")
+                # 仍然初始化 system_configs（使用 ON CONFLICT DO NOTHING 确保幂等性）
+                _init_system_configs()
                 return
     except Exception as e:
         print(f"⚠️ Quick check failed, proceeding with full init: {e}")
@@ -116,7 +213,10 @@ def init_db():
     # 2. 自动迁移：添加缺失的列（兼容老数据库）
     _migrate_schema()
     
-    # 3. LangGraph checkpointer - 使用 advisory lock 确保只有一个进程执行 setup()
+    # 3. 初始化 system_configs 表和默认配置
+    _init_system_configs()
+    
+    # 4. LangGraph checkpointer - 使用 advisory lock 确保只有一个进程执行 setup()
     # Advisory lock key: 使用固定的大整数作为锁标识
     CHECKPOINTER_LOCK_KEY = 20250107  # 固定的锁 ID
     

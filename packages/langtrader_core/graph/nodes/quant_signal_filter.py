@@ -30,8 +30,9 @@ class QuantSignalFilter(NodePlugin):
         description="量化信号预处理和过滤",
         category="analysis",
         tags=["quantitative", "signal", "filter"],
-        insert_after="market_state",
-        suggested_order=3,
+        requires=["market_regime_detector"],  # 依赖市场状态识别
+        insert_after="market_regime_detector",  # 现在在 market_regime_detector 之后
+        suggested_order=4,
         auto_register=True
     )
     
@@ -42,7 +43,7 @@ class QuantSignalFilter(NodePlugin):
         # 从 bot config 读取配置（通过 context），确保有默认值
         # 注意：config.get() 可能返回 None，需要用 or 提供 fallback
         self.weights = (config or {}).get('quant_signal_weights') or self.DEFAULT_WEIGHTS
-        self.threshold = (config or {}).get('quant_signal_threshold') or 50
+        self.threshold = (config or {}).get('quant_signal_threshold') or 45
     
     async def run(self, state: State) -> State:
         """为每个币种计算量化信号"""

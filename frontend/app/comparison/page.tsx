@@ -403,7 +403,7 @@ export default function ComparisonPage() {
                         return (
                           <TableCell key={botId}>
                             <div className="flex items-center gap-2">
-                              {data?.win_rate !== undefined ? formatPercent(data.win_rate * 100, 1) : '-'}
+                              {data?.win_rate !== undefined ? formatPercent(data.win_rate, 1) : '-'}
                               {isBest && <Trophy className="h-4 w-4 text-yellow-500" />}
                             </div>
                           </TableCell>

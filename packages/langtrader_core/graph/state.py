@@ -406,6 +406,11 @@ class State(BaseModel):
     # 告警信息
     alerts: List[str] = Field(default_factory=list)
     
+    # 市场状态识别（由 market_regime_detector 节点填充）
+    market_regime: Optional[str] = None  # trending_up, trending_down, ranging, volatile, uncertain
+    regime_confidence: float = 0.0  # 判断置信度 0-1
+    regime_details: List[Dict[str, Any]] = Field(default_factory=list)  # 每个币种的详细判断
+    
     def reset_for_new_cycle(self):
         """
         重置每轮临时数据（保留 bot_id、prompt_name、initial_balance）
@@ -421,5 +426,9 @@ class State(BaseModel):
         self.batch_decision = None
         self.debate_decision = None
         self.performance = None
+        # 市场状态识别结果
+        self.market_regime = None
+        self.regime_confidence = 0.0
+        self.regime_details = []
         # alerts 保留：用于跨周期传递执行失败信息给 AI
         # account 和 positions 由 run_once 单独刷新

@@ -120,10 +120,17 @@ DEFAULT_DEBATE_PROMPTS = {
 - **推荐信心度 > 50 的交易机会**（不要过于保守，有一定把握就可以推荐）
 - 关注资金费率极端情况（高资金费率可能预示下跌）
 
-## 止损止盈规则（做空）
-- 止盈价格 < 当前价格 < 止损价格
-- 示例：当前价格 $100 → 止盈 $90, 止损 $105
-- **注意**：做空的止损止盈方向与做多相反！
+## ⚠️ 止损止盈规则（做空）- 极其重要！
+**做空的止损止盈方向与做多完全相反！**
+
+正确格式：`止盈价格 < 当前价格 < 止损价格`
+- 示例：当前价格 $100 → 止盈 $90（在下方），止损 $105（在上方）
+- 止盈 (take_profit) = 期望价格下跌到的目标位
+- 止损 (stop_loss) = 如果价格上涨到此处则止损
+
+**验证规则**：做空时必须满足 `stop_loss > take_profit`
+- ✅ 正确：SL=105, TP=90 (105 > 90)
+- ❌ 错误：SL=95, TP=110 (这是做多的设置！会被系统拒绝)
 
 ## 你的任务
 基于候选币种列表和分析师的技术分析：
@@ -275,7 +282,7 @@ class DebateDecisionNode(NodePlugin):
         requires=["quant_signal_filter"],
         requires_llm=True,
         insert_after="quant_signal_filter",
-        suggested_order=4,
+        suggested_order=5,
         auto_register=True,  # 模式2启用
     )
     
@@ -287,7 +294,7 @@ class DebateDecisionNode(NodePlugin):
     }
     
     # 风控默认配置（仅作为 fallback，优先从 bot.risk_limits 读取）
-    # 注意：百分比使用整数格式（80 = 80%），资金费率使用小数格式（0.05 = 0.05%）
+    # 注意：百分比使用整数格式（80 = 80%），用于 AI prompt 展示
     DEFAULT_RISK_LIMITS = {
         "max_total_allocation_pct": 80.0,
         "max_single_allocation_pct": 30.0,
@@ -298,6 +305,42 @@ class DebateDecisionNode(NodePlugin):
         "default_leverage": 3,
         "max_funding_rate_pct": 0.05,  # 0.05%，正常市场资金费率范围
     }
+    
+    def _get_allocation_pct(self, risk_limits: dict, key: str, default: float) -> float:
+        """
+        兼容读取仓位百分比配置
+        
+        支持两种字段名格式：
+        - 旧格式：max_total_allocation_pct (整数，80 = 80%)
+        - 新格式：max_total_exposure_pct (小数，0.8 = 80%)
+        
+        返回整数格式的百分比（用于 AI prompt）
+        """
+        # 字段名映射（新名称 -> 旧名称）
+        name_map = {
+            'max_total_allocation_pct': 'max_total_exposure_pct',
+            'max_single_allocation_pct': 'max_single_symbol_pct',
+        }
+        
+        # 1. 优先尝试新字段名（小数格式）
+        new_key = name_map.get(key)
+        if new_key and new_key in risk_limits:
+            value = risk_limits[new_key]
+            # 小数格式转换为整数百分比（0.8 -> 80）
+            if value <= 1:
+                return value * 100
+            return value
+        
+        # 2. 尝试旧字段名（整数格式）
+        if key in risk_limits:
+            value = risk_limits[key]
+            # 如果是小数格式，转换为整数百分比
+            if value <= 1:
+                return value * 100
+            return value
+        
+        # 3. 返回默认值
+        return default
     
     def __init__(self, context=None, config=None):
         super().__init__(context, config)
@@ -326,9 +369,10 @@ class DebateDecisionNode(NodePlugin):
         
         # 3. 合并配置：bot.risk_limits > system_configs > 默认值
         self.node_config = {
-            # 风控约束（从 risk_limits 读取，统一使用百分比格式）
-            "max_total_allocation_pct": self.risk_limits.get('max_total_allocation_pct', self.DEFAULT_RISK_LIMITS['max_total_allocation_pct']),
-            "max_single_allocation_pct": self.risk_limits.get('max_single_allocation_pct', self.DEFAULT_RISK_LIMITS['max_single_allocation_pct']),
+            # 风控约束（从 risk_limits 读取，统一使用百分比格式 80 = 80%）
+            # 使用兼容方法，支持新旧两种字段名和格式
+            "max_total_allocation_pct": self._get_allocation_pct(self.risk_limits, 'max_total_allocation_pct', self.DEFAULT_RISK_LIMITS['max_total_allocation_pct']),
+            "max_single_allocation_pct": self._get_allocation_pct(self.risk_limits, 'max_single_allocation_pct', self.DEFAULT_RISK_LIMITS['max_single_allocation_pct']),
             "min_position_size_usd": self.risk_limits.get('min_position_size_usd', self.DEFAULT_RISK_LIMITS['min_position_size_usd']),
             "max_position_size_usd": self.risk_limits.get('max_position_size_usd', self.DEFAULT_RISK_LIMITS['max_position_size_usd']),
             "min_risk_reward_ratio": self.risk_limits.get('min_risk_reward_ratio', self.DEFAULT_RISK_LIMITS['min_risk_reward_ratio']),
@@ -1115,6 +1159,140 @@ class DebateDecisionNode(NodePlugin):
             strategy_rationale="辩论流程异常，全部观望"
         )
     
+    def _create_close_only_decisions(self, state: State) -> State:
+        """
+        只生成平仓决策（不开仓）
+        
+        用于震荡市/高波动市场景：
+        - 不开新仓
+        - 检查现有持仓是否需要平仓（止盈/止损/趋势反转）
+        
+        判断平仓条件：
+        1. 止损：亏损 >= 3%
+        2. 止盈：盈利 >= 10%，或盈利 >= 5% 且趋势减弱
+        3. 趋势反转：技术面出现反转信号
+        """
+        decisions = []
+        
+        # ========== 1. 检查现有持仓 ==========
+        for pos in state.positions:
+            symbol = pos.symbol
+            
+            # 获取市场数据
+            market_data = state.market_data.get(symbol, {})
+            indicators = market_data.get('indicators', {})
+            current_price = indicators.get('current_price', pos.price)
+            
+            # 计算 ROE（Return on Equity）= 价格变动 × 杠杆
+            if pos.side == 'buy':
+                price_change_pct = ((current_price - pos.price) / pos.price * 100) if pos.price > 0 else 0
+            else:
+                price_change_pct = ((pos.price - current_price) / pos.price * 100) if pos.price > 0 else 0
+            pnl_pct = price_change_pct * pos.leverage
+            
+            # 获取技术指标
+            rsi = indicators.get('rsi_4h') or indicators.get('rsi_3m', 50)
+            # MACD 返回的是单个 float 值（MACD 主线），正值看涨，负值看跌
+            macd_value = indicators.get('macd_4h', 0)
+            macd_value = macd_value if isinstance(macd_value, (int, float)) else 0
+            
+            # ========== 判断是否需要平仓 ==========
+            should_close = False
+            close_reason = ""
+            
+            # 条件 1：止损（亏损 >= 3%）
+            if pnl_pct <= -3:
+                should_close = True
+                close_reason = f"止损: 亏损 {pnl_pct:.2f}% >= 3%"
+            
+            # 条件 2：止盈（盈利 >= 10%）
+            elif pnl_pct >= 10:
+                should_close = True
+                close_reason = f"止盈: 盈利 {pnl_pct:.2f}% >= 10%"
+            
+            # 条件 3：趋势减弱 + 有盈利（盈利 >= 5%）
+            elif pnl_pct >= 5:
+                # 多头：RSI 超买 + MACD 为负
+                if pos.side == 'buy' and rsi > 70 and macd_value < 0:
+                    should_close = True
+                    close_reason = f"趋势减弱止盈: 盈利 {pnl_pct:.2f}%, RSI={rsi:.0f}>70, MACD<0"
+                # 空头：RSI 超卖 + MACD 为正
+                elif pos.side == 'sell' and rsi < 30 and macd_value > 0:
+                    should_close = True
+                    close_reason = f"趋势减弱止盈: 盈利 {pnl_pct:.2f}%, RSI={rsi:.0f}<30, MACD>0"
+            
+            # 条件 4：趋势反转信号（即使没有盈利也要考虑平仓）
+            if not should_close:
+                if pos.side == 'buy' and rsi > 75 and macd_value < 0:
+                    should_close = True
+                    close_reason = f"趋势反转: RSI={rsi:.0f}>75, MACD<0"
+                elif pos.side == 'sell' and rsi < 25 and macd_value > 0:
+                    should_close = True
+                    close_reason = f"趋势反转: RSI={rsi:.0f}<25, MACD>0"
+            
+            # ========== 生成决策 ==========
+            if should_close:
+                close_action = "close_long" if pos.side == 'buy' else "close_short"
+                decisions.append(PortfolioDecision(
+                    symbol=symbol,
+                    action=close_action,
+                    allocation_pct=0,
+                    confidence=90,
+                    reasoning=close_reason,
+                    priority=0,  # 最高优先级
+                ))
+                logger.info(f"🔴 {symbol}: 生成平仓决策 - {close_reason}")
+            else:
+                # 继续持有（wait）
+                decisions.append(PortfolioDecision(
+                    symbol=symbol,
+                    action="wait",
+                    allocation_pct=0,
+                    confidence=50,
+                    reasoning=f"震荡市继续持有: PnL={pnl_pct:+.2f}%, 未触发平仓条件",
+                    priority=99,
+                ))
+                logger.info(f"⏸️ {symbol}: 继续持有 - PnL={pnl_pct:+.2f}%")
+        
+        # ========== 2. 候选币种全部设为 wait ==========
+        position_symbols = {p.symbol for p in state.positions}
+        for symbol in state.symbols:
+            # 跳过已有持仓的币种（上面已处理）
+            if symbol in position_symbols:
+                continue
+            
+            decisions.append(PortfolioDecision(
+                symbol=symbol,
+                action="wait",
+                allocation_pct=0,
+                confidence=0,
+                reasoning="震荡市，跳过开仓",
+                priority=99,
+            ))
+        
+        # ========== 3. 构建结果 ==========
+        batch_result = BatchDecisionResult(
+            decisions=decisions,
+            total_allocation_pct=0,
+            cash_reserve_pct=100,
+            strategy_rationale=f"震荡市模式: 检查了 {len(state.positions)} 个持仓, 跳过 {len(state.symbols)} 个候选币种的开仓"
+        )
+        
+        state.batch_decision = batch_result
+        
+        # 同时写入 debate_decision（与前端兼容）
+        state.debate_decision = DebateDecisionResult(
+            analyst_outputs=[],
+            bull_suggestions=[],
+            bear_suggestions=[],
+            final_decision=batch_result,
+            debate_summary="震荡市模式: 只检查平仓，不开仓",
+            completed_at=datetime.now(),
+        )
+        
+        logger.info(f"📊 震荡市决策完成: {len(decisions)} 个决策")
+        return state
+    
     def _get_forced_close_decisions(self, state: State) -> List[PortfolioDecision]:
         """
         检查需要强制平仓的持仓
@@ -1228,6 +1406,24 @@ class DebateDecisionNode(NodePlugin):
             # 返回空的批量决策
             state.batch_decision = self._create_default_decisions(state)
             return state
+        
+        # ========== 市场状态检查 ==========
+        regime = getattr(state, 'market_regime', None)
+        if regime:
+            logger.info(f"📊 市场状态: {regime} (置信度: {getattr(state, 'regime_confidence', 0):.1%})")
+            
+            if regime == "ranging":
+                # 震荡市：跳过新开仓，只检查持仓是否需要平仓
+                logger.warning("⏸️ 震荡市检测 (market_regime=ranging)")
+                logger.warning("   跳过新开仓，只检查持仓是否需要平仓")
+                return self._create_close_only_decisions(state)
+            
+            if regime == "volatile":
+                # 高波动市：降低仓位限制
+                logger.warning("⚠️ 高波动市检测 (market_regime=volatile)")
+                logger.warning("   降低仓位限制，更严格的风控")
+                original_max = self.node_config.get('max_single_allocation_pct', 30)
+                self.node_config['max_single_allocation_pct'] = min(original_max, 15)
         
         # 加载绩效
         if self.performance_service:

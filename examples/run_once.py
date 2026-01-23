@@ -98,17 +98,25 @@ class RunOnce:
         
         # 4. 获取账户信息
         _account_info = await self.trader.get_account_info()
-        self.initial_balance = _account_info.total.get('USDC', 0) or _account_info.total.get('USDT', 0)
+        current_balance = _account_info.total.get('USDC', 0) or _account_info.total.get('USDT', 0)
         self.positions = await self.trader.get_positions()
         
-        # 4.1 将 initial_balance 写入数据库（仅首次启动时）
+        # 4.1 initial_balance 处理：优先从数据库读取，避免重启时覆盖
+        # 这样确保 initial_balance 始终是 bot 创建后第一次获取的账户值
         bot_model = self.session.get(Bot, self.bot_id)
-        if bot_model and bot_model.initial_balance is None and self.initial_balance > 0:
-            from decimal import Decimal
-            bot_model.initial_balance = Decimal(str(self.initial_balance))
-            self.session.add(bot_model)
-            self.session.commit()
-            logger.info(f"💾 Saved initial_balance to database: {self.initial_balance}")
+        if bot_model and bot_model.initial_balance is not None:
+            # 从数据库读取已保存的初始余额（首次启动时保存的值）
+            self.initial_balance = float(bot_model.initial_balance)
+            logger.info(f"📦 Loaded initial_balance from database: {self.initial_balance}")
+        else:
+            # 首次启动：从交易所获取并保存到数据库
+            self.initial_balance = current_balance
+            if bot_model and self.initial_balance > 0:
+                from decimal import Decimal
+                bot_model.initial_balance = Decimal(str(self.initial_balance))
+                self.session.add(bot_model)
+                self.session.commit()
+                logger.info(f"💾 Saved initial_balance to database: {self.initial_balance}")
         
         # 5. 初始化交易历史仓储和绩效服务
         logger.info("Initializing trade history and performance services...")
@@ -354,8 +362,16 @@ class RunOnce:
         return result
 
     async def cleanup(self):
-        """清理资源"""
+        """
+        清理资源并平仓所有持仓
+        
+        重要：bot 停止时必须先平掉所有持仓，避免无人管理的仓位造成用户损失
+        """
         logger.info("🧹 Cleaning up resources...")
+        
+        # ========== 0. 强制平仓所有持仓（最重要，必须在关闭连接之前！）==========
+        if hasattr(self, 'trader'):
+            await self._close_all_positions()
 
         # 1. 关闭 WebSocket streams
         if hasattr(self, 'stream_manager'):
@@ -378,6 +394,75 @@ class RunOnce:
             self.session.close()
 
         logger.info("✅ Cleanup completed")
+    
+    async def _close_all_positions(self, max_retries: int = 3):
+        """
+        强制平仓所有持仓
+        
+        Args:
+            max_retries: 每个仓位的最大重试次数
+        """
+        logger.info("=" * 50)
+        logger.info("🚨 CLOSING ALL POSITIONS BEFORE SHUTDOWN")
+        logger.info("=" * 50)
+        
+        try:
+            positions = await self.trader.get_positions()
+            
+            if not positions:
+                logger.info("✅ No open positions to close")
+                return
+            
+            logger.warning(f"⚠️ Found {len(positions)} open position(s), closing all...")
+            
+            # 记录成功和失败的平仓
+            success_count = 0
+            failed_symbols = []
+            
+            for position in positions:
+                symbol = position.symbol
+                side = position.side
+                amount = position.amount
+                
+                logger.info(f"📤 Closing: {symbol} ({side}, amount={amount})")
+                
+                # 重试机制
+                for attempt in range(1, max_retries + 1):
+                    try:
+                        result = await self.trader.close_position(symbol)
+                        
+                        if result.success:
+                            logger.info(f"✅ {symbol}: Position closed successfully")
+                            success_count += 1
+                            break
+                        else:
+                            logger.warning(f"⚠️ {symbol}: Attempt {attempt}/{max_retries} failed - {result.error}")
+                            if attempt < max_retries:
+                                await asyncio.sleep(1)  # 等待 1 秒后重试
+                    except Exception as e:
+                        logger.error(f"🚨 {symbol}: Attempt {attempt}/{max_retries} exception - {e}")
+                        if attempt < max_retries:
+                            await asyncio.sleep(1)
+                else:
+                    # 所有重试都失败
+                    logger.error(f"❌ {symbol}: FAILED to close after {max_retries} attempts!")
+                    failed_symbols.append(symbol)
+            
+            # 总结
+            logger.info("=" * 50)
+            logger.info(f"📊 Close positions summary: {success_count}/{len(positions)} succeeded")
+            
+            if failed_symbols:
+                logger.error(f"🚨 CRITICAL: Failed to close: {failed_symbols}")
+                logger.error("🚨 These positions remain open and need manual intervention!")
+            else:
+                logger.info("✅ All positions closed successfully")
+            
+            logger.info("=" * 50)
+            
+        except Exception as e:
+            logger.error(f"🚨 CRITICAL: Error during position closing: {e}")
+            logger.error("🚨 Some positions may remain open!")
 
 
 async def main():

@@ -54,7 +54,7 @@ export function EditBotDialog({ bot, children }: EditBotDialogProps) {
   const [maxLeverage, setMaxLeverage] = useState((bot.max_leverage ?? 3).toString())
   const [cycleInterval, setCycleInterval] = useState((bot.cycle_interval_seconds ?? 180).toString())
   const [maxSymbols, setMaxSymbols] = useState((bot.max_concurrent_symbols ?? 5).toString())
-  const [quantThreshold, setQuantThreshold] = useState((bot.quant_signal_threshold ?? 50).toString())
+  const [quantThreshold, setQuantThreshold] = useState((bot.quant_signal_threshold ?? 45).toString())
   
   // Risk Limits JSON 编辑状态
   const [riskLimitsJson, setRiskLimitsJson] = useState('')
@@ -73,7 +73,7 @@ export function EditBotDialog({ bot, children }: EditBotDialogProps) {
       setMaxLeverage((bot.max_leverage ?? 3).toString())
       setCycleInterval((bot.cycle_interval_seconds ?? 180).toString())
       setMaxSymbols((bot.max_concurrent_symbols ?? 5).toString())
-      setQuantThreshold((bot.quant_signal_threshold ?? 50).toString())
+      setQuantThreshold((bot.quant_signal_threshold ?? 45).toString())
       
       // 初始化 risk_limits JSON
       if (bot.risk_limits && Object.keys(bot.risk_limits).length > 0) {

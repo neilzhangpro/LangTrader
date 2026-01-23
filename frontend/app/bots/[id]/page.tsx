@@ -299,10 +299,10 @@ export default function BotDetailPage() {
         />
         <MetricsCard
           title="Win Rate"
-          value={formatPercent((performance?.win_rate ?? 0) * 100, 1)}
+          value={formatPercent(performance?.win_rate ?? 0, 1)}
           subtitle={`${performance?.total_trades ?? 0} total trades`}
           icon={Percent}
-          trend={(performance?.win_rate ?? 0) > 0.5 ? 'up' : 'down'}
+          trend={(performance?.win_rate ?? 0) > 50 ? 'up' : 'down'}
         />
         <MetricsCard
           title="Total PnL"

@@ -45,24 +45,26 @@ class Execution(NodePlugin):
         category="Basic",
         tags=["execution", "official"],
         insert_after="debate_decision",  # 模式2：跟在辩论决策后
-        suggested_order=5,
+        suggested_order=6,
         auto_register=True
     )
     
     # 风控默认配置（仅作为 fallback，优先从 bot.risk_limits 读取）
-    # 注意：百分比使用整数格式（80 = 80%），资金费率使用小数格式（0.05 = 0.05%）
+    # 注意：所有百分比使用小数格式（0.8 = 80%，0.15 = 15%，0.0005 = 0.05%）
     DEFAULT_RISK_LIMITS = {
-        "max_total_allocation_pct": 80.0,      # 总仓位上限 80%
-        "max_single_allocation_pct": 30.0,     # 单币种上限 30%
+        "max_total_exposure_pct": 0.8,         # 总仓位上限 80%
+        "max_single_symbol_pct": 0.3,          # 单币种上限 30%
         "max_leverage": 5,
-        "max_consecutive_losses": 5,
-        "max_daily_loss_pct": 5.0,             # 单日最大亏损 5%
-        "max_drawdown_pct": 15.0,              # 最大回撤 15%
-        "max_funding_rate_pct": 0.05,          # 资金费率上限 0.05%（正常市场范围）
+        "max_consecutive_losses": 8,           # 连续亏损 8 次暂停
+        "max_daily_loss_pct": 0.05,            # 单日最大亏损 5%
+        "max_drawdown_pct": 0.15,              # 最大回撤 15%
+        "max_funding_rate_pct": 0.0005,        # 资金费率上限 0.05%（正常市场范围）
         "funding_rate_check_enabled": True,
         "min_position_size_usd": 10.0,
         "max_position_size_usd": 5000.0,
         "min_risk_reward_ratio": 2.0,
+        "default_stop_loss_pct": 3.0,          # 默认止损 3%
+        "default_take_profit_pct": 6.0,        # 默认止盈 6%
         "hard_stop_enabled": True,
         "pause_on_consecutive_loss": True,
         "pause_on_max_drawdown": True,
@@ -103,19 +105,19 @@ class Execution(NodePlugin):
         1. bot.risk_limits (self.risk_limits)
         2. 默认值 (DEFAULT_RISK_LIMITS)
         
-        注意：所有百分比使用 % 格式（如 80 表示 80%），需要在使用时转换
+        注意：所有百分比使用小数格式（0.8 = 80%，0.15 = 15%）
         """
         # 合并默认值和 bot 配置
         limits = {**self.DEFAULT_RISK_LIMITS, **self.risk_limits}
         
-        # 转换为小数格式用于计算（如 80% -> 0.8）
+        # 直接使用配置值（已经是小数格式）
         return {
-            # 百分比转小数
-            "max_total_exposure_pct": limits.get('max_total_allocation_pct', 80) / 100,
-            "max_single_symbol_pct": limits.get('max_single_allocation_pct', 30) / 100,
-            "max_daily_loss_pct": limits.get('max_daily_loss_pct', 5) / 100,
-            "max_drawdown_pct": limits.get('max_drawdown_pct', 15) / 100,
-            "max_funding_rate_pct": limits.get('max_funding_rate_pct', 0.1) / 100,
+            # 百分比字段（小数格式：0.8 = 80%）
+            "max_total_exposure_pct": limits.get('max_total_exposure_pct', 0.8),
+            "max_single_symbol_pct": limits.get('max_single_symbol_pct', 0.3),
+            "max_daily_loss_pct": limits.get('max_daily_loss_pct', 0.05),
+            "max_drawdown_pct": limits.get('max_drawdown_pct', 0.15),
+            "max_funding_rate_pct": limits.get('max_funding_rate_pct', 0.0005),
             
             # 非百分比字段直接使用
             "max_leverage": limits.get('max_leverage', 10),
@@ -233,19 +235,32 @@ class Execution(NodePlugin):
                     reason=f"Consecutive losses {consecutive_losses} >= max {max_consecutive}, trading paused"
                 )
         
-        # ========== 6. 资金费率检查 ==========
+        # ========== 6. 资金费率检查（仅警告，不阻止开仓）==========
+        # 资金费率是持仓成本因素，但不应作为开仓的硬性阻止条件
+        # 下跌市场中资金费率为负（空头付费）是正常的，不应阻止做空
         if limits.get('funding_rate_check_enabled', True):
             max_funding = limits.get('max_funding_rate_pct', 0.001)
             funding_rate = self._get_funding_rate(state, symbol)
             
             if funding_rate is not None and abs(funding_rate) > max_funding:
-                # 如果做多且资金费率为正（多头付费），或做空且资金费率为负（空头付费）
-                if (decision.action == "open_long" and funding_rate > max_funding) or \
-                   (decision.action == "open_short" and funding_rate < -max_funding):
-                    return RiskCheckResult(
-                        passed=False,
-                        reason=f"Funding rate {funding_rate*100:.4f}% exceeds limit {max_funding*100:.4f}%"
+                # 记录警告但不阻止开仓
+                if decision.action == "open_long" and funding_rate > max_funding:
+                    logger.warning(
+                        f"⚠️ {symbol}: 资金费率对多头不利 {funding_rate*100:.4f}% > {max_funding*100:.4f}%，但允许开仓"
                     )
+                elif decision.action == "open_short" and funding_rate < -max_funding:
+                    logger.warning(
+                        f"⚠️ {symbol}: 资金费率对空头不利 {funding_rate*100:.4f}% < -{max_funding*100:.4f}%，但允许开仓"
+                    )
+                # 只有在极端资金费率（超过 0.3%）时才阻止
+                extreme_funding_limit = 0.003  # 0.3%
+                if abs(funding_rate) > extreme_funding_limit:
+                    if (decision.action == "open_long" and funding_rate > 0) or \
+                       (decision.action == "open_short" and funding_rate < 0):
+                        return RiskCheckResult(
+                            passed=False,
+                            reason=f"极端资金费率 {funding_rate*100:.4f}% 超过安全阈值 {extreme_funding_limit*100:.4f}%"
+                        )
         
         # ========== 7. 最大回撤检查 ==========
         if limits.get('pause_on_max_drawdown', True):
@@ -458,7 +473,7 @@ class Execution(NodePlugin):
             # ========== 平仓操作：不需要检查余额，直接执行 ==========
             if action in ("close_long", "close_short"):
                 logger.info(f"🔴 {symbol}: 执行平仓 ({action})")
-                ai_decision = self._portfolio_to_ai_decision(portfolio_decision, 0)
+                ai_decision = self._portfolio_to_ai_decision(portfolio_decision, 0, state)
                 result = await self._execute_close_with_validation(ai_decision, state, symbol)
                 if result.status == "success":
                     logger.info(f"✅ {symbol}: 平仓成功")
@@ -498,7 +513,7 @@ class Execution(NodePlugin):
                     logger.info(f"   调整: 保证金 ${margin_needed:.2f}, 名义价值 ${nominal_value:.2f}")
             
             # 转换为 AIDecision 并执行（使用名义价值）
-            ai_decision = self._portfolio_to_ai_decision(portfolio_decision, nominal_value)
+            ai_decision = self._portfolio_to_ai_decision(portfolio_decision, nominal_value, state)
             
             # 执行开仓
             if action in ("open_long", "open_short"):
@@ -537,15 +552,62 @@ class Execution(NodePlugin):
         
         return state
     
-    def _portfolio_to_ai_decision(self, pd: PortfolioDecision, position_size_usd: float) -> AIDecision:
-        """将 PortfolioDecision 转换为 AIDecision"""
+    def _portfolio_to_ai_decision(
+        self, 
+        pd: PortfolioDecision, 
+        position_size_usd: float,
+        state: State
+    ) -> AIDecision:
+        """
+        将 PortfolioDecision 转换为 AIDecision
+        
+        如果 LLM 没有设置止损止盈价格，自动根据当前价格和默认百分比计算。
+        """
+        symbol = pd.symbol
+        stop_loss_price = pd.stop_loss
+        take_profit_price = pd.take_profit
+        
+        # ========== 自动计算缺失的止损止盈 ==========
+        # 仅对开仓操作（open_long / open_short）进行处理
+        if pd.action in ("open_long", "open_short"):
+            # 获取当前价格
+            current_price = None
+            if symbol in state.market_data:
+                indicators = state.market_data[symbol].get('indicators', {})
+                current_price = indicators.get('current_price', 0)
+            
+            if current_price and current_price > 0:
+                # 从 risk_limits 读取默认止损止盈百分比
+                default_sl_pct = self.risk_limits.get('default_stop_loss_pct', 2.0)
+                default_tp_pct = self.risk_limits.get('default_take_profit_pct', 6.0)
+                
+                # 如果止损为 None 或 <= 0，自动计算
+                if not stop_loss_price or stop_loss_price <= 0:
+                    if pd.action == "open_long":
+                        # 多头止损 = 当前价格 * (1 - 止损%)
+                        stop_loss_price = current_price * (1 - default_sl_pct / 100)
+                    else:
+                        # 空头止损 = 当前价格 * (1 + 止损%)
+                        stop_loss_price = current_price * (1 + default_sl_pct / 100)
+                    logger.info(f"   📍 {symbol}: 自动计算止损 = ${stop_loss_price:.4f} (默认 {default_sl_pct}%)")
+                
+                # 如果止盈为 None 或 <= 0，自动计算
+                if not take_profit_price or take_profit_price <= 0:
+                    if pd.action == "open_long":
+                        # 多头止盈 = 当前价格 * (1 + 止盈%)
+                        take_profit_price = current_price * (1 + default_tp_pct / 100)
+                    else:
+                        # 空头止盈 = 当前价格 * (1 - 止盈%)
+                        take_profit_price = current_price * (1 - default_tp_pct / 100)
+                    logger.info(f"   📍 {symbol}: 自动计算止盈 = ${take_profit_price:.4f} (默认 {default_tp_pct}%)")
+        
         return AIDecision(
-            symbol=pd.symbol,
+            symbol=symbol,
             action=pd.action,
             leverage=pd.leverage,
             position_size_usd=position_size_usd,
-            stop_loss_price=pd.stop_loss,
-            take_profit_price=pd.take_profit,
+            stop_loss_price=stop_loss_price,
+            take_profit_price=take_profit_price,
             confidence=pd.confidence,  # PortfolioDecision.confidence 已是 int
             risk_approved=pd.risk_approved,
             reasons=[pd.reasoning] if pd.reasoning else []
@@ -638,18 +700,38 @@ class Execution(NodePlugin):
         return True
 
     def _validate_open_position(self, decision: AIDecision) -> bool:
-        """验证开仓决策的合理性"""
+        """
+        验证开仓决策的合理性
+        
+        关键规则：
+        - open_long: 止损价 < 当前价 < 止盈价 (SL < current < TP)
+        - open_short: 止盈价 < 当前价 < 止损价 (TP < current < SL)
+        """
         symbol = decision.symbol
+        action = decision.action
+        sl = decision.stop_loss_price
+        tp = decision.take_profit_price
+        
+        # 详细日志：记录空单验证过程
+        logger.info(f"🔍 验证 {symbol} {action}: SL={sl}, TP={tp}")
 
         # 验证止盈止损方向
-        if decision.action == "open_long":
-            if decision.stop_loss_price >= decision.take_profit_price:
-                logger.error(f"🚨 {symbol}: Long invalid: SL({decision.stop_loss_price}) >= TP({decision.take_profit_price})")
+        if action == "open_long":
+            # 多单：止损 < 止盈
+            if sl >= tp:
+                logger.error(f"🚨 {symbol}: Long 止损止盈方向错误: SL({sl}) >= TP({tp})")
+                logger.error(f"   正确规则: 做多时 SL < TP (止损在下方，止盈在上方)")
                 return False
-        elif decision.action == "open_short":
-            if decision.stop_loss_price <= decision.take_profit_price:
-                logger.error(f"🚨 {symbol}: Short invalid: SL({decision.stop_loss_price}) <= TP({decision.take_profit_price})")
+            logger.info(f"✅ {symbol}: Long 止损止盈验证通过: SL({sl}) < TP({tp})")
+            
+        elif action == "open_short":
+            # 空单：止损 > 止盈（与多单相反！）
+            if sl <= tp:
+                logger.error(f"🚨 {symbol}: Short 止损止盈方向错误: SL({sl}) <= TP({tp})")
+                logger.error(f"   正确规则: 做空时 SL > TP (止损在上方，止盈在下方)")
+                logger.error(f"   提示: AI 可能按多单逻辑设置了止损止盈，需要修正 prompt")
                 return False
+            logger.info(f"✅ {symbol}: Short 止损止盈验证通过: SL({sl}) > TP({tp})")
 
         # 验证风险回报比 (reward/risk >= 3)
         if decision.risk_usd is not None and decision.risk_usd > 0:
